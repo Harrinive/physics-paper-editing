@@ -18,7 +18,7 @@ Read surrounding material whenever the snippet's relationship to adjacent conten
 
 ---
 
-## Response Format *(follow for every editing round)*
+## Response Format *(mandatory for every editing round)*
 
 1. **Summarize** the provided LaTeX snippet:
    - What the text does and its internal logic.
