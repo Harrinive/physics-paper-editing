@@ -30,6 +30,21 @@ When in doubt about length, treat it as "longer" and load both prose files; when
 
 ---
 
+## Sentence-Level Checks: Task Subagents *(when `sentence-checks.md` is loaded)*
+
+For **multi-sentence** passages, do **not** run all 10 sentence-level objectives inline yourself. Instead:
+
+1. Read [sentence-check-subagents.md](sentence-check-subagents.md) and follow it.
+2. **Feasibility:** If subagent delegation is obviously impractical (very large scope, equation-only blocks, etc.), use **`AskQuestion`** to offer skipping sentence-level subagents. If the user skips, run narrative/math checklists and still fix any sentence-level issues you notice inline.
+3. **Split:** Number sentences, then **choose your own chunking** — short, feasible assignments for item-by-item checking (often one sentence; group 2–4 short related sentences when they share one logical beat). No fixed agent count.
+4. **Launch** Task subagents (`subagent_type: generalPurpose`, `readonly: true`, `model` = Cursor's **current flagship model** from the Task tool's allowed list — do not hardcode model names in prompts).
+5. Each subagent gets the prompt template from `sentence-check-subagents.md` plus its assigned chunk.
+6. **Synthesize** reports: apply **obvious corrections**, surface **minor suggestions** as questions, then run `narrative-checks.md` / `math-checks.md` on the full passage yourself.
+
+Single-sentence or fragment-only edits: run `sentence-checks.md` inline (no subagents).
+
+---
+
 ## Response Format *(mandatory for every editing round)*
 
 1. **Summarize** the provided LaTeX snippet:
@@ -37,7 +52,10 @@ When in doubt about length, treat it as "longer" and load both prose files; when
    - Where it sits within its section and how it relates to surrounding material.
    - The underlying physics/mathematics.
 
-2. **Run every check, point by point.** Go through each objective in the loaded checklist file(s) **in order**, naming each one explicitly and stating how it applies and whether it surfaces an issue. You may not silently skip, merge, or abbreviate any point — if a check does not apply, write "not applicable" and why. Include any explicit editing directions the user provided.
+2. **Run every check, point by point.**
+   - **Sentence-level (`sentence-checks.md`):** summarize findings from Task subagent reports (see above). Name each of the 10 objectives and state whether subagents flagged an issue; do not silently skip any point.
+   - **Other loaded checklists:** go through each objective in `narrative-checks.md` and/or `math-checks.md` **in order**, naming each one explicitly. If a check does not apply, write "not applicable" and why.
+   - Include any explicit editing directions the user provided.
 
 3. **Ask** a focused clarification question if guidance is ambiguous — do not proceed to step 4 until resolved.
 
@@ -56,6 +74,6 @@ When in doubt about length, treat it as "longer" and load both prose files; when
 
 ## Checklists
 
-- For sentence- and passage-level edits, see [sentence-checks.md](sentence-checks.md).
+- For sentence- and passage-level edits, see [sentence-checks.md](sentence-checks.md) — delegate to Task subagents via [sentence-check-subagents.md](sentence-check-subagents.md).
 - For narrative ("global view") edits of a paragraph, section, or full paper, see [narrative-checks.md](narrative-checks.md).
 - For mathematical and logical rigor of any text containing math or arguments, see [math-checks.md](math-checks.md).
