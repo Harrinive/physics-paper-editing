@@ -1,79 +1,105 @@
 ---
 name: physics-paper-editing
-description: Expert scientific editor for physics papers. Use when the user asks to edit, revise, or proofread LaTeX text from a physics paper, or asks for help with academic writing, wording, sentence structure, or narrative flow in a scientific manuscript.
+description: >-
+  Edits and proofreads LaTeX from physics papers: sentence clarity, narrative
+  flow, and math/logic rigor. Use when the user asks to edit, revise, polish, or
+  proofread manuscript text, improve academic writing, or fix wording in a
+  scientific paper. Loads checklists by passage length; uses Task subagents for
+  multi-sentence sentence-level checks when feasible.
 ---
 
 # Physics Paper Editing
 
-You are an expert scientific editor fluent in physics and mathematics at the graduate level.
+Expert scientific editor for physics and mathematics at graduate level.
 
-## Setup: Understand the Paper First
+## Agent workflow (every editing round)
 
-Before editing, establish context. If the user has not already told you:
-1. **Topic and goal** — what the paper is about and what it argues.
-2. **Paper structure** — section titles and their logical order (ask the user or read `main.tex` / the top-level tex file).
-3. **Relevant source files** — which `.tex` files contain the passage being edited and its surrounding material.
+Copy and track:
 
-Read surrounding material whenever the snippet's relationship to adjacent content is unclear.
+```
+[ ] 1. Context — topic, section map, relevant .tex files; read neighbors if needed
+[ ] 2. Load checklists — use decision table below; Read tool on each file (no memory)
+[ ] 3. Sentence-level — inline OR Task subagents per sentence-check-subagents.md
+[ ] 4. Draft — assemble edits; honor [bracket comments] as instructions
+[ ] 5. Passage-level — narrative-checks.md and/or math-checks.md on full draft
+[ ] 6. Respond — format in § Response; self-check against loaded checklists
+[ ] 7. Apply — edit source in agent mode; dual-format output in ask mode
+```
 
----
+## Context (step 1)
 
-## Which Checklist to Load *(decide this first, every time)*
+If the user has not provided enough context, establish:
 
-This skill has three checklist files. You **must** read the relevant file(s) before editing — do not rely on memory of their contents.
+| Item | Source |
+|------|--------|
+| Topic and main claim | User or abstract / introduction |
+| Section order | User or `main.tex` (or top-level `.tex`) |
+| Files for this passage | User or paths around the selection |
 
-- **One or more standalone sentences** (an isolated sentence, a sentence fragment, a single equation-bearing line) → read **`sentence-checks.md`**.
-- **Anything longer** (a paragraph, multiple paragraphs, a subsection, a section, or a full paper) → read **both** `sentence-checks.md` **and** `narrative-checks.md`.
-- **Additionally, whenever the text contains mathematical objects, equations, or logical arguments** (at any length) → also read **`math-checks.md`**.
+Read surrounding `.tex` when placement, references, or notation are unclear.
 
-When in doubt about length, treat it as "longer" and load both prose files; when in doubt about whether math is involved, load `math-checks.md` too.
+## Which checklists to load (step 2)
 
----
+**Always read files with the Read tool before editing** — do not rely on recall.
 
-## Sentence-Level Checks: Task Subagents *(when `sentence-checks.md` is loaded)*
+| Passage | Read |
+|---------|------|
+| One sentence or fragment | [sentence-checks.md](sentence-checks.md) |
+| Two or more sentences | [sentence-checks.md](sentence-checks.md) + [narrative-checks.md](narrative-checks.md) |
+| Any math, equations, or logical argument | Also [math-checks.md](math-checks.md) |
 
-For **multi-sentence** passages, do **not** run all 10 sentence-level objectives inline yourself. Instead:
+When length is ambiguous, load sentence + narrative. When math might appear, load math too.
 
-1. Read [sentence-check-subagents.md](sentence-check-subagents.md) and follow it.
-2. **Feasibility:** If subagent delegation is obviously impractical (very large scope, equation-only blocks, etc.), use **`AskQuestion`** to offer skipping sentence-level subagents. If the user skips, run narrative/math checklists and still fix any sentence-level issues you notice inline.
-3. **Split:** Number sentences, then **choose your own chunking** — short, feasible assignments for item-by-item checking (often one sentence; group 2–4 short related sentences when they share one logical beat). No fixed agent count.
-4. **Launch** Task subagents (`subagent_type: generalPurpose`, `readonly: true`, `model` = Cursor's **current flagship model** from the Task tool's allowed list — do not hardcode model names in prompts).
-5. Each subagent gets the prompt template from `sentence-check-subagents.md` plus its assigned chunk.
-6. **Synthesize** reports: apply **obvious corrections**, surface **minor suggestions** as questions, then run `narrative-checks.md` / `math-checks.md` on the full passage yourself.
+## Sentence-level execution (step 3)
 
-Single-sentence or fragment-only edits: run `sentence-checks.md` inline (no subagents).
+| Passage | Method |
+|---------|--------|
+| One sentence or fragment | Run all 10 objectives in [sentence-checks.md](sentence-checks.md) inline |
+| Two or more sentences | Read [sentence-check-subagents.md](sentence-check-subagents.md) first, then subagents or inline per that file |
 
----
+Narrative and math checklists stay with the **main agent** after sentence-level work (subagents do not run them).
 
-## Response Format *(mandatory for every editing round)*
+## Response format (step 6)
 
-1. **Summarize** the provided LaTeX snippet:
-   - What the text does and its internal logic.
-   - Where it sits within its section and how it relates to surrounding material.
-   - The underlying physics/mathematics.
+**1. Passage summary**
 
-2. **Run every check, point by point.**
-   - **Sentence-level (`sentence-checks.md`):** summarize findings from Task subagent reports (see above). Name each of the 10 objectives and state whether subagents flagged an issue; do not silently skip any point.
-   - **Other loaded checklists:** go through each objective in `narrative-checks.md` and/or `math-checks.md` **in order**, naming each one explicitly. If a check does not apply, write "not applicable" and why.
-   - Include any explicit editing directions the user provided.
+- What the text does and how it flows logically.
+- Where it sits in the section and relation to neighbors.
+- Underlying physics and mathematics.
 
-3. **Ask** a focused clarification question if guidance is ambiguous — do not proceed to step 4 until resolved.
+**2. Check report**
 
-4. **Return edited text**:
-   - If in agent mode, edit the source file directly.
-   - If in ask mode, return the edited text in two forms:
-      - **Rendered**: equations as `\( … \)` (inline) or `\[ … \]` (display).
-      - **LaTeX source**: equations as `\( … \)` (inline) or `\begin{equation} … \end{equation}` (display) in a code cell for the user to copy.
-   - Provide additional versions if the word limit allows.
+- **Sentence-level:** If subagents ran, silent fixes are in the assembled draft; name all **10 objectives** from `sentence-checks.md` and report only **unresolved** items (or “addressed in draft”). If inline, report all 10. Do not re-list fixes subagents already applied.
+- **Narrative / math:** For each loaded file, go through every objective **in file order**; if N/A, say why.
+- Include any explicit user editing directions.
 
-5. **Honour inline comments**: the user may annotate the snippet with `[square-bracket comments]`; treat them as editing instructions.
+**3. Clarify** — one focused question if guidance is ambiguous; do not finalize edits until resolved.
 
-6. **Self-check before replying**: draft the edited text, re-run every point in the loaded checklist file(s) against your draft, confirm each is satisfied, correct if needed, then return the final version.
+**4. Edited text**
 
----
+- **Agent mode:** apply edits in the source `.tex` file.
+- **Ask mode:** provide
+  - **Rendered:** inline `\( … \)`, display `\[ … \]`.
+  - **LaTeX source:** inline `\( … \)`, display `\begin{equation} … \end{equation}` in a fenced block for copy-paste.
+- Extra variants only if word limit allows.
 
-## Checklists
+**5. Self-check** — re-run every loaded checklist against the final draft; fix gaps before sending.
 
-- For sentence- and passage-level edits, see [sentence-checks.md](sentence-checks.md) — delegate to Task subagents via [sentence-check-subagents.md](sentence-check-subagents.md).
-- For narrative ("global view") edits of a paragraph, section, or full paper, see [narrative-checks.md](narrative-checks.md).
-- For mathematical and logical rigor of any text containing math or arguments, see [math-checks.md](math-checks.md).
+## Checklist files (reference)
+
+| File | Scope |
+|------|--------|
+| [sentence-checks.md](sentence-checks.md) | 10 sentence-level objectives (canonical list) |
+| [sentence-check-subagents.md](sentence-check-subagents.md) | Task splitting, prompts, synthesis for ≥2 sentences |
+| [narrative-checks.md](narrative-checks.md) | Paragraph through full paper |
+| [math-checks.md](math-checks.md) | Definitions, logic, notation, quantifiers |
+
+## Project-specific context (optional)
+
+When the manuscript is the Ancilla Optimization / QEC error-budgeting paper, also know:
+
+- **Topic:** decomposing logical infidelity into error-mechanism contributions for realistic QEC devices.
+- **Typical skeleton:** Introduction → Background → full QEC evolution → logical evolution graph → Markov chain → error-budget analysis → example.
+- **Main sources:** `main.tex`, `Sections/*.tex` (read only what the user points to or what surrounds the edit).
+
+For other papers, use only the generic workflow above.
