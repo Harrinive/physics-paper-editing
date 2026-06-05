@@ -69,7 +69,7 @@ Q3: Feasible split for subagents?
 
 | Option | Then |
 |--------|------|
-| **Skip sentence-level subagents** | **INLINE** — all 12 sentence checks on the passage, then passage-level checklists |
+| **Skip sentence-level subagents** | **INLINE** — all 13 sentence checks on the passage, then passage-level checklists |
 | **Proceed with subagents anyway** | **SUBAGENTS** — one Task per splittable sentence when possible; note partial coverage when synthesizing |
 | **Narrow the scope** | User gives a shorter quote; re-run the gate |
 
@@ -99,7 +99,7 @@ Q3: Feasible split for subagents?
 [ ] 1. Context — topic, file, quote; read neighbor .tex only if needed
 [ ] 2. Gate — count sentences; Q1–Q3; set Mode line
 [ ] 3. Read checklists — Read tool only (table below)
-[ ] 4. Sentence-level — INLINE (12 checks) or SUBAGENTS (split → model AskQuestion → one Task/sentence → merge)
+[ ] 4. Sentence-level — INLINE (13 checks) or SUBAGENTS (split → model AskQuestion → one Task/sentence → merge)
 [ ] 5. Passage-level — narrative-checks.md / math-checks.md on full draft (main agent)
 [ ] 6. Respond — § Response format; self-check all loaded checklists
 [ ] 7. Apply — edit .tex in Agent mode; dual-format output in Ask mode
@@ -130,7 +130,7 @@ When length is ambiguous, load sentence + narrative. When math might appear, loa
 
 | Mode | Method |
 |------|--------|
-| **INLINE** | All 12 objectives in [sentence-checks.md](sentence-checks.md) on the passage |
+| **INLINE** | All 13 objectives in [sentence-checks.md](sentence-checks.md) on the passage |
 | **SUBAGENTS** | [sentence-check-subagents.md](sentence-check-subagents.md) — split, Tasks, synthesize |
 
 Narrative and math stay with the **main agent** after sentence-level work (subagents do not run them).
@@ -148,7 +148,7 @@ Narrative and math stay with the **main agent** after sentence-level work (subag
 **2. Check report**
 
 - First line: `Mode: …` (from the gate).
-- **Sentence-level:** If **SUBAGENTS** ran, name all **12 objectives** from `sentence-checks.md` and report only **unresolved** items (or “addressed in draft”). If **INLINE**, report all 12. Do not re-list fixes subagents already applied silently.
+- **Sentence-level:** If **SUBAGENTS** ran, name all **13 objectives** from `sentence-checks.md` and report only **unresolved** items (or “addressed in draft”). If **INLINE**, report all 13. Do not re-list fixes subagents already applied silently.
 - **Narrative / math:** For each loaded file, go through every bullet or check **in file order**; if N/A, say why.
 - Include explicit user editing directions.
 
@@ -169,7 +169,7 @@ Narrative and math stay with the **main agent** after sentence-level work (subag
 
 | File | Scope |
 |------|------|
-| [sentence-checks.md](sentence-checks.md) | 12 sentence-level objectives |
+| [sentence-checks.md](sentence-checks.md) | 13 sentence-level objectives |
 | [sentence-check-subagents.md](sentence-check-subagents.md) | Split, Task prompts, synthesis (**SUBAGENTS** only) |
 | [narrative-checks.md](narrative-checks.md) | Paragraph through full paper |
 | [math-checks.md](math-checks.md) | Definitions, logic, notation, quantifiers |

@@ -20,6 +20,10 @@ Use for anything longer than one standalone sentence: paragraph, subsection, sec
 - **Motivation and stakes** — problem and gap before heavy technical content; thread sustained.
 - **Prose vs math** — language carries motivation, connections, physical interpretation, and understanding; math carries definitions, relations, and formal claims. Flag passages that describe in words what should be stated as math.
 - **Signposting and transitions** — roadmaps, summaries, forward/back references; flag abrupt jumps. For references to equations, results, or conclusions across section/proof/paragraph boundaries, the text should remind readers what is being invoked; if that reminder is hard to phrase, flag the referenced item as too minor or too distant and consider reordering or moving the material closer.
+- **Confusion-on-first-read ordering** — flag any sentence that confuses on first encounter because content is arranged in a reversed order (effect before cause, symbol before its definition, claim before its motivation). Severity depends on *when and how* the confusion is resolved; grade and act by tier:
+  - **Tier 1 — deferred & flagged:** the confusion is acknowledged in place and explicitly promised a later resolution (e.g. “⟨confusing part⟩. We show this in the following paragraph.”). Low harm; acceptable as is, but prefer a rearrangement that removes the confusion *if it does not disturb the narrative*.
+  - **Tier 2 — resolved next sentence:** the confusion is cleared immediately afterward (e.g. an undefined symbol followed by a long explanation instead of a short `where` clause; or a high-level/unmotivated claim followed by its justification or relevance). Mild but must be tightened — prefer a short `where`-clause, reorder so the definition/motivation precedes use, or compress.
+  - **Tier 3 — never resolved / resolved much later:** the reader is left hanging or the resolution appears far away (e.g. notation explained only sections later, or not at all). Very harmful — resolve immediately by defining/motivating before use or moving the resolution adjacent.
 
 ## Group 3 — Consistency and economy
 

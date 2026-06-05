@@ -33,7 +33,7 @@ If ambiguous, note in the prompt and include the preceding sentence as context.
 
 ## 3. One sentence per Task (default)
 
-**Purpose:** each subagent audits **one** sentence against all 12 checks. This is the normal assignment rule.
+**Purpose:** each subagent audits **one** sentence against all 13 checks. This is the normal assignment rule.
 
 1. After labeling **S1, S2, …**, launch **one Task per sentence**: S1 → Task 1, S2 → Task 2, etc.
 2. **Do not** put multiple sentences in one Task unless §3.1 applies.
@@ -126,7 +126,7 @@ Read and apply every objective in order from:
 sentence-checks.md
 (same directory as this skill — use the Read tool if you do not have the file)
 
-Run all 12 checks per assigned sentence. Do not skip.
+Run all 13 checks per assigned sentence. Do not skip.
 
 ## Apply corrections yourself (do not report these)
 
@@ -138,7 +138,7 @@ Respect objective 8 (minimal changes).
 
 ## Report only what you did not fix
 
-Report when wording needs passage-level judgment: ambiguous “it/this/which”, intentional terminology, physics-story vs rigor tradeoff, prose-vs-math relocation (objective 12), or risk of changing technical meaning.
+Report when wording needs passage-level judgment: ambiguous “it/this/which”, intentional terminology, physics-story vs rigor tradeoff, prose-vs-math relocation (objective 12), confusion-on-first-read ordering that depends on neighboring sentences (objective 13), or risk of changing technical meaning.
 
 ## Output format
 One block per assigned sentence:
@@ -160,6 +160,7 @@ One block per assigned sentence:
 10. "For A, it does B":
 11. Physics story:
 12. Use math for math:
+13. Confusion-on-first-read ordering:
 
 **Needs user / main-agent judgment:** <items or "none">
 ---
@@ -172,7 +173,7 @@ One block per assigned sentence:
 1. **Assemble** from each **Edited** line (S1, S2, …). Resolve boundary conflicts minimally; note conflicts.
 2. **Collect** only unresolved **Checks** and **Needs user / main-agent judgment** → focused questions (SKILL.md § Response — Clarify).
 3. **Run** [narrative-checks.md](narrative-checks.md) and [math-checks.md](math-checks.md) on the full draft when loaded.
-4. In the response, **summarize sentence-level** from subagent reports; do not re-run all 12 inline unless a subagent failed or you override.
+4. In the response, **summarize sentence-level** from subagent reports; do not re-run all 13 inline unless a subagent failed or you override.
 5. Finish SKILL.md workflow (respond → self-check → apply in Agent mode).
 
 On timeout or incomplete report: run sentence checks manually for that chunk and note the gap.
