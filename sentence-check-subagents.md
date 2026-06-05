@@ -1,52 +1,23 @@
 # Sentence-level checks via Task subagents
 
-Use when [sentence-checks.md](sentence-checks.md) is loaded and the passage has **two or more** complete sentences.
+**SUBAGENTS mode only.** Obey [SKILL.md](SKILL.md) § Gate first: 2+ sentences, **not** a major rewrite (Q2), and a **feasible** split (Q3) → use this file; Q3 not feasible → AskQuestion in the gate, then return here only if the user chose **Proceed with subagents anyway**.
 
 **Main agent keeps:** narrative ([narrative-checks.md](narrative-checks.md)) and math ([math-checks.md](math-checks.md)) after synthesis.
 
-**Read this file before** splitting the passage or launching Tasks.
+**Read this file with the Read tool** before splitting the passage or launching Tasks.
 
 ---
 
-## 1. Subagents vs AskQuestion vs inline
+## 1. When this file applies
 
-| Situation | AskQuestion? | Sentence checks |
-|-----------|--------------|-----------------|
-| Single sentence or fragment | No | Inline [sentence-checks.md](sentence-checks.md) |
-| ≥2 sentences, **feasible** scope (below) | No | **Task subagents** (required — do not skip) |
-| ≥2 sentences, **impractical** scope (below) | **Yes** | Per user choice |
-| User asked for no subagents / quick inline | No | Inline |
-| User already chose skip vs proceed **this passage, this chat** | No | Honor prior choice |
-| `sentence-checks.md` not loaded | No | Other checklists only |
+| Gate mode | Use this file? |
+|-----------|----------------|
+| **INLINE** | No — run [sentence-checks.md](sentence-checks.md) inline |
+| **SUBAGENTS** | Yes — required |
+| **ASK USER** → user chose proceed anyway | Yes — coarser split; note partial coverage |
+| **ASK USER** → user chose skip | No — inline sentence checks instead |
 
-### 1.1 Feasible — run subagents without asking
-
-All must hold:
-
-- Roughly **≤12** complete sentences.
-- Each chunk is short enough for rigorous per-objective checking.
-- Mostly checkable prose (not display equations, tables, or bare lists).
-- Sentences can be split without losing essential cross-references.
-
-→ Split (§2), launch Tasks (§4–5), synthesize (§6). **Do not AskQuestion** for routine edits in this range.
-
-### 1.2 Impractical — AskQuestion required
-
-Examples: full paper or section, **~15+** sentences, mostly equations/tables, inseparable cross-references, or an unwieldy number of Tasks.
-
-**AskQuestion** title *Sentence-level checking*, options:
-
-| Option | Effect |
-|--------|--------|
-| **Skip sentence-level subagents** | Main agent runs narrative/math; fixes obvious sentence issues inline |
-| **Proceed with subagents anyway** | Coarser split (§3); note partial coverage in synthesis |
-| **Narrow the scope** | User gives a shorter passage; if still ≥2 feasible sentences, run subagents |
-
-Briefly say why (e.g. “~40 sentences”). If user skips, do **not** launch Tasks; run sentence checks inline, then narrative/math.
-
-### 1.3 Tie-break
-
-Modest count → feasible (subagents). Large count or non-sentential prose → AskQuestion.
+Do not AskQuestion when the gate already selected **SUBAGENTS**.
 
 ---
 
@@ -76,7 +47,7 @@ Launch Tasks **in parallel** when practical; batch waves if many. **`run_in_back
 
 ## 4. Passage summary, then launch Tasks
 
-**Before any Task**, write one **passage summary** for the full S1…Sn scope (same bullets as SKILL.md Response §1):
+**Before any Task**, write one **passage summary** for the full S1…Sn scope (same bullets as SKILL.md § Response — passage summary):
 
 - Passage role and logical flow.
 - Placement (section, `.tex` path, neighbors).
@@ -126,7 +97,7 @@ Read and apply every objective in order from:
 sentence-checks.md
 (same directory as this skill — use the Read tool if you do not have the file)
 
-Run all 10 checks per assigned sentence. Do not skip.
+Run all 11 checks per assigned sentence. Do not skip.
 
 ## Apply corrections yourself (do not report these)
 
@@ -134,7 +105,7 @@ Run all 10 checks per assigned sentence. Do not skip.
 
 **Fix silently (minor):** Typos, punctuation, trivial grammar, polish that does not change meaning.
 
-Respect objective 7 (minimal changes).
+Respect objective 8 (minimal changes).
 
 ## Report only what you did not fix
 
@@ -148,16 +119,17 @@ One block per assigned sentence:
 **Edited:** <final LaTeX after silent fixes; if unchanged, repeat original>
 
 **Checks — unresolved only** (if all fixed: "All checks addressed in **Edited** (none to report)."):
-1. Clarify references:
-2. Define/replace terminology:
-3. Subject–verb–object:
-4. Streamline narrative:
-5. Polish wording:
-6. Rigor vs narrative:
-7. Minimal changes:
-8. Active voice:
-9. "For A, it does B":
-10. Physics story:
+1. Clarify local references:
+2. Clarify cross-boundary references:
+3. Define/replace terminology:
+4. Subject–verb–object:
+5. Streamline narrative:
+6. Polish wording:
+7. Rigor vs narrative:
+8. Minimal changes:
+9. Active voice:
+10. "For A, it does B":
+11. Physics story:
 
 **Needs user / main-agent judgment:** <items or "none">
 ---
@@ -168,9 +140,9 @@ One block per assigned sentence:
 ## 6. Synthesize subagent reports
 
 1. **Assemble** from each **Edited** line (S1, S2, …). Resolve boundary conflicts minimally; note conflicts.
-2. **Collect** only unresolved **Checks** and **Needs user / main-agent judgment** → focused questions (SKILL.md Response §3).
+2. **Collect** only unresolved **Checks** and **Needs user / main-agent judgment** → focused questions (SKILL.md § Response — Clarify).
 3. **Run** [narrative-checks.md](narrative-checks.md) and [math-checks.md](math-checks.md) on the full draft when loaded.
-4. In the response, **summarize sentence-level** from subagent reports; do not re-run all 10 inline unless a subagent failed or you override.
-5. Finish SKILL.md workflow (clarify → deliver → self-check).
+4. In the response, **summarize sentence-level** from subagent reports; do not re-run all 11 inline unless a subagent failed or you override.
+5. Finish SKILL.md workflow (respond → self-check → apply in Agent mode).
 
 On timeout or incomplete report: run sentence checks manually for that chunk and note the gap.

@@ -1,34 +1,111 @@
 ---
 name: physics-paper-editing
 description: >-
-  Edits and proofreads LaTeX from physics papers: sentence clarity, narrative
-  flow, and math/logic rigor. Use when the user asks to edit, revise, polish, or
-  proofread manuscript text, improve academic writing, or fix wording in a
-  scientific paper. Loads checklists by passage length; uses Task subagents for
-  multi-sentence sentence-level checks when feasible.
+  Edits and proofreads LaTeX from physics papers. Every round: complete § Gate
+  (count sentences, major-rewrite check, feasible split) before editing.
+  Two or more sentences, polish (not major rewrite), feasible split → Task
+  subagents required. Major rewrite or not feasible → inline or AskQuestion.
+  Loads checklists via Read tool.
 ---
 
 # Physics Paper Editing
 
 Expert scientific editor for physics and mathematics at graduate level.
 
-## Agent workflow (every editing round)
+## Gate (do this first)
 
-Copy and track:
+**Do not edit `.tex` or run sentence-level work until the gate is done.**
+
+1. **Count** complete sentences in the user’s quote or selection.
+2. Answer **Q1**, then **Q2** (if 2+ sentences), then **Q3** (if Q2 is not a major rewrite).
+3. Open the reply with: `Mode: <inline | subagents | asked-user> · <N> sentences`
+
+### Q1: How many sentences?
 
 ```
-[ ] 1. Context — topic, section map, relevant .tex files; read neighbors if needed
-[ ] 2. Load checklists — use decision table below; Read tool on each file (no memory)
-[ ] 3. Sentence-level — inline OR Task subagents per sentence-check-subagents.md
-[ ] 4. Draft — assemble edits; honor [bracket comments] as instructions
-[ ] 5. Passage-level — narrative-checks.md and/or math-checks.md on full draft
-[ ] 6. Respond — format in § Response; self-check against loaded checklists
-[ ] 7. Apply — edit source in agent mode; dual-format output in ask mode
+Q1: How many sentences?
+    │
+    ├─ 1 (or fragment) ──────────────► INLINE
+    │
+    └─ 2+ ──► Q2
 ```
 
-## Context (step 1)
+### Q2: Major rewrite?
 
-If the user has not provided enough context, establish:
+**Major rewrite** means the deliverable should be **substantially new prose**, not a polish of the existing wording in place. Subagents audit fixed **S1, S2, …** against the source; that workflow fits line-edits, not wholesale replacement.
+
+Treat as **yes** when the user (or implied task) asks to **recompose** the passage—for example: rewrite / redraft / start over; new structure or argument order; merge or split ideas into a fresh narrative; change voice or level so sentences would not read as tightened versions of the originals.
+
+Treat as **no** when the task is **polish or fix**: grammar, clarity, notation, citations, tone, word choice, or light reordering **within** the same claims and sentence roles.
+
+```
+Q2: Major rewrite?
+    │
+    ├─ yes ─► INLINE — skip subagents (main agent drafts, then checklists)
+    │
+    └─ no ───► Q3
+```
+
+### Q3: Feasible to split for subagent sentence-level editing?
+
+Judge whether you can split into **S1, S2, …** and run Tasks without losing meaning. **Feasible** when roughly all hold:
+
+- About **≤12** complete sentences (not a full section or paper).
+- Mostly checkable prose (not mostly display equations, tables, or bare lists).
+- Splittable without breaking inside math, `\cite{}`, `\ref{}`, or essential cross-references.
+- Reasonable Task count (batch 2–4 short sentences per Task when appropriate).
+
+```
+Q3: Feasible split for subagents?
+    │
+    ├─ yes ─► SUBAGENTS — split, launch Tasks, merge (no AskQuestion)
+    │
+    └─ no ───► ASK USER — then INLINE or SUBAGENTS per their answer
+```
+
+**Not feasible** examples: ~**15+** sentences, full section, mostly equations/tables, inseparable cross-references, unwieldy Task count. Briefly say why (e.g. “~40 sentences, mostly equations”).
+
+**AskQuestion** (title: *Sentence-level checking*):
+
+| Option | Then |
+|--------|------|
+| **Skip sentence-level subagents** | **INLINE** — all 11 sentence checks on the passage, then passage-level checklists |
+| **Proceed with subagents anyway** | **SUBAGENTS** — coarser split; note partial coverage when synthesizing |
+| **Narrow the scope** | User gives a shorter quote; re-run the gate |
+
+**Exceptions (no AskQuestion):**
+
+- **Q1 → 1 sentence:** always **INLINE**.
+- **Q2 → major rewrite:** always **INLINE**; do not launch sentence-level subagents.
+- **Q3 → feasible:** go straight to **SUBAGENTS**; do not ask first.
+- User explicitly chose skip / proceed / narrow for **this same quote in this chat** — honor it.
+- User explicitly says **inline / quick / no subagents** this turn — **INLINE**.
+
+| Mode | When |
+|------|------|
+| **INLINE** | 1 sentence; major rewrite; or Q3 not feasible and user skipped subagents; or explicit inline request |
+| **SUBAGENTS** | 2+ sentences, polish (Q2 no), and feasible split |
+| **ASK USER** | 2+ sentences, polish (Q2 no), and Q3 not feasible — AskQuestion before sentence-level work |
+
+**SUBAGENTS:** Follow [sentence-check-subagents.md](sentence-check-subagents.md). Write passage summary before Tasks. In Agent mode, do not apply `.tex` edits until subagent results are merged.
+
+---
+
+## Workflow
+
+```
+[ ] 1. Context — topic, file, quote; read neighbor .tex only if needed
+[ ] 2. Gate — count sentences; Q1–Q3; set Mode line
+[ ] 3. Read checklists — Read tool only (table below)
+[ ] 4. Sentence-level — INLINE (11 checks) or SUBAGENTS (split → Tasks → merge)
+[ ] 5. Passage-level — narrative-checks.md / math-checks.md on full draft (main agent)
+[ ] 6. Respond — § Response format; self-check all loaded checklists
+[ ] 7. Apply — edit .tex in Agent mode; dual-format output in Ask mode
+```
+
+Honor `[square-bracket user comments]` as editing instructions.
+
+### Context (step 1)
 
 | Item | Source |
 |------|--------|
@@ -36,30 +113,29 @@ If the user has not provided enough context, establish:
 | Section order | User or `main.tex` (or top-level `.tex`) |
 | Files for this passage | User or paths around the selection |
 
-Read surrounding `.tex` when placement, references, or notation are unclear.
+### Which checklists to Read (step 3)
 
-## Which checklists to load (step 2)
-
-**Always read files with the Read tool before editing** — do not rely on recall.
-
-| Passage | Read |
-|---------|------|
-| One sentence or fragment | [sentence-checks.md](sentence-checks.md) |
-| Two or more sentences | [sentence-checks.md](sentence-checks.md) + [narrative-checks.md](narrative-checks.md) |
-| Any math, equations, or logical argument | Also [math-checks.md](math-checks.md) |
+| Condition | Read |
+|-----------|------|
+| Always (sentence-level work) | [sentence-checks.md](sentence-checks.md) |
+| 2+ sentences | + [narrative-checks.md](narrative-checks.md) |
+| Math, equations, or logical argument | + [math-checks.md](math-checks.md) |
+| **SUBAGENTS** mode | + [sentence-check-subagents.md](sentence-check-subagents.md) **before** split or Tasks |
 
 When length is ambiguous, load sentence + narrative. When math might appear, load math too.
 
-## Sentence-level execution (step 3)
+### Sentence-level (step 4)
 
-| Passage | Method |
-|---------|--------|
-| One sentence or fragment | Run all 10 objectives in [sentence-checks.md](sentence-checks.md) inline |
-| Two or more sentences | Read [sentence-check-subagents.md](sentence-check-subagents.md) first, then subagents or inline per that file |
+| Mode | Method |
+|------|--------|
+| **INLINE** | All 11 objectives in [sentence-checks.md](sentence-checks.md) on the passage |
+| **SUBAGENTS** | [sentence-check-subagents.md](sentence-check-subagents.md) — split, Tasks, synthesize |
 
-Narrative and math checklists stay with the **main agent** after sentence-level work (subagents do not run them).
+Narrative and math stay with the **main agent** after sentence-level work (subagents do not run them).
 
-## Response format (step 6)
+---
+
+## Response format
 
 **1. Passage summary**
 
@@ -69,9 +145,10 @@ Narrative and math checklists stay with the **main agent** after sentence-level 
 
 **2. Check report**
 
-- **Sentence-level:** If subagents ran, silent fixes are in the assembled draft; name all **10 objectives** from `sentence-checks.md` and report only **unresolved** items (or “addressed in draft”). If inline, report all 10. Do not re-list fixes subagents already applied.
+- First line: `Mode: …` (from the gate).
+- **Sentence-level:** If **SUBAGENTS** ran, name all **11 objectives** from `sentence-checks.md` and report only **unresolved** items (or “addressed in draft”). If **INLINE**, report all 11. Do not re-list fixes subagents already applied silently.
 - **Narrative / math:** For each loaded file, go through every objective **in file order**; if N/A, say why.
-- Include any explicit user editing directions.
+- Include explicit user editing directions.
 
 **3. Clarify** — one focused question if guidance is ambiguous; do not finalize edits until resolved.
 
@@ -81,22 +158,25 @@ Narrative and math checklists stay with the **main agent** after sentence-level 
 - **Ask mode:** provide
   - **Rendered:** inline `\( … \)`, display `\[ … \]`.
   - **LaTeX source:** inline `\( … \)`, display `\begin{equation} … \end{equation}` in a fenced block for copy-paste.
-- Extra variants only if word limit allows.
 
 **5. Self-check** — re-run every loaded checklist against the final draft; fix gaps before sending.
+
+---
 
 ## Checklist files (reference)
 
 | File | Scope |
-|------|--------|
-| [sentence-checks.md](sentence-checks.md) | 10 sentence-level objectives (canonical list) |
-| [sentence-check-subagents.md](sentence-check-subagents.md) | Task splitting, prompts, synthesis for ≥2 sentences |
+|------|------|
+| [sentence-checks.md](sentence-checks.md) | 11 sentence-level objectives |
+| [sentence-check-subagents.md](sentence-check-subagents.md) | Split, Task prompts, synthesis (**SUBAGENTS** only) |
 | [narrative-checks.md](narrative-checks.md) | Paragraph through full paper |
 | [math-checks.md](math-checks.md) | Definitions, logic, notation, quantifiers |
 
+---
+
 ## Project-specific context (optional)
 
-When the manuscript is the Ancilla Optimization / QEC error-budgeting paper, also know:
+When the manuscript is the Ancilla Optimization / QEC error-budgeting paper:
 
 - **Topic:** decomposing logical infidelity into error-mechanism contributions for realistic QEC devices.
 - **Typical skeleton:** Introduction → Background → full QEC evolution → logical evolution graph → Markov chain → error-budget analysis → example.
