@@ -14,10 +14,10 @@
 |-----------|----------------|
 | **INLINE** | No — run [sentence-checks.md](sentence-checks.md) inline |
 | **SUBAGENTS** | Yes — required |
-| **ASK USER** → user chose proceed anyway | Yes — coarser split; note partial coverage |
+| **ASK USER** → user chose proceed anyway | Yes — one Task per splittable sentence when possible; note partial coverage |
 | **ASK USER** → user chose skip | No — inline sentence checks instead |
 
-Do not AskQuestion when the gate already selected **SUBAGENTS**.
+Do not re-AskQuestion for *Sentence-level checking* when Q3 was already feasible. **Always** run the *Subagent model* AskQuestion (§4) before launching Tasks, unless the user already chose a model for **this same quote in this chat**.
 
 ---
 
@@ -31,21 +31,48 @@ If ambiguous, note in the prompt and include the preceding sentence as context.
 
 ---
 
-## 3. Batch sentences across subagents
+## 3. One sentence per Task (default)
 
-Choose the split (no fixed chunk size):
+**Purpose:** each subagent audits **one** sentence against all 12 checks. This is the normal assignment rule.
 
-- **One sentence per Task** when long, dense, or math-heavy.
-- **2–4 short related sentences** when one logical beat (e.g. consecutive proof steps).
-- **Do not** assign a whole paragraph unless it is one sentence.
+1. After labeling **S1, S2, …**, launch **one Task per sentence**: S1 → Task 1, S2 → Task 2, etc.
+2. **Do not** put multiple sentences in one Task unless §3.1 applies.
+3. Launch Tasks **in parallel** when practical; use waves if the platform limits concurrency. **`run_in_background: false`** — wait before synthesizing.
+4. State the plan in the Mode line: `· <M> Tasks` where **M = number of sentences** (when using the default rule).
 
-Keep list items or proof steps together when splitting would lose referents (“the second term”, “type~2”).
+### 3.1 Exception: more than 10 sentences
 
-Launch Tasks **in parallel** when practical; batch waves if many. **`run_in_background: false`** — wait before synthesizing.
+When the passage has **>10** complete sentences, you may assign **2 or more sentences per Task** to keep the run manageable (typical under the gate: 11–12 sentences → e.g. 2 per Task). If the user chose **Proceed with subagents anyway** on a longer quote, scale batch size accordingly. Briefly note the batching choice in the Mode line (e.g. `· 6 Tasks (2 sentences each)`). **Never** batch when **≤10** sentences unless the user explicitly requests it for this quote.
 
 ---
 
-## 4. Passage summary, then launch Tasks
+## 4. AskQuestion — subagent model
+
+**After** §2–§3 assignment planning and **before** writing the passage summary or launching Tasks, call **AskQuestion**.
+
+**Title:** *Subagent model*
+
+Build options from the **current session Task allowed model list** (do not hardcode slugs in skill files). Offer **one flagship per provider**, with the **exact model slug in each option label**:
+
+| Provider | Pick |
+|----------|------|
+| **Cursor** | Highest-tier Composer model in the allowed list |
+| **OpenAI** | Highest-tier GPT model in the allowed list |
+| **Anthropic** | Highest-tier Claude model in the allowed list |
+
+Example option labels (slugs change — derive from the live list):
+
+- `Cursor — composer-2.5`
+- `OpenAI — gpt-5.3-codex`
+- `Anthropic — claude-opus-4-8-thinking-medium`
+
+Use the chosen slug as the `model` argument on **every** sentence-check Task in this round. If a slug is unavailable when launching, say so and re-AskQuestion with valid options.
+
+**Skip** this AskQuestion only when the user already selected a subagent model for **this same quote in this chat**.
+
+---
+
+## 5. Passage summary, then launch Tasks
 
 **Before any Task**, write one **passage summary** for the full S1…Sn scope (same bullets as SKILL.md § Response — passage summary):
 
@@ -59,17 +86,17 @@ Paste the **identical** block into every subagent prompt under `## Passage summa
 Task(
   subagent_type: "generalPurpose",
   readonly: true,
-  model: <highest-capability model in Task tool allowed list this session>,
-  description: "Sentence check: <brief scope>",
-  prompt: <template §5>
+  model: <slug from §4 AskQuestion>,
+  description: "Sentence check: S<k>",
+  prompt: <template §6>
 )
 ```
 
-Set `model` from the **current** Task allowed list each session. **Do not** hardcode model names in skill files or prompts.
+Set `model` to the user’s §4 choice. **Do not** hardcode model slugs in skill files; **do** show current slugs in the AskQuestion option labels.
 
 ---
 
-## 5. Subagent prompt template
+## 6. Subagent prompt template
 
 Replace placeholders. Reuse the same `## Passage summary (shared)` in every Task.
 
@@ -77,7 +104,7 @@ Replace placeholders. Reuse the same `## Passage summary (shared)` in every Task
 You are a sentence-level scientific editor for a physics paper.
 
 ## Passage summary (shared)
-<identical block in every Task — from §4>
+<identical block in every Task — from §5>
 
 ## Local context (read-only)
 - Paper topic: <if not clear from summary>
@@ -85,10 +112,12 @@ You are a sentence-level scientific editor for a physics paper.
 - Adjacent excerpt (1–3 sentences before/after if helpful): <or omit>
 
 ## Your assignment
-Check ONLY the following sentence(s). Use the given labels.
+Check ONLY the sentence(s) listed below—**default: one sentence** (§3); if §3.1 batched, list each label separately.
 
 ### Sentence <label>
 <exact LaTeX/text>
+
+(repeat `### Sentence <label>` blocks only when §3.1 assigned multiple sentences to this Task)
 
 User inline comments: <[bracket comments] or "none">
 
@@ -97,7 +126,7 @@ Read and apply every objective in order from:
 sentence-checks.md
 (same directory as this skill — use the Read tool if you do not have the file)
 
-Run all 11 checks per assigned sentence. Do not skip.
+Run all 12 checks per assigned sentence. Do not skip.
 
 ## Apply corrections yourself (do not report these)
 
@@ -109,7 +138,7 @@ Respect objective 8 (minimal changes).
 
 ## Report only what you did not fix
 
-Report when wording needs passage-level judgment: ambiguous “it/this/which”, intentional terminology, physics-story vs rigor tradeoff, or risk of changing technical meaning.
+Report when wording needs passage-level judgment: ambiguous “it/this/which”, intentional terminology, physics-story vs rigor tradeoff, prose-vs-math relocation (objective 12), or risk of changing technical meaning.
 
 ## Output format
 One block per assigned sentence:
@@ -130,6 +159,7 @@ One block per assigned sentence:
 9. Active voice:
 10. "For A, it does B":
 11. Physics story:
+12. Use math for math:
 
 **Needs user / main-agent judgment:** <items or "none">
 ---
@@ -137,12 +167,12 @@ One block per assigned sentence:
 
 ---
 
-## 6. Synthesize subagent reports
+## 7. Synthesize subagent reports
 
 1. **Assemble** from each **Edited** line (S1, S2, …). Resolve boundary conflicts minimally; note conflicts.
 2. **Collect** only unresolved **Checks** and **Needs user / main-agent judgment** → focused questions (SKILL.md § Response — Clarify).
 3. **Run** [narrative-checks.md](narrative-checks.md) and [math-checks.md](math-checks.md) on the full draft when loaded.
-4. In the response, **summarize sentence-level** from subagent reports; do not re-run all 11 inline unless a subagent failed or you override.
+4. In the response, **summarize sentence-level** from subagent reports; do not re-run all 12 inline unless a subagent failed or you override.
 5. Finish SKILL.md workflow (respond → self-check → apply in Agent mode).
 
 On timeout or incomplete report: run sentence checks manually for that chunk and note the gap.

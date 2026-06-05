@@ -17,3 +17,4 @@ Do not skip, merge, or abbreviate objectives.
 | 9 | **Prefer active voice** unless passive improves clarity. |
 | 10 | **Rewrite “For A, it does B”** — find this structure and rewrite as “A does B”. |
 | 11 | **Let physics tell the story** — give math objects physical meaning where possible; avoid math that reads detached from the physics question. |
+| 12 | **Use math for math** — reserve prose for motivation, connections, physics, and understanding; use equations and formal notation for definitions, relations, and claims. Flag sentences that paraphrase math in words when the content belongs in math. |
