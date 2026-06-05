@@ -18,6 +18,7 @@ Use for anything longer than one standalone sentence: paragraph, subsection, sec
 
 - **Logical arc** — each part follows from what precedes; flag gaps, non-sequiturs, unmotivated steps.
 - **Motivation and stakes** — problem and gap before heavy technical content; thread sustained.
+- **Model setup as scope** — when a unit introduces a new setting, declare what the work considers or defines (scope, domain, starting point) rather than scattering debatable “assumptions”; wording should match sentence objective 7 across the block.
 - **Prose vs math** — language carries motivation, connections, physical interpretation, and understanding; math carries definitions, relations, and formal claims. Flag passages that describe in words what should be stated as math.
 - **Signposting and transitions** — roadmaps, summaries, forward/back references; flag abrupt jumps. For references to equations, results, or conclusions across section/proof/paragraph boundaries, the text should remind readers what is being invoked; if that reminder is hard to phrase, flag the referenced item as too minor or too distant and consider reordering or moving the material closer.
 - **Confusion-on-first-read ordering** — flag any sentence that confuses on first encounter because content is arranged in a reversed order (effect before cause, symbol before its definition, claim before its motivation). Severity depends on *when and how* the confusion is resolved; grade and act by tier:

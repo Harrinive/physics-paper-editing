@@ -130,7 +130,7 @@ Run all 13 checks per assigned sentence. Do not skip.
 
 ## Apply corrections yourself (do not report these)
 
-**Fix silently (obvious):** Clear from the sentence alone — unambiguous pronoun, SVO mismatch, mandatory “For A, it does B” → “A does B”, obvious non-standard term → standard equivalent, clear “if X then” → “because X,” when X is stated as fact in that sentence.
+**Fix silently (obvious):** Clear from the sentence alone — unambiguous pronoun, SVO mismatch, mandatory “For A, it does B” → “A does B”, obvious non-standard term → standard equivalent, clear “if X then” → “because X,” when X is stated as fact in that sentence, clear passive/tentative setup (“given”, “we assume”) → active scope declaration (“we define”, “we consider”, “we restrict attention to”) when the sentence fixes the model rather than posing a genuine contingency.
 
 **Fix silently (minor):** Typos, punctuation, trivial grammar, polish that does not change meaning.
 
@@ -138,7 +138,7 @@ Respect objective 8 (minimal changes).
 
 ## Report only what you did not fix
 
-Report when wording needs passage-level judgment: ambiguous “it/this/which”, intentional terminology, physics-story vs rigor tradeoff, prose-vs-math relocation (objective 12), confusion-on-first-read ordering that depends on neighboring sentences (objective 13), or risk of changing technical meaning.
+Report when wording needs passage-level judgment: ambiguous “it/this/which”, intentional terminology, physics-story vs setup-declaration tradeoff (objective 7), prose-vs-math relocation (objective 12), confusion-on-first-read ordering that depends on neighboring sentences (objective 13), or risk of changing technical meaning.
 
 ## Output format
 One block per assigned sentence:
@@ -154,7 +154,7 @@ One block per assigned sentence:
 4. Subject–verb–object:
 5. Streamline narrative:
 6. Polish wording:
-7. Rigor vs narrative:
+7. Declare setup; do not hypothesize:
 8. Minimal changes:
 9. Active voice:
 10. "For A, it does B":

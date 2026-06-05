@@ -12,7 +12,7 @@ Do not skip, merge, or abbreviate objectives.
 | 4 | **Fix subject–verb–object mismatches** — grammatical agreement and semantic fit, including inside clauses (e.g. states do not “yield” results; a model does not “prove” a conclusion). |
 | 5 | **Streamline narrative** — coherent flow between sentences; remove redundant phrases or nouns that signal convoluted logic. |
 | 6 | **Polish non-native wording** — concise, idiomatic English; preserve meaning and technical accuracy. |
-| 7 | **Balance rigor with narrative** — state physical/mathematical facts as givens, not conditional premises (“Because X is Y, …” not “If X is Y, then …” when X is established). |
+| 7 | **Declare setup; do not hypothesize** — when fixing the physical setting, domain, or conventions, state what the work considers or defines—not what might be true. Prefer active setup (“we define”, “we consider”, “we restrict attention to”, “our starting point is”, “under the condition that” when the condition specifies the model) over passive or tentative framing (“given”, “we assume”, “suppose that”) unless the text is genuinely contingent or part of a proof strategy (e.g. proof by contradiction). Once a premise is established for the passage, state it as fact (“Because X is Y, …” not “If X is Y, then …”). |
 | 8 | **Minimal changes** — edit only what clarity and flow require; substantial reordering only with explicit user instruction. |
 | 9 | **Prefer active voice** unless passive improves clarity. |
 | 10 | **Rewrite “For A, it does B”** — find this structure and rewrite as “A does B”. |
