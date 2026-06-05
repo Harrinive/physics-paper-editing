@@ -18,7 +18,7 @@ Use for anything longer than one standalone sentence: paragraph, subsection, sec
 
 - **Logical arc** — each part follows from what precedes; flag gaps, non-sequiturs, unmotivated steps.
 - **Motivation and stakes** — problem and gap before heavy technical content; thread sustained.
-- **Signposting and transitions** — roadmaps, summaries, forward/back references; flag abrupt jumps.
+- **Signposting and transitions** — roadmaps, summaries, forward/back references; flag abrupt jumps. For references to equations, results, or conclusions across section/proof/paragraph boundaries, the text should remind readers what is being invoked; if that reminder is hard to phrase, flag the referenced item as too minor or too distant and consider reordering or moving the material closer.
 
 ## Group 3 — Consistency and economy
 
