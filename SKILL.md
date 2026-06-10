@@ -121,7 +121,7 @@ Honor `[square-bracket user comments]` as editing instructions.
 |-----------|------|
 | Always (sentence-level work) | [sentence-checks.md](sentence-checks.md) |
 | 2+ sentences | + [narrative-checks.md](narrative-checks.md) |
-| Math, equations, or logical argument | + [math-checks.md](math-checks.md) |
+| Math, equations, or logical argument | + [math-checks.md](math-checks.md) — start with **Step 0**: classify each statement as derived / posited / imported / convention choice, then run the matching type-specific checks |
 | **SUBAGENTS** mode | + [sentence-check-subagents.md](sentence-check-subagents.md) **before** split or Tasks |
 
 When length is ambiguous, load sentence + narrative. When math might appear, load math too.
@@ -151,6 +151,15 @@ Narrative and math stay with the **main agent** after sentence-level work (subag
 - **Sentence-level:** If **SUBAGENTS** ran, name all **13 objectives** from `sentence-checks.md` and report only **unresolved** items (or “addressed in draft”). If **INLINE**, report all 13. Do not re-list fixes subagents already applied silently.
 - **Narrative / math:** For each loaded file, go through every bullet or check **in file order**; if N/A, say why.
 - Include explicit user editing directions.
+- **Score block:** close the report with an HTML comment listing every check run and its result:
+  ```
+  <!-- CHECKS
+  <check-name>: PASS|FAIL — <one-line reason if FAIL>
+  ...
+  OVERALL: PASS|FAIL
+  -->
+  ```
+  `OVERALL` is `FAIL` if any individual check is `FAIL`. The hook loop reads this block to decide whether to re-prompt.
 
 **3. Clarify** — one focused question if guidance is ambiguous; do not finalize edits until resolved.
 
@@ -161,7 +170,7 @@ Narrative and math stay with the **main agent** after sentence-level work (subag
   - **Rendered:** inline `\( … \)`, display `\[ … \]`.
   - **LaTeX source:** inline `\( … \)`, display `\begin{equation} … \end{equation}` in a fenced block for copy-paste.
 
-**5. Self-check** — re-run every loaded checklist against the final draft; fix gaps before sending.
+**5. Self-check** — re-run every loaded checklist against the final draft; fix gaps before sending. **When a major rewrite was produced, apply all checks to the replacement prose you generated** — generated text can introduce the same failures the skill is designed to catch (back-translation, undefined terms, scope mismatch).
 
 ---
 
@@ -172,7 +181,7 @@ Narrative and math stay with the **main agent** after sentence-level work (subag
 | [sentence-checks.md](sentence-checks.md) | 13 sentence-level objectives |
 | [sentence-check-subagents.md](sentence-check-subagents.md) | Split, Task prompts, synthesis (**SUBAGENTS** only) |
 | [narrative-checks.md](narrative-checks.md) | Paragraph through full paper |
-| [math-checks.md](math-checks.md) | Definitions, logic, notation, quantifiers |
+| [math-checks.md](math-checks.md) | Statement-type classification (Step 0) + per-type checks: derived (rigor), posited (faithfulness), imported (provenance), convention choice (legitimacy) |
 
 ---
 
