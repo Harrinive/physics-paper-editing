@@ -2,6 +2,13 @@
 
 Use whenever the text has mathematical objects, equations, or logical arguments — any length. Consider the snippet plus surrounding and earlier paper text.
 
+**Who runs this file:**
+
+| Phase | Runner | Scope |
+|-------|--------|-------|
+| **Phase 1** | Main agent after sentence work ([verification-loop.md](verification-loop.md)) | Full passage under edit |
+| **Phase 2** | Math **verifier** Task — producer **never** inline ([phase2-verify-subagents.md](phase2-verify-subagents.md)) | **Always** full passage |
+
 **Run Step 0 first, then the checks for each statement's type. Name every check; state how it applies and whether it surfaces an issue. If N/A: not applicable, and why.**
 
 ---

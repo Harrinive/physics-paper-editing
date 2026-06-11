@@ -2,6 +2,14 @@
 
 Apply to standalone sentences and local passages. **Run every objective below in order.** Name each objective, state how it applies, and report issues. If one does not apply, say **not applicable** and why.
 
+**Who runs this file:**
+
+| Phase | Runner | Scope |
+|-------|--------|-------|
+| **Phase 1 — INLINE** | Main agent ([gate.md](gate.md)) | All sentences |
+| **Phase 1 — SUBAGENTS** | Sentence Tasks ([sentence-check-subagents.md](sentence-check-subagents.md)) | All sentences |
+| **Phase 2** | Sentence **verifier** Tasks — producer **never** inline ([phase2-verify-subagents.md](phase2-verify-subagents.md)) | **Changed** sentences only |
+
 Do not skip, merge, or abbreviate objectives.
 
 | # | Objective |

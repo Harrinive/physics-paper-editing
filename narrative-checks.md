@@ -2,7 +2,14 @@
 
 Use for anything longer than one standalone sentence: paragraph, subsection, section, or full paper.
 
-**Scope the unit under review:** one paragraph → “the whole” means that paragraph; a section → that section; full paper → the paper. When a check needs broader context (e.g. vs abstract), read surrounding material first.
+**Who runs this file:**
+
+| Phase | Runner | Scope |
+|-------|--------|-------|
+| **Phase 1** | Main agent after sentence work ([verification-loop.md](verification-loop.md)) | Full passage under edit |
+| **Phase 2** | Narrative **verifier** Task — producer **never** inline ([phase2-verify-subagents.md](phase2-verify-subagents.md)) | **Always** full passage |
+
+**Scope the unit under review:** one paragraph → "the whole" means that paragraph; a section → that section; full paper → the paper. When a check needs broader context (e.g. vs abstract), read surrounding material first.
 
 **Run all four groups and every bullet in order.** Name each group and bullet; state how it applies and whether it surfaces an issue. If N/A: **not applicable** and why.
 

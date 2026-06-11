@@ -1,187 +1,193 @@
 ---
 name: physics-paper-editing
 description: >-
-  Edits and proofreads LaTeX from physics papers. Every round: complete § Gate
-  (count sentences, major-rewrite check, feasible split) before editing.
-  Polish on 2+ splittable sentences → one Task subagent per sentence; AskQuestion
-  for subagent model before launch. Major rewrite or not feasible → inline or
-  AskQuestion. Loads checklists via Read tool.
+  Edits and proofreads LaTeX from physics papers. Two-phase pipeline: edit gate
+  routes production; Phase 1 source verify (polish, gated); Phase 2 mandatory
+  verifier subagents (narrative + math on full passage; sentence checks on
+  changed sentences only; synthesizer decides OVERALL). Loads checklists via Read tool.
 ---
 
 # Physics Paper Editing
 
 Expert scientific editor for physics and mathematics at graduate level.
 
-## Gate (do this first)
+## Purpose
 
-**Do not edit `.tex` or run sentence-level work until the gate is done.**
+Edit LaTeX prose using a **two-phase verification pipeline**:
 
-1. **Count** complete sentences in the user’s quote or selection.
-2. Answer **Q1**, then **Q2** (if 2+ sentences), then **Q3** (if Q2 is not a major rewrite).
-3. Open the reply with: `Mode: <inline | subagents | asked-user> · <N> sentences` (add `· <M> Tasks · <model slug>` when **SUBAGENTS** runs).
+1. **Phase 1 (source verify)** — audit the user's existing prose before editing (polish path only).
+2. **Phase 2 (output verify)** — independent verifier subagents grade the producer's draft before shipping.
 
-### Q1: How many sentences?
-
-```
-Q1: How many sentences?
-    │
-    ├─ 1 (or fragment) ──────────────► INLINE
-    │
-    └─ 2+ ──► Q2
-```
-
-### Q2: Major rewrite?
-
-**Major rewrite** means the deliverable should be **substantially new prose**, not a polish of the existing wording in place. Subagents audit fixed **S1, S2, …** against the source; that workflow fits line-edits, not wholesale replacement.
-
-Treat as **yes** when the user (or implied task) asks to **recompose** the passage—for example: rewrite / redraft / start over; new structure or argument order; merge or split ideas into a fresh narrative; change voice or level so sentences would not read as tightened versions of the originals.
-
-Treat as **no** when the task is **polish or fix**: grammar, clarity, notation, citations, tone, word choice, or light reordering **within** the same claims and sentence roles.
-
-```
-Q2: Major rewrite?
-    │
-    ├─ yes ─► INLINE — skip subagents (main agent drafts, then checklists)
-    │
-    └─ no ───► Q3
-```
-
-### Q3: Feasible to split for subagent sentence-level editing?
-
-Judge whether you can split into **S1, S2, …** and run Tasks without losing meaning. **Feasible** when roughly all hold:
-
-- About **≤12** complete sentences (not a full section or paper).
-- Mostly checkable prose (not mostly display equations, tables, or bare lists).
-- Splittable without breaking inside math, `\cite{}`, `\ref{}`, or essential cross-references.
-- Reasonable Task count (**one Task per sentence** by default; see [sentence-check-subagents.md](sentence-check-subagents.md) §3).
-
-```
-Q3: Feasible split for subagents?
-    │
-    ├─ yes ─► SUBAGENTS — AskQuestion subagent model → one Task per sentence → merge
-    │
-    └─ no ───► ASK USER — then INLINE or SUBAGENTS per their answer
-```
-
-**Not feasible** examples: **>12** sentences, full section, mostly equations/tables, inseparable cross-references, unwieldy Task count. Briefly say why (e.g. “~40 sentences, mostly equations”).
-
-**AskQuestion** (title: *Sentence-level checking*):
-
-| Option | Then |
-|--------|------|
-| **Skip sentence-level subagents** | **INLINE** — all 13 sentence checks on the passage, then passage-level checklists |
-| **Proceed with subagents anyway** | **SUBAGENTS** — one Task per splittable sentence when possible; note partial coverage when synthesizing |
-| **Narrow the scope** | User gives a shorter quote; re-run the gate |
-
-**Exceptions (skip the Q3 feasibility AskQuestion only):**
-
-- **Q1 → 1 sentence:** always **INLINE**.
-- **Q2 → major rewrite:** always **INLINE**; do not launch sentence-level subagents.
-- **Q3 → feasible:** go straight to **SUBAGENTS** (no *Sentence-level checking* AskQuestion).
-- User explicitly chose skip / proceed / narrow for **this same quote in this chat** — honor it.
-- User explicitly says **inline / quick / no subagents** this turn — **INLINE**.
-
-**SUBAGENTS always requires a model AskQuestion** before launching Tasks (see [sentence-check-subagents.md](sentence-check-subagents.md) §4), unless the user already picked a subagent model for **this same quote in this chat**.
-
-| Mode | When |
-|------|------|
-| **INLINE** | 1 sentence; major rewrite; or Q3 not feasible and user skipped subagents; or explicit inline request |
-| **SUBAGENTS** | 2+ sentences, polish (Q2 no), and feasible split |
-| **ASK USER** | 2+ sentences, polish (Q2 no), and Q3 not feasible — AskQuestion before sentence-level work |
-
-**SUBAGENTS:** Follow [sentence-check-subagents.md](sentence-check-subagents.md): **one Task per sentence** (default), **AskQuestion** for subagent model, passage summary, parallel Tasks, merge. In Agent mode, do not apply `.tex` edits until subagent results are merged.
+The **producer** (main agent) writes the draft and applies fixes. It **must not** grade its own draft or set `OVERALL: PASS|FAIL` — only the Phase 2 **verifier synthesizer** may do that.
 
 ---
 
-## Workflow
+## Roles and terms
+
+| Term | Meaning |
+|------|---------|
+| **Producer** | Main agent — steps 1–5 and 7; applies fixes when Phase 2 FAILs |
+| **Edit gate** | Step 3 — compose vs polish + whether Phase 1 runs ([gate.md](gate.md)) |
+| **Source verify gate** | Step 4 — INLINE vs SUBAGENTS for Phase 1 ([gate.md](gate.md)) |
+| **INLINE** | Main agent runs sentence checks directly (no sentence Tasks) |
+| **SUBAGENTS** | Task subagents run sentence checks ([sentence-check-subagents.md](sentence-check-subagents.md)) |
+| **Changed sentences** | Phase 2: labels **S*k*** whose text differs from the prior baseline ([phase2-verify-subagents.md](phase2-verify-subagents.md)) |
+| **CHECKS block** | HTML comment with per-check results and `OVERALL: PASS\|FAIL` — Phase 2 only; synthesizer is sole authority |
+
+**Sentence-count thresholds** (Phase 1 gates only — canonical):
+
+| Count | Effect |
+|-------|--------|
+| **1** (or fragment) | Always **INLINE** |
+| **2–10** | Feasible for **SUBAGENTS** — one Task per sentence |
+| **11–12** | Feasible; may batch 2 sentences per Task |
+| **>12** | **Not feasible** — **ASK USER** unless user narrows scope |
+
+---
+
+## Pipeline
+
+```mermaid
+flowchart TD
+    start[1 Context + 2 Read checklists] --> editGate[3 Edit gate]
+    editGate -->|major rewrite| produceCompose[5 Produce draft — compose]
+    editGate -->|polish| sourceLoop[4 Phase 1 source verify]
+    sourceLoop --> produceEdit[5 Produce draft — from audit]
+    produceCompose --> verifySuite[6 Phase 2 output verify]
+    produceEdit --> verifySuite
+    verifySuite -->|synthesizer FAIL| fixDraft[Producer fixes draft]
+    fixDraft --> verifySuite
+    verifySuite -->|synthesizer PASS| ship[7 Ship .tex + CHECKS]
+```
+
+| | Phase 1 — source verify | Phase 2 — output verify |
+|--|-------------------------|-------------------------|
+| **Step** | 4 | 6 |
+| **Target** | User's existing prose | Producer's generated draft |
+| **When** | Polish only; skipped on major rewrite | Every edit turn |
+| **Routing** | [gate.md](gate.md) | No gate — [phase2-verify-subagents.md](phase2-verify-subagents.md) |
+| **Sentence** | All sentences (INLINE or SUBAGENTS) | **Changed sentences only** |
+| **Narrative + math** | Main agent | Verifier Tasks on **full passage** |
+| **Who decides done** | Main agent → informs step 5 | **Verifier synthesizer** |
+| **CHECKS** | No | Required |
+
+Full phase comparison: [verification-loop.md](verification-loop.md).
+
+---
+
+## Workflow checklist
+
+Complete steps in order.
+
+**Hard rules:**
+
+- Do not write `.tex` until the synthesizer reports `OVERALL: PASS`.
+- Producer must not grade its own draft or set OVERALL.
+- Never skip Phase 2 because Phase 1 ran.
+- When any gate yields **SUBAGENTS**, use subagents — no inline shortcut ([gate.md](gate.md)).
 
 ```
-[ ] 1. Context — topic, file, quote; read neighbor .tex only if needed
-[ ] 2. Gate — count sentences; Q1–Q3; set Mode line
-[ ] 3. Read checklists — Read tool only (table below)
-[ ] 4. Sentence-level — INLINE (13 checks) or SUBAGENTS (split → model AskQuestion → one Task/sentence → merge)
-[ ] 5. Passage-level — narrative-checks.md / math-checks.md on full draft (main agent)
-[ ] 6. Respond — § Response format; self-check all loaded checklists
-[ ] 7. Apply — edit .tex in Agent mode; dual-format output in Ask mode
+[ ] 1. Context — file, neighbors, [bracket comments] as editing instructions
+[ ] 2. Read checklists — see table below
+[ ] 3. Edit gate — routes steps 4–5 ([gate.md](gate.md))
+[ ] 4. Phase 1 source verify — polish only; skip on major rewrite ([verification-loop.md](verification-loop.md))
+[ ] 5. Produce draft — compose (major rewrite) or apply Phase 1 audit (polish)
+[ ] 6. Phase 2 output verify — mandatory verifier subagents ([phase2-verify-subagents.md](phase2-verify-subagents.md))
+[ ] 7. Ship — write .tex; synthesizer CHECKS block in user response
 ```
 
-Honor `[square-bracket user comments]` as editing instructions.
-
-### Context (step 1)
+### Step 1 — Context
 
 | Item | Source |
 |------|--------|
 | Topic and main claim | User or abstract / introduction |
 | Section order | User or `main.tex` (or top-level `.tex`) |
 | Files for this passage | User or paths around the selection |
+| `[bracket comments]` | User inline editing instructions — strip from working copy, honor in edits |
 
-### Which checklists to Read (step 3)
+### Step 2 — What to Read
 
 | Condition | Read |
 |-----------|------|
-| Always (sentence-level work) | [sentence-checks.md](sentence-checks.md) |
+| Always | [sentence-checks.md](sentence-checks.md) |
 | 2+ sentences | + [narrative-checks.md](narrative-checks.md) |
-| Math, equations, or logical argument | + [math-checks.md](math-checks.md) — start with **Step 0**: classify each statement as derived / posited / imported / convention choice, then run the matching type-specific checks |
-| **SUBAGENTS** mode | + [sentence-check-subagents.md](sentence-check-subagents.md) **before** split or Tasks |
+| Math, equations, or logical argument | + [math-checks.md](math-checks.md) |
+| Steps 3–4 | + [gate.md](gate.md) |
+| Phase 1 SUBAGENTS or Phase 2 | + [sentence-check-subagents.md](sentence-check-subagents.md) |
+| Step 6 | + [verification-loop.md](verification-loop.md), [phase2-verify-subagents.md](phase2-verify-subagents.md) |
 
 When length is ambiguous, load sentence + narrative. When math might appear, load math too.
 
-### Sentence-level (step 4)
+### Steps 3–7 — Detail files
 
-| Mode | Method |
-|------|--------|
-| **INLINE** | All 13 objectives in [sentence-checks.md](sentence-checks.md) on the passage |
-| **SUBAGENTS** | [sentence-check-subagents.md](sentence-check-subagents.md) — split, Tasks, synthesize |
+| Step | Detail in |
+|------|-----------|
+| 3 Edit gate | [gate.md](gate.md) |
+| 4 Phase 1 | [verification-loop.md](verification-loop.md) |
+| 5 Produce draft | Compose fresh prose (major rewrite) or apply Phase 1 audit (polish) |
+| 6 Phase 2 | [phase2-verify-subagents.md](phase2-verify-subagents.md) |
+| 7 Ship | Write `.tex`; include synthesizer CHECKS verbatim in user response |
 
-Narrative and math stay with the **main agent** after sentence-level work (subagents do not run them).
+### AskQuestion prompts
+
+| When | Title | Detail |
+|------|-------|--------|
+| Q3 not feasible (steps 3–4) | *Sentence-level checking* | [gate.md](gate.md) |
+| Phase 1 SUBAGENTS | *Subagent model* | [sentence-check-subagents.md](sentence-check-subagents.md) §4 |
+| Phase 2 (each iteration) | *Verifier subagent model* | [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion |
+
+Skip model AskQuestion when the user already chose a model for **this same quote/draft scope in this chat**.
 
 ---
 
 ## Response format
 
-**1. Passage summary**
+Structure every editing response as follows.
+
+### 1. Passage summary
 
 - What the text does and how it flows logically.
 - Where it sits in the section and relation to neighbors.
 - Underlying physics and mathematics.
 
-**2. Check report**
+### 2. Check report
 
-- First line: `Mode: …` (from the gate).
-- **Sentence-level:** If **SUBAGENTS** ran, name all **13 objectives** from `sentence-checks.md` and report only **unresolved** items (or “addressed in draft”). If **INLINE**, report all 13. Do not re-list fixes subagents already applied silently.
-- **Narrative / math:** For each loaded file, go through every bullet or check **in file order**; if N/A, say why.
-- Include explicit user editing directions.
-- **Score block:** close the report with an HTML comment listing every check run and its result:
+- **First line — `Mode:`**
+  - **Phase 2:** copy **verbatim** from the verifier synthesizer.
+  - **Phase 1 only:** `Mode: inline|subagents|asked-user · N sentences` (+ `· M Tasks · model` when SUBAGENTS ran).
+- **Sentence / narrative / math:** Summarize verifier reports (Phase 2) or Phase 1 audit.
+- Include user editing directions and `[bracket comment]` resolutions.
+- **CHECKS block** — copy **verbatim** from synthesizer after Phase 2 PASS; producer must not edit OVERALL:
+
   ```
   <!-- CHECKS
-  <check-name>: PASS|FAIL — <one-line reason if FAIL>
   ...
   OVERALL: PASS|FAIL
   -->
   ```
-  `OVERALL` is `FAIL` if any individual check is `FAIL`. The hook loop reads this block to decide whether to re-prompt.
 
-**3. Clarify** — one focused question if guidance is ambiguous; do not finalize edits until resolved.
+### 3. Clarify
 
-**4. Edited text**
+One focused question if guidance is ambiguous; do not ship until resolved.
 
-- **Agent mode:** apply edits in the source `.tex` file.
-- **Ask mode:** provide
-  - **Rendered:** inline `\( … \)`, display `\[ … \]`.
-  - **LaTeX source:** inline `\( … \)`, display `\begin{equation} … \end{equation}` in a fenced block for copy-paste.
+### 4. Edited text
 
-**5. Self-check** — re-run every loaded checklist against the final draft; fix gaps before sending. **When a major rewrite was produced, apply all checks to the replacement prose you generated** — generated text can introduce the same failures the skill is designed to catch (back-translation, undefined terms, scope mismatch).
+- **Agent mode:** final passing passage; `.tex` updated in step 7.
+- **Ask mode:** rendered preview and LaTeX source.
 
 ---
 
-## Checklist files (reference)
+## File index
 
-| File | Scope |
+| File | Role |
 |------|------|
-| [sentence-checks.md](sentence-checks.md) | 13 sentence-level objectives |
-| [sentence-check-subagents.md](sentence-check-subagents.md) | Split, Task prompts, synthesis (**SUBAGENTS** only) |
-| [narrative-checks.md](narrative-checks.md) | Paragraph through full paper |
-| [math-checks.md](math-checks.md) | Statement-type classification (Step 0) + per-type checks: derived (rigor), posited (faithfulness), imported (provenance), convention choice (legitimacy) |
+| [gate.md](gate.md) | Phase 1 routing — edit gate and source verify gate |
+| [verification-loop.md](verification-loop.md) | Phase 1 and Phase 2 loop rules |
+| [phase2-verify-subagents.md](phase2-verify-subagents.md) | Phase 2 execution — verifiers, prompts, synthesizer |
+| [sentence-check-subagents.md](sentence-check-subagents.md) | Sentence Task splitting, batching, prompts |
+| [sentence-checks.md](sentence-checks.md) | 13 sentence objectives |
+| [narrative-checks.md](narrative-checks.md) | Passage-level narrative groups |
+| [math-checks.md](math-checks.md) | Math and logic checks |
 
 ---
 
