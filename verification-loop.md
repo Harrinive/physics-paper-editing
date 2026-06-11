@@ -47,7 +47,7 @@ If understanding changes materially, revise the edit plan and re-run from step 1
 **Purpose:** Independent agents grade the producer's draft before shipping.
 
 ```
-1. AskQuestion — verifier model (unless already chosen for this draft scope)
+1. AskQuestion — verifier model profile (unless already chosen for this draft scope)
 2. Identify changed sentences → see phase2-verify-subagents.md § Changed sentences
 3. Launch verifier Tasks:
      • narrative — always, full passage

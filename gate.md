@@ -112,9 +112,11 @@ If you edited without subagents when SUBAGENTS was required, stop, report the vi
 | Proceed with subagents anyway | SUBAGENTS — one Task per splittable sentence; note partial coverage |
 | Narrow the scope | User gives shorter quote; re-run gate |
 
-### Subagent model (SUBAGENTS)
+### Sentence checker model (SUBAGENTS)
 
-**Always required** before launching Tasks — [sentence-check-subagents.md](sentence-check-subagents.md) §4. Skip only when user already picked a model for **this same quote in this chat**.
+**Always required** before launching Phase 1 sentence Tasks — [sentence-check-subagents.md](sentence-check-subagents.md) §4 (fast tier). Skip only when user already picked a model for **this same quote in this chat**.
+
+Phase 2 uses the three-question *Verifier model profile* — [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion.
 
 ---
 
@@ -126,10 +128,10 @@ If you edited without subagents when SUBAGENTS was required, stop, report the vi
 Mode: <inline | subagents | asked-user> · <N> sentences
 ```
 
-Add `· <M> Tasks · <model slug>` when SUBAGENTS runs.
+Add `· <M> Tasks · <model slug>` when Phase 1 SUBAGENTS runs.
 
 **Phase 2** (verifier synthesizer only — [phase2-verify-subagents.md](phase2-verify-subagents.md)):
 
 ```
-Mode: verify-subagents · <N> sentences · <C> changed · <M> Tasks · <model slug>
+Mode: verify-subagents · <N> sentences · <C> changed · <M> Tasks · sentence:<Q1 slug> · deep:<Q2 slug> · synth:<Q3 slug>
 ```

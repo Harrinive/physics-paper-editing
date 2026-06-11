@@ -22,11 +22,29 @@ The **producer** (main agent) writes the draft and applies fixes. It **must not*
 
 ---
 
+## Unit of work
+
+This skill edits **one passage at a time**, at most **12 sentences** (see sentence-count thresholds below). Passages longer than that are out of scope — ask the user to narrow the selection or use a future section-level skill.
+
+**Input:** one passage ≤12 sentences, plus optional short context (neighbors, section title, brief).
+
+**Output (Agent mode):** synthesizer `OVERALL: PASS`, the `.tex` file updated, and the verbatim `<!-- CHECKS ... -->` block in the response.
+
+**Output (Ask mode):** same CHECKS block and edited LaTeX preview; no `.tex` write until Agent mode.
+
+A caller (e.g. a future macro skill) may invoke this skill repeatedly on successive ≤12-sentence units; each invocation is an independent unit of work with its own draft scope and verifier model profile.
+
+---
+
 ## Roles and terms
 
 | Term | Meaning |
 |------|---------|
 | **Producer** | Main agent — steps 1–5 and 7; applies fixes when Phase 2 FAILs |
+| **Sentence verifier** | Task subagent — one sentence (or batched pair); 13 objectives ([sentence-check-subagents.md](sentence-check-subagents.md)) |
+| **Narrative verifier** | Task subagent — full passage; four narrative groups ([narrative-checks.md](narrative-checks.md)) |
+| **Math verifier** | Task subagent — full passage when math or logical argument present ([math-checks.md](math-checks.md)) |
+| **Verifier synthesizer** | Task subagent — merges verifier reports; **sole** `OVERALL` authority ([phase2-verify-subagents.md](phase2-verify-subagents.md)) |
 | **Edit gate** | Step 3 — compose vs polish + whether Phase 1 runs ([gate.md](gate.md)) |
 | **Source verify gate** | Step 4 — INLINE vs SUBAGENTS for Phase 1 ([gate.md](gate.md)) |
 | **INLINE** | Main agent runs sentence checks directly (no sentence Tasks) |
@@ -42,6 +60,20 @@ The **producer** (main agent) writes the draft and applies fixes. It **must not*
 | **2–10** | Feasible for **SUBAGENTS** — one Task per sentence |
 | **11–12** | Feasible; may batch 2 sentences per Task |
 | **>12** | **Not feasible** — **ASK USER** unless user narrows scope |
+
+### Agent tiers
+
+Decompose by **which agent runs**, not abstract job titles. One worker subagent = one specialist.
+
+| Tier | Who | Writes prose? | Dispatches Tasks? | Grades `OVERALL`? |
+|------|-----|---------------|-------------------|-------------------|
+| **Main agent** (Producer) | 1 agent | Yes (draft + fixes) | Yes | **No** |
+| **Verifier subagents** | sentence · narrative · math — one specialist each | No (sentence may suggest `Edited:`) | No | No |
+| **Verifier synthesizer** | 1 agent | No | No | **Yes (sole authority)** |
+
+**Writer ≠ grader invariant:** the agent that writes the passage-level draft (Producer) must never be the agent that sets `OVERALL: PASS|FAIL`. Phase 2 enforces this: checkers and synthesizer are readonly Tasks; only the synthesizer emits CHECKS and OVERALL.
+
+Phase 1 sentence work may run on the main agent (INLINE) or sentence verifier Tasks (SUBAGENTS). Narrative and math checks in Phase 1 run on the main agent; in Phase 2 they are verifier Tasks alongside sentence verifiers and the synthesizer.
 
 ---
 
@@ -67,7 +99,8 @@ flowchart TD
 | **When** | Polish only; skipped on major rewrite | Every edit turn |
 | **Routing** | [gate.md](gate.md) | No gate — [phase2-verify-subagents.md](phase2-verify-subagents.md) |
 | **Sentence** | All sentences (INLINE or SUBAGENTS) | **Changed sentences only** |
-| **Narrative + math** | Main agent | Verifier Tasks on **full passage** |
+| **Narrative verifier** | Main agent | Task on **full passage** |
+| **Math verifier** | Main agent (when applicable) | Task on **full passage** (when applicable) |
 | **Who decides done** | Main agent → informs step 5 | **Verifier synthesizer** |
 | **CHECKS** | No | Required |
 
@@ -133,10 +166,10 @@ When length is ambiguous, load sentence + narrative. When math might appear, loa
 | When | Title | Detail |
 |------|-------|--------|
 | Q3 not feasible (steps 3–4) | *Sentence-level checking* | [gate.md](gate.md) |
-| Phase 1 SUBAGENTS | *Subagent model* | [sentence-check-subagents.md](sentence-check-subagents.md) §4 |
-| Phase 2 (each iteration) | *Verifier subagent model* | [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion |
+| Phase 1 SUBAGENTS | *Sentence checker model* | [sentence-check-subagents.md](sentence-check-subagents.md) §4 — fast tier |
+| Phase 2 (each iteration) | *Verifier model profile* | [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion — three questions (sentence · narrative+logic · synthesizer) |
 
-Skip model AskQuestion when the user already chose a model for **this same quote/draft scope in this chat**.
+Skip model AskQuestion when the user already chose models for **this same draft scope in this chat** (reuse across FAIL→fix loops).
 
 ---
 

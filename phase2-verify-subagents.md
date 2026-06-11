@@ -59,12 +59,12 @@ Before launching sentence verifier Tasks, the **producer** labels **S1, S2, …*
 ```
 1. Write passage summary → paste into every verifier prompt
 2. Label S1, S2, … and identify changed labels (§ Changed sentences)
-3. AskQuestion — verifier model (unless already chosen for this draft scope)
+3. AskQuestion — verifier model profile (unless already chosen for this draft scope)
 4. Launch in parallel when practical (run_in_background: false):
-     • narrative verifier — full passage
-     • math verifier — full passage (or N/A report if no math)
-     • sentence verifiers — one Task per changed label
-5. Launch synthesizer — pass all reports + changed/skipped label lists
+     • narrative verifier — full passage (deep tier)
+     • math verifier — full passage when applicable (deep tier; or N/A report if no math)
+     • sentence verifiers — one Task per changed label (fast tier)
+5. Launch synthesizer — deep tier; pass all reports + changed/skipped label lists
 6. PASS → step 7 (ship)  |  FAIL → producer fixes → restart from step 2
 ```
 
@@ -86,13 +86,32 @@ Before launching sentence verifier Tasks, the **producer** labels **S1, S2, …*
 
 ---
 
-## AskQuestion — verifier model
+## AskQuestion — verifier model profile
 
-**Before** launching Tasks, call **AskQuestion** unless the user already chose a model for **this same draft scope in this chat**.
+**Before** launching Tasks, call **AskQuestion** unless the user already chose a profile for **this same draft scope in this chat**. Reuse the same three slugs across every FAIL→fix loop iteration.
 
-**Title:** *Verifier subagent model*
+**Title:** *Verifier model profile*
 
-Follow [sentence-check-subagents.md](sentence-check-subagents.md) §4 (one flagship per provider; exact slug in label). Use the chosen slug on **every** Phase 2 Task including the synthesizer.
+**One form, three questions** — each option = one flagship (or fast tier) per provider, **exact slug in each label**, built from the session's allowed Task model list:
+
+1. **Sentence checker** (high volume, fast tier) — default **Cursor Composer (fast)** when available.
+2. **Narrative & logic checker** (passage-level reasoning) — default **Claude flagship**.
+3. **Synthesizer** (sets `OVERALL`; never fast tier) — default **Claude flagship**.
+
+Narrative and math verifier Tasks share the slug from question 2. Sentence verifier Tasks use question 1. The synthesizer Task uses question 3.
+
+If a default slug is unavailable, re-AskQuestion with valid options for that question only.
+
+### Per-Task model assignment
+
+| Task | Tier | Slug source |
+|------|------|-------------|
+| Sentence verifiers | Fast | Question 1 |
+| Narrative verifier | Deep | Question 2 |
+| Math verifier | Deep | Question 2 |
+| Verifier synthesizer | Deep | Question 3 |
+
+Keep `readonly: true` on every verifier Task.
 
 ---
 
@@ -106,13 +125,23 @@ Same template as [sentence-check-subagents.md](sentence-check-subagents.md) §6.
 Task(
   subagent_type: "generalPurpose",
   readonly: true,
-  model: <verifier model slug>,
+  model: <sentence-checker slug — fast tier, profile Q1>,
   description: "Phase2 sentence verify: S<k>",
   prompt: <sentence-check-subagents.md §6 template>
 )
 ```
 
 ### Narrative verifier
+
+```text
+Task(
+  subagent_type: "generalPurpose",
+  readonly: true,
+  model: <narrative+logic slug — deep tier, profile Q2>,
+  description: "Phase2 narrative verify",
+  prompt: <template below>
+)
+```
 
 ```text
 You are a narrative verifier for a physics paper. You did NOT write this draft.
@@ -143,6 +172,16 @@ Do not edit the draft. Report each group in file order.
 ### Math verifier
 
 ```text
+Task(
+  subagent_type: "generalPurpose",
+  readonly: true,
+  model: <narrative+logic slug — deep tier, profile Q2>,
+  description: "Phase2 math verify",
+  prompt: <template below>
+)
+```
+
+```text
 You are a math/logic verifier for a physics paper. You did NOT write this draft.
 
 ## Passage summary (shared)
@@ -165,6 +204,16 @@ If no math or logical argument: state that and mark math checks N/A — still co
 ```
 
 ### Verifier synthesizer
+
+```text
+Task(
+  subagent_type: "generalPurpose",
+  readonly: true,
+  model: <synthesizer slug — deep tier, profile Q3>,
+  description: "Phase2 verifier synthesizer",
+  prompt: <template below>
+)
+```
 
 ```text
 You are the verifier synthesizer. You did NOT write the draft. You decide whether the draft passes.
@@ -195,7 +244,7 @@ Total sentences: <N>. Changed (sentence-verified): <list>. Skipped (unchanged): 
 4. If OVERALL: FAIL, list concrete fixes (no vague advice).
 
 ## Output format (required)
-Mode: verify-subagents · <N> sentences · <C> changed · <M> Tasks · <model slug>
+Mode: verify-subagents · <N> sentences · <C> changed · <M> Tasks · sentence:<Q1 slug> · deep:<Q2 slug> · synth:<Q3 slug>
 
 <!-- CHECKS
 <one line per check — stable names, e.g. sentence_S2_obj3, narrative_group2_logical_arc>

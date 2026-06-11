@@ -21,7 +21,7 @@ Sentence-count thresholds (Phase 1 gates): [SKILL.md](SKILL.md) § Roles and ter
 | ASK USER → proceed anyway | Yes — splittable sentences; note partial coverage |
 | ASK USER → skip | No — inline instead |
 
-Do not re-AskQuestion for *Sentence-level checking* when Q3 was already feasible. Run the model AskQuestion (§4) before Tasks unless user already chose a model for **this same quote/draft scope in this chat**.
+Do not re-AskQuestion for *Sentence-level checking* when Q3 was already feasible. Run the sentence-checker AskQuestion (§4) before Phase 1 Tasks unless user already chose a model for **this same quote/draft scope in this chat**.
 
 ---
 
@@ -56,24 +56,28 @@ When the assigned set has **>10** sentences (typically 11–12 under the ≤12 g
 
 ---
 
-## 4. AskQuestion — subagent / verifier model
+## 4. AskQuestion — sentence checker model (fast tier)
 
-**After** §2–§3 planning and **before** passage summary or Tasks, call **AskQuestion**.
+**After** §2–§3 planning and **before** passage summary or Tasks, call **AskQuestion** unless the user already chose a sentence-checker model for **this same quote/draft scope in this chat**.
 
 | Phase | Title |
 |-------|-------|
-| Phase 1 SUBAGENTS | *Subagent model* |
-| Phase 2 | *Verifier subagent model* |
+| Phase 1 SUBAGENTS | *Sentence checker model* |
+| Phase 2 | Part of *Verifier model profile* — see [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion (question 1 only) |
 
-Build options from the **current session Task allowed model list**. Offer **one flagship per provider** with the **exact slug in each label**:
+**Phase 1 SUBAGENTS:** ask for the **sentence checker** model only (fast tier — high volume, mechanical 13-objective pass).
+
+Build options from the **current session Task allowed model list**. Prefer a **fast Composer** model when available; otherwise offer one flagship per provider with the **exact slug in each label**:
 
 | Provider | Pick |
 |----------|------|
-| Cursor | Highest-tier Composer model in the allowed list |
+| Cursor | Fast Composer model if in the allowed list; else highest-tier Composer |
 | OpenAI | Highest-tier GPT model in the allowed list |
 | Anthropic | Highest-tier Claude model in the allowed list |
 
 Use the chosen slug on **every** sentence Task. If unavailable, re-AskQuestion with valid options.
+
+**Phase 2:** do not run a separate sentence-model AskQuestion — use question 1 of the three-question *Verifier model profile* form in [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion.
 
 ---
 
@@ -91,7 +95,7 @@ Paste the **identical** block into every subagent prompt under `## Passage summa
 Task(
   subagent_type: "generalPurpose",
   readonly: true,
-  model: <slug from §4>,
+  model: <sentence-checker slug — fast tier from §4 or Phase 2 profile Q1>,
   description: "Sentence check: S<k>" | "Phase2 sentence verify: S<k>",
   prompt: <template §6>
 )
