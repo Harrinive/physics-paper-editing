@@ -47,9 +47,9 @@ If understanding changes materially, revise the edit plan and re-run from step 1
 **Purpose:** Independent agents grade the producer's draft before shipping.
 
 ```
-1. AskQuestion — verifier model profile (unless already chosen for this draft scope)
+1. AskQuestion — verifier model profile (hard stop — see phase2-verify-subagents.md § Model selection gate)
 2. Identify changed sentences → see phase2-verify-subagents.md § Changed sentences
-3. Launch verifier Tasks:
+3. Launch verifier Tasks (only after step 1 resolves):
      • narrative — always, full passage
      • math — full passage when applicable
      • sentence — changed labels only
@@ -72,6 +72,8 @@ Full execution detail: [phase2-verify-subagents.md](phase2-verify-subagents.md).
 ## Non-negotiable rules
 
 - Phase 2: always fresh verifier subagents; no gates; no producer self-grade.
+- **AskQuestion before any Phase 2 verifier `Task`** — major rewrite does not waive this ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate).
+- Never auto-select model slugs; skill recommendations require user confirmation via `AskQuestion`.
 - Never skip Phase 2 because Phase 1 ran.
 - Never end the turn without synthesizer `OVERALL: PASS`.
 - After any Phase 2 draft fix, relaunch the verifier suite (new Tasks): narrative + math on full passage; sentence Tasks only for sentences changed in that fix pass.

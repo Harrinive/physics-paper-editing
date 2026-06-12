@@ -21,7 +21,7 @@ Sentence-count thresholds (Phase 1 gates): [SKILL.md](SKILL.md) § Roles and ter
 | ASK USER → proceed anyway | Yes — splittable sentences; note partial coverage |
 | ASK USER → skip | No — inline instead |
 
-Do not re-AskQuestion for *Sentence-level checking* when Q3 was already feasible. Run the sentence-checker AskQuestion (§4) before Phase 1 Tasks unless user already chose a model for **this same quote/draft scope in this chat**.
+Do not re-AskQuestion for *Sentence-level checking* when Q3 was already feasible. Run the sentence-checker AskQuestion (§4) before Phase 1 Tasks unless user already chose a model for **this same quote/draft scope in this chat**, or a macro **section brief** supplied `verifier_profile.sentence` (use that slug — do not re-ask).
 
 ---
 
@@ -58,7 +58,9 @@ When the assigned set has **>10** sentences (typically 11–12 under the ≤12 g
 
 ## 4. AskQuestion — sentence checker model (fast tier)
 
-**After** §2–§3 planning and **before** passage summary or Tasks, call **AskQuestion** unless the user already chose a sentence-checker model for **this same quote/draft scope in this chat**.
+**After** §2–§3 planning and **before** passage summary or Tasks, call **AskQuestion** unless the user already chose a sentence-checker model for **this same quote/draft scope in this chat**, or macro `session.md` has `user_confirmed: true` with a Phase 1 sentence slug.
+
+**Hard stop:** do not launch sentence `Task`s until `AskQuestion` returns. Skill recommendations (e.g. fast Composer) are **(Recommended)** options in the form — not silent defaults. Phase 2 uses the three-question *Verifier model profile* instead ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate).
 
 | Phase | Title |
 |-------|-------|

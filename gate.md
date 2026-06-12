@@ -73,6 +73,8 @@ Q3: Feasible split?
 
 **Not feasible** examples: >12 sentences, full section, mostly equations/tables, inseparable cross-references. Briefly say why.
 
+**>12 sentences or whole-section edit:** route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) (macro skill). Do not proceed with the micro pipeline on the full section in one turn.
+
 ---
 
 ## Outcomes
@@ -81,12 +83,25 @@ Q3: Feasible split?
 |-----------|-------------------|----------------------------|
 | 1 sentence | INLINE | INLINE |
 | 2+ polish, feasible split | SUBAGENTS | SUBAGENTS (mandatory) |
-| Major rewrite | INLINE (compose); skip Phase 1 | Skipped |
+| Major rewrite | INLINE (compose); skip Phase 1 | Skipped — **Phase 2 AskQuestion still required** |
 | Q3 not feasible | ASK USER | ASK USER |
 | User requests inline / quick / no subagents | INLINE | INLINE |
 | User chose skip / proceed / narrow (this quote, this chat) | Honor choice | Honor choice |
 
 **Skip the Q3 AskQuestion** when Q1 → 1 sentence, Q2 → major rewrite, or Q3 → feasible (go straight to SUBAGENTS).
+
+---
+
+## Major rewrite path
+
+When Q2 → major rewrite:
+
+| Step | Runs? | Model AskQuestion? |
+|------|-------|-------------------|
+| Phase 1 (step 4) | **No** | **No** (no Phase 1 Tasks) |
+| Phase 2 (step 6) | **Yes — always** | **Yes** — *Verifier model profile* ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate) |
+
+**Common mistake:** treating "Phase 1 skipped" as "skip all model asks." Phase 2 is independent; compose → **AskQuestion** → verifier Tasks.
 
 ---
 
@@ -108,6 +123,7 @@ If you edited without subagents when SUBAGENTS was required, stop, report the vi
 
 | Option | Then |
 |--------|------|
+| Use section macro skill (Recommended) | Route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) — Stages A–E |
 | Skip sentence-level subagents | INLINE — all 13 sentence checks, then passage-level checklists |
 | Proceed with subagents anyway | SUBAGENTS — one Task per splittable sentence; note partial coverage |
 | Narrow the scope | User gives shorter quote; re-run gate |
@@ -116,7 +132,7 @@ If you edited without subagents when SUBAGENTS was required, stop, report the vi
 
 **Always required** before launching Phase 1 sentence Tasks — [sentence-check-subagents.md](sentence-check-subagents.md) §4 (fast tier). Skip only when user already picked a model for **this same quote in this chat**.
 
-Phase 2 uses the three-question *Verifier model profile* — [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion.
+Phase 2 uses the three-question *Verifier model profile* — [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion. **Required on every first Phase 2 iteration**, including major rewrites. Never auto-select defaults.
 
 ---
 

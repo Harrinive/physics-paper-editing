@@ -24,7 +24,7 @@ The **producer** (main agent) writes the draft and applies fixes. It **must not*
 
 ## Unit of work
 
-This skill edits **one passage at a time**, at most **12 sentences** (see sentence-count thresholds below). Passages longer than that are out of scope — ask the user to narrow the selection or use a future section-level skill.
+This skill edits **one passage at a time**, at most **12 sentences** (see sentence-count thresholds below). Passages longer than that are **out of scope for this skill** — route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or ask the user to narrow the selection.
 
 **Input:** one passage ≤12 sentences, plus optional short context (neighbors, section title, brief).
 
@@ -32,7 +32,7 @@ This skill edits **one passage at a time**, at most **12 sentences** (see senten
 
 **Output (Ask mode):** same CHECKS block and edited LaTeX preview; no `.tex` write until Agent mode.
 
-A caller (e.g. a future macro skill) may invoke this skill repeatedly on successive ≤12-sentence units; each invocation is an independent unit of work with its own draft scope and verifier model profile.
+A caller (e.g. [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md)) may invoke this skill repeatedly on successive ≤12-sentence units; each invocation is an independent unit of work with its own draft scope and verifier model profile (or an inherited profile from the section brief — skip AskQuestion when supplied).
 
 ---
 
@@ -59,7 +59,7 @@ A caller (e.g. a future macro skill) may invoke this skill repeatedly on success
 | **1** (or fragment) | Always **INLINE** |
 | **2–10** | Feasible for **SUBAGENTS** — one Task per sentence |
 | **11–12** | Feasible; may batch 2 sentences per Task |
-| **>12** | **Not feasible** — **ASK USER** unless user narrows scope |
+| **>12** | **Not feasible** — route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or **ASK USER** to narrow |
 
 ### Agent tiers
 
@@ -85,8 +85,9 @@ flowchart TD
     editGate -->|major rewrite| produceCompose[5 Produce draft — compose]
     editGate -->|polish| sourceLoop[4 Phase 1 source verify]
     sourceLoop --> produceEdit[5 Produce draft — from audit]
-    produceCompose --> verifySuite[6 Phase 2 output verify]
-    produceEdit --> verifySuite
+    produceCompose --> askModels[6a AskQuestion — verifier model profile]
+    produceEdit --> askModels
+    askModels --> verifySuite[6b Phase 2 verifier Tasks]
     verifySuite -->|synthesizer FAIL| fixDraft[Producer fixes draft]
     fixDraft --> verifySuite
     verifySuite -->|synthesizer PASS| ship[7 Ship .tex + CHECKS]
@@ -118,6 +119,7 @@ Complete steps in order.
 - Producer must not grade its own draft or set OVERALL.
 - Never skip Phase 2 because Phase 1 ran.
 - When any gate yields **SUBAGENTS**, use subagents — no inline shortcut ([gate.md](gate.md)).
+- **Never launch verifier `Task`s without model AskQuestion** — see [Model selection gate](phase2-verify-subagents.md#model-selection-gate-hard-stop). Skipping Phase 1 does **not** waive this.
 
 ```
 [ ] 1. Context — file, neighbors, [bracket comments] as editing instructions
@@ -126,6 +128,8 @@ Complete steps in order.
 [ ] 4. Phase 1 source verify — polish only; skip on major rewrite ([verification-loop.md](verification-loop.md))
 [ ] 5. Produce draft — compose (major rewrite) or apply Phase 1 audit (polish)
 [ ] 6. Phase 2 output verify — mandatory verifier subagents ([phase2-verify-subagents.md](phase2-verify-subagents.md))
+      [ ] 6a. AskQuestion — *Verifier model profile* (unless valid skip — see below)
+      [ ] 6b. Launch verifier Tasks only after user answers (or inherited profile)
 [ ] 7. Ship — write .tex; synthesizer CHECKS block in user response
 ```
 
@@ -169,7 +173,21 @@ When length is ambiguous, load sentence + narrative. When math might appear, loa
 | Phase 1 SUBAGENTS | *Sentence checker model* | [sentence-check-subagents.md](sentence-check-subagents.md) §4 — fast tier |
 | Phase 2 (each iteration) | *Verifier model profile* | [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion — three questions (sentence · narrative+logic · synthesizer) |
 
-Skip model AskQuestion when the user already chose models for **this same draft scope in this chat** (reuse across FAIL→fix loops).
+**Valid skip conditions only** (all others → **must** AskQuestion):
+
+| Condition | Applies to |
+|-----------|------------|
+| User already chose models for **this same draft scope in this chat** | Phase 1 sentence model; Phase 2 full profile (reuse across FAIL→fix loops) |
+| Macro section `session.md` has `user_confirmed: true` and § Verifier model profile | Phase 2 — inherit; document `inherited from session.md (Stage A confirmed)` |
+| Macro section brief supplied `verifier_profile` **without** `session.md` confirmation | **Not valid** — run AskQuestion |
+
+**Forbidden** (compliance violations — stop and AskQuestion before any `Task`):
+
+- Auto-selecting "default" or "recommended" slugs without `AskQuestion`.
+- Phrases like "default model profile", "using recommended models", or "Phase 1 skipped so skipping model ask".
+- Launching verifier `Task`s in the same turn **before** `AskQuestion` returns (unless a valid skip above applies).
+
+Major rewrite skips **Phase 1 only** — Phase 2 **still requires** *Verifier model profile* on the first Phase 2 iteration ([gate.md](gate.md) § Major rewrite path).
 
 ---
 

@@ -54,18 +54,51 @@ Before launching sentence verifier Tasks, the **producer** labels **S1, S2, …*
 
 ---
 
+## Model selection gate (hard stop)
+
+**Do not launch any verifier `Task` until model slugs are resolved.**
+
+```
+Draft ready (step 5) ──► AskQuestion (*Verifier model profile*) ──► user answers ──► Tasks
+                              ▲
+                              │ skip only if valid (see below)
+```
+
+| Valid skip | Action |
+|------------|--------|
+| User already chose a profile for **this draft scope in this chat** | Reuse same three slugs (FAIL→fix loops) |
+| Section `session.md` has `user_confirmed: true` and complete § Verifier model profile | Inherit `{ sentence, deep, synth }`; note `inherited from session.md (Stage A confirmed)` — no re-ask |
+| Section brief supplied `verifier_profile` **only** | **Not a valid skip by itself** — must also have `session.md` `user_confirmed: true` from Stage A AskQuestion |
+
+**Not a valid skip:** Phase 1 skipped; major rewrite; polish path; skill "recommended" slugs; your guess at good models; manifest/brief slugs without `session.md` `user_confirmed: true`.
+
+**Forbidden before AskQuestion:**
+
+- Any `Task(...)` call for sentence, narrative, math, or synthesizer verifiers.
+- Announcing "default model profile" or silently picking slugs from § AskQuestion recommendations.
+
+**Major rewrite path:** Phase 1 is skipped, but step 6 **always** runs. On the **first** Phase 2 iteration you **must** call `AskQuestion` — there is no Phase 1 sentence-model ask to substitute for it.
+
+**Pre-launch self-check** (all must be true before the first `Task`):
+
+- [ ] `AskQuestion` returned user choices, **or** a valid skip condition is documented.
+- [ ] Three slugs recorded: sentence (Q1), deep (Q2), synth (Q3).
+- [ ] No verifier `Task` was launched earlier in this turn.
+
+---
+
 ## Workflow
 
 ```
-1. Write passage summary → paste into every verifier prompt
-2. Label S1, S2, … and identify changed labels (§ Changed sentences)
-3. AskQuestion — verifier model profile (unless already chosen for this draft scope)
+1. AskQuestion — verifier model profile (unless valid skip — § Model selection gate)
+2. Write passage summary → paste into every verifier prompt
+3. Label S1, S2, … and identify changed labels (§ Changed sentences)
 4. Launch in parallel when practical (run_in_background: false):
      • narrative verifier — full passage (deep tier)
      • math verifier — full passage when applicable (deep tier; or N/A report if no math)
      • sentence verifiers — one Task per changed label (fast tier)
 5. Launch synthesizer — deep tier; pass all reports + changed/skipped label lists
-6. PASS → step 7 (ship)  |  FAIL → producer fixes → restart from step 2
+6. PASS → step 7 (ship)  |  FAIL → producer fixes → restart from step 3 (reuse slugs; no re-AskQuestion)
 ```
 
 **Task count:** narrative + math (if applicable) + synthesizer + one Task per changed sentence.
@@ -78,6 +111,8 @@ Before launching sentence verifier Tasks, the **producer** labels **S1, S2, …*
 
 **Forbidden:**
 
+- Launching verifier `Task`s before `AskQuestion` resolves model slugs (§ Model selection gate).
+- Auto-selecting recommended/default slugs without user input.
 - Running [sentence-checks.md](sentence-checks.md), [narrative-checks.md](narrative-checks.md), or [math-checks.md](math-checks.md) inline on the draft.
 - Writing or guessing `OVERALL` without synthesizer output.
 - Skipping narrative or math because the draft is "already checked" in Phase 1.
@@ -88,19 +123,19 @@ Before launching sentence verifier Tasks, the **producer** labels **S1, S2, …*
 
 ## AskQuestion — verifier model profile
 
-**Before** launching Tasks, call **AskQuestion** unless the user already chose a profile for **this same draft scope in this chat**. Reuse the same three slugs across every FAIL→fix loop iteration.
+**Mandatory on first Phase 2 iteration** unless a valid skip in § Model selection gate applies. Reuse the same three slugs across every FAIL→fix loop iteration — do **not** re-ask on re-loops.
 
 **Title:** *Verifier model profile*
 
-**One form, three questions** — each option = one flagship (or fast tier) per provider, **exact slug in each label**, built from the session's allowed Task model list:
+**One form, three questions** — each option = one flagship (or fast tier) per provider, **exact slug in each label**, built from the session's allowed Task model list. Mark the skill's recommended pick with **(Recommended)** in the option label — the user must still confirm via `AskQuestion`; recommendations are **not** permission to skip asking.
 
-1. **Sentence checker** (high volume, fast tier) — default **Cursor Composer (fast)** when available.
-2. **Narrative & logic checker** (passage-level reasoning) — default **Claude flagship**.
-3. **Synthesizer** (sets `OVERALL`; never fast tier) — default **Claude flagship**.
+1. **Sentence checker** (high volume, fast tier) — recommend **Cursor Composer (fast)** when available.
+2. **Narrative & logic checker** (passage-level reasoning) — recommend **Claude flagship**.
+3. **Synthesizer** (sets `OVERALL`; never fast tier) — recommend **Claude flagship**.
 
 Narrative and math verifier Tasks share the slug from question 2. Sentence verifier Tasks use question 1. The synthesizer Task uses question 3.
 
-If a default slug is unavailable, re-AskQuestion with valid options for that question only.
+If a recommended slug is unavailable in the session list, omit it and offer valid alternatives — still via `AskQuestion`, never silent substitution.
 
 ### Per-Task model assignment
 
