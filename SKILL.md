@@ -1,15 +1,19 @@
 ---
 name: physics-paper-editing
 description: >-
-  Edits and proofreads LaTeX from physics papers. Two-phase pipeline: edit gate
-  routes production; Phase 1 source verify (polish, gated); Phase 2 mandatory
-  verifier subagents (narrative + math on full passage; sentence checks on
-  changed sentences only; synthesizer decides OVERALL). Loads checklists via Read tool.
+  Standalone LaTeX prose editor for physics papers (≤12 sentences). Two-phase
+  pipeline: Phase 1 source verify (polish); Phase 2 mandatory verifier
+  subagents with compliance monitoring. Use alone for short quotes; routes
+  >12 sentences to physics-paper-editing-section. Loads checklists via Read tool.
 ---
 
-# Physics Paper Editing
+# Physics Paper Editing (micro)
 
 Expert scientific editor for physics and mathematics at graduate level.
+
+**Use this skill alone** when the user gives a passage of **≤12 sentences** — run steps 1–7 below. No macro skill, no `cross-skill.md`, no `.physics-edit/` on that path.
+
+**Scope overflow (>12 sentences or whole section):** stop the micro pipeline; suggest [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or ask the user to narrow the quote. Detail: § Scope overflow below.
 
 ## Purpose
 
@@ -24,15 +28,42 @@ The **producer** (main agent) writes the draft and applies fixes. It **must not*
 
 ## Unit of work
 
-This skill edits **one passage at a time**, at most **12 sentences** (see sentence-count thresholds below). Passages longer than that are **out of scope for this skill** — route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or ask the user to narrow the selection.
+| | |
+|--|--|
+| **Scope** | One passage, **≤12 sentences** |
+| **Input** | Passage + optional context (neighbors, section title, brief) |
+| **Output (Agent)** | Synthesizer `OVERALL: PASS`, `.tex` updated, verbatim `<!-- CHECKS ... -->` |
+| **Output (Ask)** | CHECKS block + preview; no `.tex` write until Agent mode |
 
-**Input:** one passage ≤12 sentences, plus optional short context (neighbors, section title, brief).
+Passages **>12 sentences** are out of scope — see § Scope overflow.
 
-**Output (Agent mode):** synthesizer `OVERALL: PASS`, the `.tex` file updated, and the verbatim `<!-- CHECKS ... -->` block in the response.
+**Verifier models (standalone):** `AskQuestion` per [phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate (same-chat reuse is the only skip).
 
-**Output (Ask mode):** same CHECKS block and edited LaTeX preview; no `.tex` write until Agent mode.
+---
 
-A caller (e.g. [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md)) may invoke this skill repeatedly on successive ≤12-sentence units; each invocation is an independent unit of work with its own draft scope and verifier model profile (or an inherited profile from the section brief — skip AskQuestion when supplied).
+## Standalone quick start
+
+Default path when only this skill is attached and the quote is **≤12 sentences**:
+
+1. **Scope** — confirm ≤12 sentences (§ Scope overflow if not).
+2. **Read** — step 2 table below (+ detail files for steps 3–7).
+3. **Edit gate** — polish vs major rewrite ([gate.md](gate.md)).
+4. **Phase 1** — if polish; skip if major rewrite.
+5. **Produce draft** — step 5.
+6. **Phase 2** — `AskQuestion` (*Verifier model profile*) on first iteration unless same-chat reuse ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate).
+7. **Ship** — `.tex` + synthesizer CHECKS only after `OVERALL: PASS`.
+
+---
+
+## Scope overflow
+
+When the target has **>12 sentences** or the user asks for a whole `\section{...}`:
+
+1. Do **not** run steps 3–7 on the full text in one turn.
+2. Tell the user the passage exceeds micro scope.
+3. Offer: attach [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md), **or** narrow to ≤12 sentences.
+
+That is the **only** macro awareness required on a standalone micro job. Do not read [cross-skill.md](cross-skill.md) unless you are routing overflow or were invoked from macro Stage D (§ Invoked by section macro).
 
 ---
 
@@ -44,7 +75,9 @@ A caller (e.g. [physics-paper-editing-section](../physics-paper-editing-section/
 | **Sentence verifier** | Task subagent — one sentence (or batched pair); 13 objectives ([sentence-check-subagents.md](sentence-check-subagents.md)) |
 | **Narrative verifier** | Task subagent — full passage; four narrative groups ([narrative-checks.md](narrative-checks.md)) |
 | **Math verifier** | Task subagent — full passage when math or logical argument present ([math-checks.md](math-checks.md)) |
-| **Verifier synthesizer** | Task subagent — merges verifier reports; **sole** `OVERALL` authority ([phase2-verify-subagents.md](phase2-verify-subagents.md)) |
+| **Verifier synthesizer** | Task subagent — merges compliance + verifier reports; **sole** `OVERALL` authority ([phase2-verify-subagents.md](phase2-verify-subagents.md)) |
+| **Task plan** | Orchestrator block listing N, phase, per-label sentence Tasks — **required before any worker Task** ([compliance-monitoring.md](compliance-monitoring.md)) |
+| **COMPLIANCE** | Worker Step 0 — PASS/FAIL on assignment before specialist work ([compliance-monitoring.md](compliance-monitoring.md)) |
 | **Edit gate** | Step 3 — compose vs polish + whether Phase 1 runs ([gate.md](gate.md)) |
 | **Source verify gate** | Step 4 — INLINE vs SUBAGENTS for Phase 1 ([gate.md](gate.md)) |
 | **INLINE** | Main agent runs sentence checks directly (no sentence Tasks) |
@@ -68,12 +101,10 @@ Decompose by **which agent runs**, not abstract job titles. One worker subagent 
 | Tier | Who | Writes prose? | Dispatches Tasks? | Grades `OVERALL`? |
 |------|-----|---------------|-------------------|-------------------|
 | **Main agent** (Producer) | 1 agent | Yes (draft + fixes) | Yes | **No** |
-| **Verifier subagents** | sentence · narrative · math — one specialist each | No (sentence may suggest `Edited:`) | No | No |
+| **Verifier subagents** | sentence · narrative · math — one specialist each | No (sentence may suggest `Edited:`) | No | No (Step 0: grade **assignment** only) |
 | **Verifier synthesizer** | 1 agent | No | No | **Yes (sole authority)** |
 
-**Writer ≠ grader invariant:** the agent that writes the passage-level draft (Producer) must never be the agent that sets `OVERALL: PASS|FAIL`. Phase 2 enforces this: checkers and synthesizer are readonly Tasks; only the synthesizer emits CHECKS and OVERALL.
-
-Phase 1 sentence work may run on the main agent (INLINE) or sentence verifier Tasks (SUBAGENTS). Narrative and math checks in Phase 1 run on the main agent; in Phase 2 they are verifier Tasks alongside sentence verifiers and the synthesizer.
+**Writer ≠ grader:** Producer never sets `OVERALL`; synthesizer only ([compliance-monitoring.md](compliance-monitoring.md)). Phase 1 sentence work: main agent (INLINE) or sentence Tasks (SUBAGENTS). Phase 1 narrative + math: main agent; Phase 2: verifier Tasks + synthesizer.
 
 ---
 
@@ -93,19 +124,7 @@ flowchart TD
     verifySuite -->|synthesizer PASS| ship[7 Ship .tex + CHECKS]
 ```
 
-| | Phase 1 — source verify | Phase 2 — output verify |
-|--|-------------------------|-------------------------|
-| **Step** | 4 | 6 |
-| **Target** | User's existing prose | Producer's generated draft |
-| **When** | Polish only; skipped on major rewrite | Every edit turn |
-| **Routing** | [gate.md](gate.md) | No gate — [phase2-verify-subagents.md](phase2-verify-subagents.md) |
-| **Sentence** | All sentences (INLINE or SUBAGENTS) | **Changed sentences only** |
-| **Narrative verifier** | Main agent | Task on **full passage** |
-| **Math verifier** | Main agent (when applicable) | Task on **full passage** (when applicable) |
-| **Who decides done** | Main agent → informs step 5 | **Verifier synthesizer** |
-| **CHECKS** | No | Required |
-
-Full phase comparison: [verification-loop.md](verification-loop.md).
+**Phase comparison (canonical):** [verification-loop.md](verification-loop.md) § Phase comparison.
 
 ---
 
@@ -120,17 +139,23 @@ Complete steps in order.
 - Never skip Phase 2 because Phase 1 ran.
 - When any gate yields **SUBAGENTS**, use subagents — no inline shortcut ([gate.md](gate.md)).
 - **Never launch verifier `Task`s without model AskQuestion** — see [Model selection gate](phase2-verify-subagents.md#model-selection-gate-hard-stop). Skipping Phase 1 does **not** waive this.
+- **Publish Task plan** and pass it to every worker — see [compliance-monitoring.md](compliance-monitoring.md) § Task plan block. **Never** batch ≤10 sentences into one sentence Task.
 
 ```
 [ ] 1. Context — file, neighbors, [bracket comments] as editing instructions
-[ ] 2. Read checklists — see table below
+[ ] 2. Read checklists — see table below + [compliance-monitoring.md](compliance-monitoring.md)
 [ ] 3. Edit gate — routes steps 4–5 ([gate.md](gate.md))
 [ ] 4. Phase 1 source verify — polish only; skip on major rewrite ([verification-loop.md](verification-loop.md))
+      [ ] 4a. Label S1…SN on source
+      [ ] 4b. Emit Task plan (phase1_sentence_tasks = N labels if polish, N≥2)
+      [ ] 4c. Launch **N** Phase 1 sentence Tasks (one per label) — never batch ≤10
+      [ ] 4d. Main agent: narrative + math on source ([verification-loop.md](verification-loop.md))
 [ ] 5. Produce draft — compose (major rewrite) or apply Phase 1 audit (polish)
 [ ] 6. Phase 2 output verify — mandatory verifier subagents ([phase2-verify-subagents.md](phase2-verify-subagents.md))
-      [ ] 6a. AskQuestion — *Verifier model profile* (unless valid skip — see below)
-      [ ] 6b. Launch verifier Tasks only after user answers (or inherited profile)
-[ ] 7. Ship — write .tex; synthesizer CHECKS block in user response
+      [ ] 6a. AskQuestion — *Verifier model profile* (unless valid skip — phase2-verify-subagents.md § Model selection gate; macro chunk: session.md per § Invoked by section macro)
+      [ ] 6b. Update Task plan (phase2_sentence_tasks = changed labels only)
+      [ ] 6c. Launch narrative + math + **one Task per changed sentence** + synthesizer
+[ ] 7. Ship — write .tex; synthesizer CHECKS block in user response (procedural PASS required)
 ```
 
 ### Step 1 — Context
@@ -150,8 +175,9 @@ Complete steps in order.
 | 2+ sentences | + [narrative-checks.md](narrative-checks.md) |
 | Math, equations, or logical argument | + [math-checks.md](math-checks.md) |
 | Steps 3–4 | + [gate.md](gate.md) |
-| Phase 1 SUBAGENTS or Phase 2 | + [sentence-check-subagents.md](sentence-check-subagents.md) |
+| Phase 1 SUBAGENTS or Phase 2 | + [sentence-check-subagents.md](sentence-check-subagents.md), [compliance-monitoring.md](compliance-monitoring.md) |
 | Step 6 | + [verification-loop.md](verification-loop.md), [phase2-verify-subagents.md](phase2-verify-subagents.md) |
+| Before any verifier Task | + [compliance-monitoring.md](compliance-monitoring.md) § Task plan block |
 
 When length is ambiguous, load sentence + narrative. When math might appear, load math too.
 
@@ -173,21 +199,9 @@ When length is ambiguous, load sentence + narrative. When math might appear, loa
 | Phase 1 SUBAGENTS | *Sentence checker model* | [sentence-check-subagents.md](sentence-check-subagents.md) §4 — fast tier |
 | Phase 2 (each iteration) | *Verifier model profile* | [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion — three questions (sentence · narrative+logic · synthesizer) |
 
-**Valid skip conditions only** (all others → **must** AskQuestion):
+**Model selection (standalone):** [phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate · Phase 1 sentence: [sentence-check-subagents.md](sentence-check-subagents.md) §4. Skip only same-chat reuse for this draft scope. Major rewrite skips Phase 1 only — Phase 2 AskQuestion still required on first iteration.
 
-| Condition | Applies to |
-|-----------|------------|
-| User already chose models for **this same draft scope in this chat** | Phase 1 sentence model; Phase 2 full profile (reuse across FAIL→fix loops) |
-| Macro section `session.md` has `user_confirmed: true` and § Verifier model profile | Phase 2 — inherit; document `inherited from session.md (Stage A confirmed)` |
-| Macro section brief supplied `verifier_profile` **without** `session.md` confirmation | **Not valid** — run AskQuestion |
-
-**Forbidden** (compliance violations — stop and AskQuestion before any `Task`):
-
-- Auto-selecting "default" or "recommended" slugs without `AskQuestion`.
-- Phrases like "default model profile", "using recommended models", or "Phase 1 skipped so skipping model ask".
-- Launching verifier `Task`s in the same turn **before** `AskQuestion` returns (unless a valid skip above applies).
-
-Major rewrite skips **Phase 1 only** — Phase 2 **still requires** *Verifier model profile* on the first Phase 2 iteration ([gate.md](gate.md) § Major rewrite path).
+**Model selection (macro chunk):** § Invoked by section macro below.
 
 ---
 
@@ -230,15 +244,32 @@ One focused question if guidance is ambiguous; do not ship until resolved.
 
 ## File index
 
+**Pipeline (read as needed)**
+
 | File | Role |
 |------|------|
-| [gate.md](gate.md) | Phase 1 routing — edit gate and source verify gate |
-| [verification-loop.md](verification-loop.md) | Phase 1 and Phase 2 loop rules |
-| [phase2-verify-subagents.md](phase2-verify-subagents.md) | Phase 2 execution — verifiers, prompts, synthesizer |
+| [gate.md](gate.md) | Edit gate + source verify gate (Phase 1 routing) |
+| [verification-loop.md](verification-loop.md) | Phase 1 vs Phase 2 comparison |
+| [phase2-verify-subagents.md](phase2-verify-subagents.md) | Phase 2 — verifiers, prompts, synthesizer |
 | [sentence-check-subagents.md](sentence-check-subagents.md) | Sentence Task splitting, batching, prompts |
+| [compliance-monitoring.md](compliance-monitoring.md) | Task plan, Step 0, synthesizer procedural checks |
+
+**Checklists**
+
+| File | Role |
+|------|------|
 | [sentence-checks.md](sentence-checks.md) | 13 sentence objectives |
 | [narrative-checks.md](narrative-checks.md) | Passage-level narrative groups |
 | [math-checks.md](math-checks.md) | Math and logic checks |
+
+## Invoked by section macro (optional)
+
+Read this section **only** when Stage D passes `chunk_text` + `edit_gate` + `session.md` via [chunk-contract.md](../physics-paper-editing-section/chunk-contract.md). Otherwise ignore.
+
+- Run the same steps 1–7 on `chunk_text` only.
+- **Skip micro edit gate Q2** — use supplied `edit_gate` (`polish` \| `rewrite`).
+- **Verifier models:** inherit from `session.md` when `user_confirmed: true`; else AskQuestion. Handoff rules: [cross-skill.md](cross-skill.md) § Verifier model profile.
+- Set `caller: section-orchestrator` in the Task plan ([compliance-monitoring.md](compliance-monitoring.md)).
 
 ---
 

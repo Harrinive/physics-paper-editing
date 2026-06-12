@@ -2,7 +2,9 @@
 
 **Read with the Read tool** before launching Phase 2 ([SKILL.md](SKILL.md) step 6).
 
-Phase comparison and loop rules: [verification-loop.md](verification-loop.md). Sentence splitting and prompts: [sentence-check-subagents.md](sentence-check-subagents.md).
+Required for **every** micro edit — standalone or macro chunk. **Canonical for:** model selection gate · changed-sentence scope · Phase 2 workflow. Macro verifier inheritance: [cross-skill.md](cross-skill.md) § Verifier model profile (chunk agents only).
+
+Also read: [verification-loop.md](verification-loop.md) · [sentence-check-subagents.md](sentence-check-subagents.md) · [compliance-monitoring.md](compliance-monitoring.md).
 
 ---
 
@@ -83,6 +85,8 @@ Draft ready (step 5) ──► AskQuestion (*Verifier model profile*) ──► 
 
 - [ ] `AskQuestion` returned user choices, **or** a valid skip condition is documented.
 - [ ] Three slugs recorded: sentence (Q1), deep (Q2), synth (Q3).
+- [ ] **Task plan** published in response and pasted into every worker prompt ([compliance-monitoring.md](compliance-monitoring.md) § Task plan block).
+- [ ] Phase 2: `phase2_sentence_tasks` lists **one label per changed sentence**; no batching when C ≤ 10.
 - [ ] No verifier `Task` was launched earlier in this turn.
 
 ---
@@ -93,15 +97,16 @@ Draft ready (step 5) ──► AskQuestion (*Verifier model profile*) ──► 
 1. AskQuestion — verifier model profile (unless valid skip — § Model selection gate)
 2. Write passage summary → paste into every verifier prompt
 3. Label S1, S2, … and identify changed labels (§ Changed sentences)
-4. Launch in parallel when practical (run_in_background: false):
+4. Emit Task plan (phase2_sentence_tasks = changed labels only)
+5. Launch in parallel when practical (run_in_background: false):
      • narrative verifier — full passage (deep tier)
      • math verifier — full passage when applicable (deep tier; or N/A report if no math)
      • sentence verifiers — one Task per changed label (fast tier)
-5. Launch synthesizer — deep tier; pass all reports + changed/skipped label lists
-6. PASS → step 7 (ship)  |  FAIL → producer fixes → restart from step 3 (reuse slugs; no re-AskQuestion)
+6. Launch synthesizer — deep tier; pass Task plan + all reports + changed/skipped label lists
+7. PASS (content + procedural) → step 7 ship  |  FAIL → fix draft and/or relaunch with corrected Task plan
 ```
 
-**Task count:** narrative + math (if applicable) + synthesizer + one Task per changed sentence.
+**Task count:** narrative + math (if applicable) + synthesizer + **C** sentence Tasks (C = changed count). Mode line **M** must equal C.
 
 ---
 
@@ -118,6 +123,8 @@ Draft ready (step 5) ──► AskQuestion (*Verifier model profile*) ──► 
 - Skipping narrative or math because the draft is "already checked" in Phase 1.
 - Sentence verifier Tasks for **unchanged** labels.
 - Resuming old verifier Tasks after a draft fix.
+- Launching one sentence Task for multiple labels (compliance violation).
+- Shipping when any worker reports `COMPLIANCE: FAIL` or synthesizer reports `compliance_orchestrator_plan: FAIL`.
 
 ---
 
@@ -181,6 +188,9 @@ Task(
 ```text
 You are a narrative verifier for a physics paper. You did NOT write this draft.
 
+## Orchestrator task plan (verify in Step 0 — read-only)
+<paste identical block from producer — compliance-monitoring.md>
+
 ## Passage summary (shared)
 <identical block in every Task>
 
@@ -190,11 +200,19 @@ You are a narrative verifier for a physics paper. You did NOT write this draft.
 ## Adjacent context (if helpful)
 <1–3 sentences before/after from .tex, or omit>
 
+## Step 0 — Assignment compliance (run FIRST)
+Confirm you received the **full passage** (all N sentences) and a valid Task plan. If fragment only, or polish + N≥2 but plan shows fewer Phase 1 labels than N, emit COMPLIANCE: FAIL and stop. See compliance-monitoring.md § Narrative worker.
+
 ## Instructions
-Read and run every group and bullet in narrative-checks.md (Read tool if needed).
+If COMPLIANCE: PASS — read and run every group and bullet in narrative-checks.md (Read tool if needed).
 Do not edit the draft. Report each group in file order.
 
 ## Output format
+### Assignment compliance
+COMPLIANCE: PASS | FAIL
+Role: narrative
+Reason: <one line>
+
 ### Narrative verification
 **Group 1 — Core message and framing:** <findings or PASS>
 **Group 2 — Logical arc and motivation:** <findings or PASS>
@@ -219,17 +237,28 @@ Task(
 ```text
 You are a math/logic verifier for a physics paper. You did NOT write this draft.
 
+## Orchestrator task plan (verify in Step 0 — read-only)
+<paste identical block from producer>
+
 ## Passage summary (shared)
 <identical block in every Task>
 
 ## Draft under review
 <full generated passage — LaTeX/text>
 
+## Step 0 — Assignment compliance (run FIRST)
+Confirm full passage + Task plan present. See compliance-monitoring.md § Math worker.
+
 ## Instructions
-Read math-checks.md (Read tool if needed). Run Step 0 (classify statements), then type-specific checks.
+If COMPLIANCE: PASS — read math-checks.md (Read tool if needed). Run Step 0 (classify statements), then type-specific checks.
 If no math or logical argument: state that and mark math checks N/A — still complete the report.
 
 ## Output format
+### Assignment compliance
+COMPLIANCE: PASS | FAIL
+Role: math
+Reason: <one line>
+
 ### Math verification
 **Step 0 — Classifications:** <list each statement and type, or "no math statements">
 
@@ -259,8 +288,12 @@ You are the verifier synthesizer. You did NOT write the draft. You decide whethe
 ## Draft under review
 <full generated passage>
 
+## Orchestrator task plan
+<paste Task plan block from producer>
+
 ## Sentence scope
 Total sentences: <N>. Changed (sentence-verified): <list>. Skipped (unchanged): <list>.
+Expected Phase 2 sentence Tasks launched (C): <count>. Mode line M must equal C.
 
 ## Verifier reports
 ### Sentence reports (changed only)
@@ -273,17 +306,22 @@ Total sentences: <N>. Changed (sentence-verified): <list>. Skipped (unchanged): 
 <paste math verifier output>
 
 ## Instructions
-1. Merge all FAIL items from narrative, math, and changed-sentence reports. Any unresolved FAIL → OVERALL: FAIL.
-2. Unchanged sentences were not sentence-verified; do not FAIL for sentence-level issues on skipped labels unless narrative or math caught them.
-3. Emit the CHECKS block. You are the **only** agent that may set OVERALL.
-4. If OVERALL: FAIL, list concrete fixes (no vague advice).
+1. **Procedural compliance first:** Any worker `COMPLIANCE: FAIL` → `compliance_worker_reports: FAIL` → OVERALL: FAIL. Audit Task plan: Phase 2 requires M=C sentence Tasks; forbid `sentence_S1-S3` range lines — one line per label (`sentence_S1`, `sentence_S2`, …).
+2. Merge specialist FAIL items from workers that passed Step 0. Any unresolved FAIL → OVERALL: FAIL.
+3. Unchanged sentences were not sentence-verified; do not FAIL for sentence-level issues on skipped labels unless narrative or math caught them.
+4. Emit the CHECKS block. You are the **only** agent that may set OVERALL.
+5. If OVERALL: FAIL, list concrete fixes — distinguish **procedural** (relaunch Tasks with correct plan) vs **content**.
 
 ## Output format (required)
 Mode: verify-subagents · <N> sentences · <C> changed · <M> Tasks · sentence:<Q1 slug> · deep:<Q2 slug> · synth:<Q3 slug>
 
 <!-- CHECKS
-<one line per check — stable names, e.g. sentence_S2_obj3, narrative_group2_logical_arc>
+compliance_orchestrator_plan: PASS|FAIL
+compliance_worker_reports: PASS|FAIL
+sentence_S1: PASS|FAIL|skipped
 ...
+narrative_group1: PASS|FAIL
+math_step0: PASS|FAIL|N/A
 OVERALL: PASS|FAIL
 -->
 

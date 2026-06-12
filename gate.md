@@ -2,11 +2,11 @@
 
 **Read with the Read tool** when [SKILL.md](SKILL.md) steps **3 or 4** run.
 
-**Phase 2 has no gate** — see [phase2-verify-subagents.md](phase2-verify-subagents.md).
+**Phase 2 has no gate** — see [phase2-verify-subagents.md](phase2-verify-subagents.md). Phase comparison: [verification-loop.md](verification-loop.md) (canonical).
 
 **Do not run sentence-level work until the gate for the current step is done.**
 
-Sentence-count thresholds: [SKILL.md](SKILL.md) § Roles and terms (canonical).
+Sentence-count thresholds: [SKILL.md](SKILL.md) § Roles and terms (canonical). Scope overflow (>12): [SKILL.md](SKILL.md) § Scope overflow.
 
 ---
 
@@ -109,9 +109,11 @@ When Q2 → major rewrite:
 
 When any gate yields **SUBAGENTS**, you **must** use subagents. **Never** substitute INLINE because the passage is short, simple, or you believe you can run the 13 checks yourself.
 
-**Forbidden when SUBAGENTS applies:** applying sentence fixes yourself; skipping model AskQuestion; launching zero Tasks.
+**Forbidden when SUBAGENTS applies:** applying sentence fixes yourself; skipping model AskQuestion; launching zero Tasks; **batching multiple sentences into one Task** when N ≤ 10 ([compliance-monitoring.md](compliance-monitoring.md)).
 
 If you edited without subagents when SUBAGENTS was required, stop, report the violation, and re-run the gate before further edits.
+
+**Compliance:** Publish the Task plan before launching Tasks. Workers grade assignment in Step 0; synthesizer grades procedural compliance. See [compliance-monitoring.md](compliance-monitoring.md) § Anti-patterns.
 
 ---
 

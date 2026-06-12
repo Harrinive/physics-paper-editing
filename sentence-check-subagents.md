@@ -9,6 +9,8 @@
 
 Sentence-count thresholds (Phase 1 gates): [SKILL.md](SKILL.md) § Roles and terms.
 
+**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before the 13 objectives — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) → `COMPLIANCE: FAIL`.
+
 ---
 
 ## 1. When this file applies
@@ -21,7 +23,12 @@ Sentence-count thresholds (Phase 1 gates): [SKILL.md](SKILL.md) § Roles and ter
 | ASK USER → proceed anyway | Yes — splittable sentences; note partial coverage |
 | ASK USER → skip | No — inline instead |
 
-Do not re-AskQuestion for *Sentence-level checking* when Q3 was already feasible. Run the sentence-checker AskQuestion (§4) before Phase 1 Tasks unless user already chose a model for **this same quote/draft scope in this chat**, or a macro **section brief** supplied `verifier_profile.sentence` (use that slug — do not re-ask).
+Do not re-AskQuestion for *Sentence-level checking* when Q3 was already feasible. Run the sentence-checker AskQuestion (§4) before Phase 1 Tasks unless:
+
+- user already chose a model for **this same quote/draft scope in this chat**, or
+- macro chunk invocation: `session.md` has `user_confirmed: true` with a Phase 1 sentence slug ([SKILL.md](SKILL.md) § Invoked by section macro · [cross-skill.md](cross-skill.md) § Verifier model profile).
+
+`section-brief.md` or `manifest.json` slugs alone are **not** a valid skip.
 
 ---
 
@@ -48,7 +55,9 @@ If ambiguous, note in the prompt and include the preceding sentence as context.
 
 1. Launch **one Task per assigned sentence** (or per §3.1 batch).
 2. Launch Tasks **in parallel** when practical; `run_in_background: false` — wait before next step.
-3. **M** in the Mode line = number of sentence Tasks launched.
+3. **M** in the Mode line = number of sentence Tasks launched (must equal N in Phase 1 polish, or C in Phase 2).
+
+**Anti-patterns:** See [compliance-monitoring.md](compliance-monitoring.md) § Anti-patterns. Launching one Task for multiple labels when N ≤ 10 is a **compliance violation** — workers will FAIL and synthesizer will block ship.
 
 ### 3.1 Batching (11–12 sentences, or user chose proceed on longer quote)
 
@@ -58,7 +67,10 @@ When the assigned set has **>10** sentences (typically 11–12 under the ≤12 g
 
 ## 4. AskQuestion — sentence checker model (fast tier)
 
-**After** §2–§3 planning and **before** passage summary or Tasks, call **AskQuestion** unless the user already chose a sentence-checker model for **this same quote/draft scope in this chat**, or macro `session.md` has `user_confirmed: true` with a Phase 1 sentence slug.
+**After** §2–§3 planning and **before** passage summary or Tasks, call **AskQuestion** unless:
+
+- user already chose a sentence-checker model for **this same quote/draft scope in this chat**, or
+- macro chunk invocation: `session.md` has `user_confirmed: true` with § Verifier model profile (use `Phase 1 sentence` row, or `Phase 2 sentence` when Phase 1 row omitted — [cross-skill.md](cross-skill.md) § Verifier model profile).
 
 **Hard stop:** do not launch sentence `Task`s until `AskQuestion` returns. Skill recommendations (e.g. fast Composer) are **(Recommended)** options in the form — not silent defaults. Phase 2 uses the three-question *Verifier model profile* instead ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate).
 
@@ -98,10 +110,12 @@ Task(
   subagent_type: "generalPurpose",
   readonly: true,
   model: <sentence-checker slug — fast tier from §4 or Phase 2 profile Q1>,
-  description: "Sentence check: S<k>" | "Phase2 sentence verify: S<k>",
+  description: "Phase1 sentence: S<k>" | "Phase2 sentence verify: S<k>",
   prompt: <template §6>
 )
 ```
+
+**Task description must include the label** (`Phase1 sentence: S2`) — not `sentence verify c11` or `all sentences`.
 
 ---
 
@@ -109,6 +123,9 @@ Task(
 
 ```text
 You are a sentence-level scientific editor for a physics paper.
+
+## Orchestrator task plan (verify in Step 0 — read-only)
+<paste identical block from producer — compliance-monitoring.md § Task plan block>
 
 ## Passage summary (shared)
 <identical block in every Task — from §5>
@@ -118,13 +135,29 @@ You are a sentence-level scientific editor for a physics paper.
 - Section / file: <title and .tex path>
 - Adjacent excerpt (1–3 sentences before/after if helpful): <or omit>
 
+## Step 0 — Assignment compliance (run FIRST)
+
+You monitor the **orchestrator**, not just the prose.
+
+Expected: **exactly ONE** sentence label S<k> in this Task (see `Your assignment` below). Phase 1 polish: your label must appear in `phase1_sentence_tasks`. Phase 2: your label must appear in `phase2_changed_labels`.
+
+If the prompt lists multiple sentences, a range (S1–S3), or "all sentences", or your label is missing from the task plan:
+
+### Assignment compliance
+COMPLIANCE: FAIL
+Role: sentence
+Label: S<k>
+Reason: <one line — e.g. batched assignment; expected one label per Task>
+
+(Do not run specialist checks below.)
+
+Otherwise emit COMPLIANCE: PASS and continue.
+
 ## Your assignment
-Check ONLY the sentence(s) listed below—default: one sentence (§3); if §3.1 batched, list each label separately.
+Check ONLY **one** sentence — label S<k>:
 
 ### Sentence <label>
 <exact LaTeX/text>
-
-(repeat only when §3.1 batched multiple sentences into one Task)
 
 User inline comments: <[bracket comments] or "none">
 
@@ -145,7 +178,14 @@ Respect objective 8 (minimal changes).
 Report when wording needs passage-level judgment: ambiguous "it/this/which", intentional terminology, physics-story vs setup-declaration tradeoff (obj. 7), prose-vs-math relocation (obj. 12), confusion-on-first-read ordering depending on neighbors (obj. 13), or risk of changing technical meaning.
 
 ## Output format
-One block per assigned sentence:
+
+### Assignment compliance
+COMPLIANCE: PASS | FAIL
+Role: sentence
+Label: S<k>
+Reason: <one line>
+
+(Omit specialist section below if COMPLIANCE: FAIL.)
 
 ---
 ### Sentence <label>
