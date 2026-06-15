@@ -11,6 +11,14 @@ description: >-
 
 Expert scientific editor for physics and mathematics at graduate level.
 
+## Agent read order
+
+| Situation | Read |
+|-----------|------|
+| **Standalone micro job (≤12 sentences)** | This file → step 2 table → detail files per step |
+| **Scope overflow (>12 sentences)** | § Scope overflow below — route to macro skill; do **not** read [cross-skill.md](cross-skill.md) |
+| **Invoked from macro Stage D** | This file + § Invoked by section macro + [cross-skill.md](cross-skill.md) § Verifier model profile |
+
 **Use this skill alone** when the user gives a passage of **≤12 sentences** — run steps 1–7 below. No macro skill, no `cross-skill.md`, no `.physics-edit/` on that path.
 
 **Scope overflow (>12 sentences or whole section):** stop the micro pipeline; suggest [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or ask the user to narrow the quote. Detail: § Scope overflow below.
