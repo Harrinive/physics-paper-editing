@@ -6,7 +6,16 @@
 
 **Do not run sentence-level work until the gate for the current step is done.**
 
-Sentence-count thresholds: [SKILL.md](SKILL.md) § Roles and terms (canonical). Scope overflow (>12): [SKILL.md](SKILL.md) § Scope overflow.
+---
+
+## Sentence-count thresholds
+
+| Count | Effect |
+|-------|--------|
+| **1** (or fragment) | Always **INLINE** |
+| **2–10** | Feasible for **SUBAGENTS** — one Task per sentence |
+| **11–12** | Feasible; may batch 2 sentences per Task |
+| **>12** | **Not feasible** — route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or **ASK USER** to narrow |
 
 ---
 

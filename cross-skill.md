@@ -102,7 +102,7 @@ Do not duplicate these tables in SKILL.md — link here or to the canonical file
 | Topic | Canonical file | Section |
 |-------|----------------|---------|
 | Phase 1 vs Phase 2 | [verification-loop.md](verification-loop.md) | Phase comparison |
-| Edit gate · source verify gate | [gate.md](gate.md) | Decision tree |
+| Edit gate · source verify gate | [gate.md](gate.md) | Decision tree · Sentence-count thresholds |
 | Phase 2 workflow · changed sentences | [phase2-verify-subagents.md](phase2-verify-subagents.md) | Full file |
 | Task plan · COMPLIANCE · anti-patterns | [compliance-monitoring.md](compliance-monitoring.md) | Full file |
 | Sentence Task count · batching | [sentence-check-subagents.md](sentence-check-subagents.md) | §3 |

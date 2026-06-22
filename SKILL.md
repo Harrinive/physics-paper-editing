@@ -17,11 +17,20 @@ Expert scientific editor for physics and mathematics at graduate level.
 |-----------|------|
 | **Standalone micro job (≤12 sentences)** | This file → step 2 table → detail files per step |
 | **Scope overflow (>12 sentences)** | § Scope overflow below — route to macro skill; do **not** read [cross-skill.md](cross-skill.md) |
-| **Invoked from macro Stage D** | This file + § Invoked by section macro + [cross-skill.md](cross-skill.md) § Verifier model profile |
+| **Invoked from macro Stage D** | This file + [Invoked by section macro](#invoked-by-section-macro-optional) + [cross-skill.md](cross-skill.md) § Verifier model profile |
 
 **Use this skill alone** when the user gives a passage of **≤12 sentences** — run steps 1–7 below. No macro skill, no `cross-skill.md`, no `.physics-edit/` on that path.
 
-**Scope overflow (>12 sentences or whole section):** stop the micro pipeline; suggest [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or ask the user to narrow the quote. Detail: § Scope overflow below.
+**Scope overflow (>12 sentences or whole section):** stop the micro pipeline; suggest [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or ask the user to narrow the quote. Detail: [Scope overflow](#scope-overflow).
+
+## Invoked by section macro (optional)
+
+Read this section **only** when Stage D passes `chunk_text` + `edit_gate` + `session.md` via [chunk-contract.md](../physics-paper-editing-section/chunk-contract.md). Otherwise ignore.
+
+- Run the same steps 1–7 on `chunk_text` only.
+- **Skip micro edit gate Q2** — use supplied `edit_gate` (`polish` \| `rewrite`).
+- **Verifier models:** inherit from `session.md` when `user_confirmed: true`; else AskQuestion. Handoff rules: [cross-skill.md](cross-skill.md) § Verifier model profile.
+- Set `caller: section-orchestrator` in the Task plan ([compliance-monitoring.md](compliance-monitoring.md)).
 
 ## Purpose
 
@@ -43,7 +52,7 @@ The **producer** (main agent) writes the draft and applies fixes. It **must not*
 | **Output (Agent)** | Synthesizer `OVERALL: PASS`, `.tex` updated, verbatim `<!-- CHECKS ... -->` |
 | **Output (Ask)** | CHECKS block + preview; no `.tex` write until Agent mode |
 
-Passages **>12 sentences** are out of scope — see § Scope overflow.
+Passages **>12 sentences** are out of scope — see [Scope overflow](#scope-overflow).
 
 **Verifier models (standalone):** `AskQuestion` per [phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate (same-chat reuse is the only skip).
 
@@ -53,7 +62,7 @@ Passages **>12 sentences** are out of scope — see § Scope overflow.
 
 Default path when only this skill is attached and the quote is **≤12 sentences**:
 
-1. **Scope** — confirm ≤12 sentences (§ Scope overflow if not).
+1. **Scope** — confirm ≤12 sentences ([Scope overflow](#scope-overflow) if not).
 2. **Read** — step 2 table below (+ detail files for steps 3–7).
 3. **Edit gate** — polish vs major rewrite ([gate.md](gate.md)).
 4. **Phase 1** — if polish; skip if major rewrite.
@@ -71,7 +80,7 @@ When the target has **>12 sentences** or the user asks for a whole `\section{...
 2. Tell the user the passage exceeds micro scope.
 3. Offer: attach [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md), **or** narrow to ≤12 sentences.
 
-That is the **only** macro awareness required on a standalone micro job. Do not read [cross-skill.md](cross-skill.md) unless you are routing overflow or were invoked from macro Stage D (§ Invoked by section macro).
+That is the **only** macro awareness required on a standalone micro job. Do not read [cross-skill.md](cross-skill.md) unless you are routing overflow or were invoked from macro Stage D ([Invoked by section macro](#invoked-by-section-macro-optional)).
 
 ---
 
@@ -93,14 +102,7 @@ That is the **only** macro awareness required on a standalone micro job. Do not 
 | **Changed sentences** | Phase 2: labels **S*k*** whose text differs from the prior baseline ([phase2-verify-subagents.md](phase2-verify-subagents.md)) |
 | **CHECKS block** | HTML comment with per-check results and `OVERALL: PASS\|FAIL` — Phase 2 only; synthesizer is sole authority |
 
-**Sentence-count thresholds** (Phase 1 gates only — canonical):
-
-| Count | Effect |
-|-------|--------|
-| **1** (or fragment) | Always **INLINE** |
-| **2–10** | Feasible for **SUBAGENTS** — one Task per sentence |
-| **11–12** | Feasible; may batch 2 sentences per Task |
-| **>12** | **Not feasible** — route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or **ASK USER** to narrow |
+**Sentence-count thresholds:** see [gate.md](gate.md) § Sentence-count thresholds. **Scope:** ≤12 sentences micro; >12 route to macro.
 
 ### Agent tiers
 
@@ -269,17 +271,6 @@ One focused question if guidance is ambiguous; do not ship until resolved.
 | [sentence-checks.md](sentence-checks.md) | 13 sentence objectives |
 | [narrative-checks.md](narrative-checks.md) | Passage-level narrative groups |
 | [math-checks.md](math-checks.md) | Math and logic checks |
-
-## Invoked by section macro (optional)
-
-Read this section **only** when Stage D passes `chunk_text` + `edit_gate` + `session.md` via [chunk-contract.md](../physics-paper-editing-section/chunk-contract.md). Otherwise ignore.
-
-- Run the same steps 1–7 on `chunk_text` only.
-- **Skip micro edit gate Q2** — use supplied `edit_gate` (`polish` \| `rewrite`).
-- **Verifier models:** inherit from `session.md` when `user_confirmed: true`; else AskQuestion. Handoff rules: [cross-skill.md](cross-skill.md) § Verifier model profile.
-- Set `caller: section-orchestrator` in the Task plan ([compliance-monitoring.md](compliance-monitoring.md)).
-
----
 
 ## Project-specific context (optional)
 
