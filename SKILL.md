@@ -9,7 +9,7 @@ description: >-
 
 # Physics Paper Editing (micro)
 
-Expert scientific editor for physics and mathematics at graduate level.
+Expert scientific editor for physics and mathematics at graduate level. **Standalone** for passages **≤12 sentences**; routes longer passages to the macro skill.
 
 ## Agent read order
 
@@ -271,6 +271,13 @@ One focused question if guidance is ambiguous; do not ship until resolved.
 | [sentence-checks.md](sentence-checks.md) | 13 sentence objectives |
 | [narrative-checks.md](narrative-checks.md) | Passage-level narrative groups |
 | [math-checks.md](math-checks.md) | Math and logic checks |
+
+## Related skills
+
+| Skill | When |
+|-------|------|
+| **physics-paper-editing-section** | Passage **>12 sentences** or whole `\section{...}` |
+| **sc-qubit-sim** | Scientific prose in simulation docs (`conventions/scientific-prose.md`) |
 
 ## Project-specific context (optional)
 
