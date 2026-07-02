@@ -46,9 +46,11 @@ Use your platform's skill-creation workflow first, then port the workflow logic 
 
 1. Read `SKILL.md` and linked detail files to understand the workflow.
 2. Invoke your platform's skill-creation guide (table above) — do not hand-roll folder layout.
-3. Map Cursor-only constructs: `AskQuestion` → interactive prompts; `Task` subagents → your platform's subagent/delegation model; `.physics-edit/` disk state paths → equivalent session storage.
-4. Keep sibling install layout if using both micro + macro skills (`../physics-paper-editing/` links).
-5. Test on a short LaTeX passage before relying on the full verifier pipeline.
+3. Map Cursor-only constructs: `AskQuestion` → user-choice hard stops; `Task` → delegation API + per-worker `model` when supported; linked checklists → read/preload before gates (`SKILL.md` “Read with the Read tool”).
+4. **Verifier model profile** — preserve the gate and three roles in `cross-skill.md` / `phase2-verify-subagents.md` (fast sentence · deep narrative+math · deep synthesizer; no verifier until user confirms slugs). Per-subagent models are platform-specific even within one vendor — e.g. Cursor `Task(model=…)`; Claude Code `Agent` frontmatter or invocation `model`; Codex `~/.codex/agents/*.toml` presets; Copilot `.agent.md` / `task(model=…)` (may be plan-guarded). If runtime per-invocation pick isn't supported, use named agent presets instead of AskQuestion forms. Cursor SDK/automation: separate agent runs, one model each — no `Task` tool.
+5. **Compliance chain** — Task plan → worker Step 0 COMPLIANCE → synthesizer-only `OVERALL` (`compliance-monitoring.md`; writer ≠ grader).
+6. Keep sibling install layout if using both micro + macro skills (`../physics-paper-editing/` links).
+7. Test on a short LaTeX passage before relying on the full verifier pipeline.
 
 ## License
 
