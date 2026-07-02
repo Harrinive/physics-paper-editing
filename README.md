@@ -24,8 +24,6 @@ git clone https://github.com/Harrinive/physics-paper-editing-section.git ~/.curs
 
 Read **`SKILL.md`** first. Linked detail files (`gate.md`, `phase2-verify-subagents.md`, etc.) hold the full rules.
 
----
-
 ## Not Cursor? Adapt this skill
 
 **This skill was made for Cursor Agent.** It references Cursor-specific tools (`AskQuestion`, `Task` subagents, compliance monitoring). Do not run it verbatim on other platforms — **adapt it** to your agent's tool surface and install layout.
