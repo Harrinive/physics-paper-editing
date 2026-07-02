@@ -44,12 +44,27 @@ Use your platform's skill-creation workflow first, then port the workflow logic 
 
 ### Adaptation checklist
 
+**Porter read order:** [SKILL.md](SKILL.md) → platform scaffold (item 2) → [cross-skill.md](cross-skill.md) → [compliance-monitoring.md](compliance-monitoring.md). If using macro too: sibling [physics-paper-editing-section/SKILL.md](../physics-paper-editing-section/SKILL.md) plus `disk-layout.md` / `session.md`.
+
 1. Read `SKILL.md` and linked detail files to understand the workflow.
 2. Invoke your platform's skill-creation guide (table above) — do not hand-roll folder layout.
-3. Map Cursor-only constructs: `AskQuestion` → user-choice hard stops; `Task` → delegation API + per-worker `model` when supported; linked checklists → read/preload before gates (`SKILL.md` “Read with the Read tool”).
-4. **Verifier model profile** — preserve the gate and three roles in `cross-skill.md` / `phase2-verify-subagents.md` (fast sentence · deep narrative+math · deep synthesizer; no verifier until user confirms slugs). Per-subagent models are platform-specific even within one vendor — e.g. Cursor `Task(model=…)`; Claude Code `Agent` frontmatter or invocation `model`; Codex `~/.codex/agents/*.toml` presets; Copilot `.agent.md` / `task(model=…)` (may be plan-guarded). If runtime per-invocation pick isn't supported, use named agent presets instead of AskQuestion forms. Cursor SDK/automation: separate agent runs, one model each — no `Task` tool.
-5. **Compliance chain** — Task plan → worker Step 0 COMPLIANCE → synthesizer-only `OVERALL` (`compliance-monitoring.md`; writer ≠ grader).
-6. Keep sibling install layout if using both micro + macro skills (`../physics-paper-editing/` links).
+3. **Map Cursor-only constructs** to your platform:
+   - `AskQuestion` → user-choice hard stops (edit gate, verifier models).
+   - `Task` → delegation API; pass per-worker `model` when supported.
+   - Linked checklists → read/preload before gates ([SKILL.md](SKILL.md) “Read with the Read tool”).
+4. **Verifier model profile** — preserve the gate and three verifier roles ([cross-skill.md](cross-skill.md) · [phase2-verify-subagents.md](phase2-verify-subagents.md)):
+   - **Fast** — sentence checker (Phase 1 SUBAGENTS + Phase 2 changed sentences).
+   - **Deep** — narrative + math workers (one model, two roles).
+   - **Deep synthesizer** — merges worker reports; **sole** grader of `OVERALL`.
+   - **Gate:** no verifier Tasks until the user confirms model slugs (or valid same-scope reuse).
+   - **Per-platform model assignment** (even within one vendor):
+     - Cursor: `Task(model=…)` · SDK/automation: separate agent runs, one model each — no `Task` tool.
+     - Claude Code: `Agent` frontmatter or invocation `model`.
+     - Codex: `~/.codex/agents/*.toml` presets.
+     - Copilot: `.agent.md` / `task(model=…)` (may be plan-guarded).
+   - If runtime per-invocation pick isn't supported, use **named agent presets** instead of AskQuestion forms.
+5. **Compliance chain** — orchestrator publishes Task plan → each worker Step 0 COMPLIANCE → synthesizer-only `OVERALL` ([compliance-monitoring.md](compliance-monitoring.md); **writer ≠ grader**).
+6. Keep sibling install layout if using both micro + macro skills (`../physics-paper-editing-section/` links).
 7. Test on a short LaTeX passage before relying on the full verifier pipeline.
 
 ## License
