@@ -1,31 +1,24 @@
 # physics-paper-editing
 
-Agent Skill for editing LaTeX physics and mathematics prose at graduate level.
-
-**Scope:** one passage of **≤12 sentences**. Passages longer than 12 sentences should use the companion [physics-paper-editing-section](https://github.com/Harrinive/physics-paper-editing-section) skill instead.
+Cursor skill for graduate-level LaTeX editing in physics and mathematics papers. Its checks and workflows reflect editing conventions developed through work with Prof. Jens Koch.
 
 ## What it does
 
-Runs a **two-phase verification pipeline** on LaTeX prose:
+This skill **decouples editing from verification**: the main agent rewrites your LaTeX passage and applies fixes; separate subagents check the draft against the style guide and return a pass/fail verdict. That split keeps quality review independent of the draft. On a failing verdict, the producer revises and verification runs again—iteration continues until the draft passes.
 
-1. **Phase 1 (source verify)** — audit the user's existing prose before editing (polish path only).
-2. **Phase 2 (output verify)** — independent verifier subagents grade the producer's draft before shipping.
+**Scope:** one short passage of **≤12 sentences**. For longer material, use the companion **macro skill** [physics-paper-editing-section](https://github.com/Harrinive/physics-paper-editing-section).
 
-The producer writes the draft and applies fixes; it does not grade its own output.
+## Install on [Cursor](https://cursor.com)
 
-## Install (Cursor)
-
+Clone into your skills directory (see the [Cursor Skills docs](https://cursor.com/docs/context/skills) for more details) with the following command:
 ```bash
 git clone https://github.com/Harrinive/physics-paper-editing.git ~/.cursor/skills/physics-paper-editing
 ```
 
 For whole-section edits, also install the macro skill as a **sibling folder**:
-
 ```bash
 git clone https://github.com/Harrinive/physics-paper-editing-section.git ~/.cursor/skills/physics-paper-editing-section
 ```
-
-Both skills use relative cross-links (`../physics-paper-editing/`, `../physics-paper-editing-section/`). They resolve only when installed as siblings under the same parent directory.
 
 ## Entry point
 
@@ -35,7 +28,7 @@ Read **`SKILL.md`** first. Linked detail files (`gate.md`, `phase2-verify-subage
 
 ## Not Cursor? Adapt this skill
 
-**This skill was authored for Cursor Agent.** It references Cursor-specific tools (`AskQuestion`, `Task` subagents, compliance monitoring). Do not run it verbatim on other platforms — **adapt it** to your agent's tool surface and install layout.
+**This skill was made for Cursor Agent.** It references Cursor-specific tools (`AskQuestion`, `Task` subagents, compliance monitoring). Do not run it verbatim on other platforms — **adapt it** to your agent's tool surface and install layout.
 
 ### How to adapt
 
@@ -45,8 +38,8 @@ Use your platform's skill-creation workflow first, then port the workflow logic 
 |----------|------------------------|-------------------|
 | **Cursor** | `~/.cursor/skills/<name>/` | [Cursor Skills docs](https://cursor.com/docs/context/skills) — or run `/create-skill` in Agent chat |
 | **Claude Code** | `~/.claude/skills/<name>/` or `.claude/skills/<name>/` | [Claude Code skills docs](https://code.claude.com/docs/en/skills) |
-| **OpenAI Codex** | `~/.codex/skills/<name>/` or `~/.agents/skills/<name>/` | [Codex Agent Skills](https://developers.openai.com/codex/skills) — run **`$skill-creator`** in Codex to scaffold the port |
-| **GitHub Copilot** | `~/.copilot/skills/<name>/` or `.github/skills/<name>/` | [Copilot: add skills](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills) |
+| **OpenAI Codex** | `~/.agents/skills/<name>/` or `.agents/skills/<name>/` (`~/.codex/skills/` legacy) | [Codex Agent Skills](https://developers.openai.com/codex/skills) — run **`$skill-creator`** in Codex to scaffold the port |
+| **GitHub Copilot** | `~/.copilot/skills/<name>/` or `~/.agents/skills/<name>/`; project: `.github/skills/<name>/` or `.agents/skills/<name>/` | [Copilot: add skills](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills) |
 | **Any agent (format reference)** | varies | [Agent Skills open spec](https://agentskills.io/specification) — shared `SKILL.md` frontmatter + body structure |
 
 ### Adaptation checklist
