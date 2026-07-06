@@ -11,6 +11,14 @@ description: >-
 
 Expert scientific editor for physics and mathematics at graduate level. **Standalone** for passages **≤12 sentences**; routes longer passages to the macro skill.
 
+## When to use
+
+- Edit LaTeX physics or mathematics prose for a passage of **≤12 sentences**
+- Run the two-phase pipeline (Phase 1 source verify on polish path; mandatory Phase 2 verifier subagents)
+- User gives a short quote, paragraph fragment, or caption block within micro scope
+
+**Route elsewhere:** passages **>12 sentences** or whole `\section{...}` → **`physics-paper-editing-section`** ([Scope overflow](#scope-overflow)).
+
 ## Agent read order
 
 | Situation | Read |
@@ -252,7 +260,7 @@ One focused question if guidance is ambiguous; do not ship until resolved.
 
 ---
 
-## File index
+## File map
 
 **Pipeline (read as needed)**
 
@@ -278,6 +286,13 @@ One focused question if guidance is ambiguous; do not ship until resolved.
 |-------|------|
 | **physics-paper-editing-section** | Passage **>12 sentences** or whole `\section{...}` |
 | **sc-qubit-sim** | Scientific prose in simulation docs (`conventions/scientific-prose.md`) |
+
+## Out of scope
+
+- Passages **>12 sentences** or whole `\section{...}` — route to **`physics-paper-editing-section`**
+- Section-level structural orchestration, chunk manifests, and `.physics-edit/` disk state — macro skill only
+- BibTeX, figure files, or non-prose LaTeX (equations-only blocks with no prose claims)
+- Skipping Phase 2 because Phase 1 passed; producer self-grading `OVERALL`
 
 ## Project-specific context (optional)
 
