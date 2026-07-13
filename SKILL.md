@@ -31,6 +31,8 @@ Expert scientific editor for physics and mathematics at graduate level. **Standa
 
 **Scope overflow (>12 sentences or whole section):** stop the micro pipeline; suggest [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or ask the user to narrow the quote. Detail: [Scope overflow](#scope-overflow).
 
+**First reply when this skill applies:** confirm passage is ≤12 sentences (or route to macro), target `.tex` file, and whether the job is polish vs major rewrite.
+
 ## Invoked by section macro (optional)
 
 Read this section **only** when Stage D passes `chunk_text` + `edit_gate` + `session.md` via [chunk-contract.md](../physics-paper-editing-section/chunk-contract.md). Otherwise ignore.
