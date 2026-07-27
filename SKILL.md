@@ -168,7 +168,7 @@ Complete steps in order.
 [ ] 4. Phase 1 source verify — polish only; skip on major rewrite ([verification-loop.md](verification-loop.md))
       [ ] 4a. Label S1…SN on source
       [ ] 4b. Emit Task plan (phase1_sentence_tasks = N labels if polish, N≥2)
-      [ ] 4c. Launch **N** Phase 1 sentence Tasks (one per label) — never batch ≤10
+      [ ] 4c. If **SUBAGENTS:** launch one Task per label (never batch ≤10); if **INLINE:** main agent runs sentence checks inline (no Tasks)
       [ ] 4d. Main agent: narrative + math on source ([verification-loop.md](verification-loop.md))
 [ ] 5. Produce draft — compose (major rewrite) or apply Phase 1 audit (polish)
 [ ] 6. Phase 2 output verify — mandatory verifier subagents ([phase2-verify-subagents.md](phase2-verify-subagents.md))

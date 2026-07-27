@@ -44,7 +44,7 @@ How many sentences in the target passage?
 | Macro Stage E boundary fix | **Micro** on ≤12-sentence span |
 | Q3 not feasible in micro gate | [gate.md](gate.md) AskQuestion → macro, inline, or narrow |
 
-**Micro gate canonical:** sentence-count table in [SKILL.md](SKILL.md) § Roles and terms.
+**Micro gate canonical:** sentence-count table in [gate.md](gate.md) § Sentence-count thresholds.
 
 ---
 

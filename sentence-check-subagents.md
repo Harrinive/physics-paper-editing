@@ -7,7 +7,7 @@
 | **Phase 1** | All sentences ([gate.md](gate.md) → SUBAGENTS) | Main agent after sentence merge ([verification-loop.md](verification-loop.md)) |
 | **Phase 2** | **Changed sentences only** ([phase2-verify-subagents.md](phase2-verify-subagents.md)) | Verifier Tasks on full passage; synthesizer decides OVERALL |
 
-Sentence-count thresholds (Phase 1 gates): [SKILL.md](SKILL.md) § Roles and terms.
+Sentence-count thresholds (Phase 1 gates): [gate.md](gate.md) § Sentence-count thresholds.
 
 **Compliance:** Every sentence Task runs **Step 0 assignment compliance** before the 13 objectives — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) → `COMPLIANCE: FAIL`.
 
