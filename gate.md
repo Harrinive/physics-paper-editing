@@ -1,6 +1,6 @@
 # Gate routing (Phase 1 only)
 
-**Read with the Read tool** when [SKILL.md](SKILL.md) steps **3 or 4** run.
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** when [SKILL.md](SKILL.md) steps **3 or 4** run.
 
 **Phase 2 has no gate** — see [phase2-verify-subagents.md](phase2-verify-subagents.md). Phase comparison: [verification-loop.md](verification-loop.md) (canonical).
 

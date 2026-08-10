@@ -1,6 +1,6 @@
 # Compliance monitoring (orchestrator ↔ workers ↔ synthesizer)
 
-**Read with the Read tool** before launching any verifier `Task` (Phase 1 or Phase 2) or grading a chunk PASS.
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before launching any verifier `Task` (Phase 1 or Phase 2) or grading a chunk PASS.
 
 Applies to **standalone micro** and **macro Stage D** chunk agents. **Writer ≠ grader:** producer/orchestrator never sets `OVERALL`; synthesizer only. **Orchestrator ≠ self-auditor:** section orchestrator does not launch micro verifier Tasks ([cross-skill.md](cross-skill.md) — macro/maintainer context only).
 

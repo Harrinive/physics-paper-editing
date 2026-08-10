@@ -1,5 +1,7 @@
 # Sentence-level checks
 
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. Open when [SKILL.md](SKILL.md) step 2 or sentence verification runs.
+
 Apply to standalone sentences and local passages. **Run every objective below in order.** Name each objective, state how it applies, and report issues. If one does not apply, say **not applicable** and why.
 
 **Who runs this file:**

@@ -1,5 +1,7 @@
 # Math and logic checks
 
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. Open when [SKILL.md](SKILL.md) step 2 or math verification runs.
+
 Use whenever the text has mathematical objects, equations, or logical arguments — any length. Consider the snippet plus surrounding and earlier paper text.
 
 **Who runs this file:**

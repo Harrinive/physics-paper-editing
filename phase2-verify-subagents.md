@@ -1,6 +1,6 @@
 # Phase 2 — output verify
 
-**Read with the Read tool** before launching Phase 2 ([SKILL.md](SKILL.md) step 6).
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before launching Phase 2 ([SKILL.md](SKILL.md) step 6).
 
 Required for **every** micro edit — standalone or macro chunk. **Canonical for:** model selection gate · changed-sentence scope · Phase 2 workflow. Macro verifier inheritance: [cross-skill.md](cross-skill.md) § Verifier model profile (chunk agents only).
 

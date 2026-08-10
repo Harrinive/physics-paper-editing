@@ -1,5 +1,7 @@
 # Narrative checks
 
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. Open when [SKILL.md](SKILL.md) step 2 or narrative verification runs.
+
 Use for anything longer than one standalone sentence: paragraph, subsection, section, or full paper.
 
 **Who runs this file:**

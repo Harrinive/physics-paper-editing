@@ -262,6 +262,18 @@ One focused question if guidance is ambiguous; do not ship until resolved.
 
 ---
 
+## Project-specific context (optional)
+
+When the manuscript is the Ancilla Optimization / QEC error-budgeting paper:
+
+- **Topic:** decomposing logical infidelity into error-mechanism contributions for realistic QEC devices.
+- **Typical skeleton:** Introduction → Background → full QEC evolution → logical evolution graph → Markov chain → error-budget analysis → example.
+- **Main sources:** `main.tex`, `Sections/*.tex` (read only what the user points to or what surrounds the edit).
+
+For other papers, use only the generic workflow above.
+
+---
+
 ## File map
 
 **Pipeline (read as needed)**
@@ -295,13 +307,3 @@ One focused question if guidance is ambiguous; do not ship until resolved.
 - Section-level structural orchestration, chunk manifests, and `.physics-edit/` disk state — macro skill only
 - BibTeX, figure files, or non-prose LaTeX (equations-only blocks with no prose claims)
 - Skipping Phase 2 because Phase 1 passed; producer self-grading `OVERALL`
-
-## Project-specific context (optional)
-
-When the manuscript is the Ancilla Optimization / QEC error-budgeting paper:
-
-- **Topic:** decomposing logical infidelity into error-mechanism contributions for realistic QEC devices.
-- **Typical skeleton:** Introduction → Background → full QEC evolution → logical evolution graph → Markov chain → error-budget analysis → example.
-- **Main sources:** `main.tex`, `Sections/*.tex` (read only what the user points to or what surrounds the edit).
-
-For other papers, use only the generic workflow above.

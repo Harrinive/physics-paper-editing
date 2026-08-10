@@ -1,6 +1,6 @@
 # Verification loops
 
-**Read with the Read tool** when [SKILL.md](SKILL.md) steps **4 or 6** run.
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** when [SKILL.md](SKILL.md) steps **4 or 6** run.
 
 **Canonical phase comparison** (this file). Execution: [gate.md](gate.md) (Phase 1) · [phase2-verify-subagents.md](phase2-verify-subagents.md) (Phase 2).
 

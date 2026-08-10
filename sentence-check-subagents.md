@@ -1,6 +1,6 @@
 # Sentence checks via Task subagents
 
-**Read with the Read tool** before splitting the passage or launching sentence Tasks.
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before splitting the passage or launching sentence Tasks.
 
 | Phase | Sentence scope | Narrative + math |
 |-------|----------------|------------------|
