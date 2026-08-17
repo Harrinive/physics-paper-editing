@@ -1,6 +1,6 @@
 # User communication (plain language)
 
-**Read with the Read tool** on **every turn** when editing for a user — micro ([SKILL.md](SKILL.md)) or macro ([physics-paper-editing-section/SKILL.md](../physics-paper-editing-section/SKILL.md)).
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. Read on **every turn** when editing for a user — micro ([SKILL.md](SKILL.md)) or macro ([physics-paper-editing-section/SKILL.md](../physics-paper-editing-section/SKILL.md)).
 
 **Audience split:** Skill files, Task prompts, disk state (`session.md`, `manifest.json`), and the **Audit log** block use internal pipeline terms. The **main narrative** of every user response uses plain language from this file.
 
