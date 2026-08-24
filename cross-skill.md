@@ -1,5 +1,7 @@
 # Micro ↔ macro — shared rules
 
+**For agents:** Start with the skill that matches scope — micro [SKILL.md](SKILL.md) § Agent read order for ≤12 sentences; macro [physics-paper-editing-section/SKILL.md](../physics-paper-editing-section/SKILL.md) § Agent read order for whole sections. Read this file only when routing, resuming, or handing off verifier models between macro and micro.
+
 **Audience:** macro orchestrator · micro agents **invoked from macro Stage D** · skill maintainers (canonical index).
 
 **Do not read this file** for a standalone short-passage edit (≤12 sentences, only micro skill attached). That path is fully specified in [SKILL.md](SKILL.md) and the pipeline detail files — no macro context required.
