@@ -29,7 +29,7 @@ How many sentences in the target passage?
 │
 ├─ ≤12 ──► micro skill (this repo: physics-paper-editing)
 │           • Run full steps 1–7 in micro SKILL.md
-│           • AskQuestion for verifier models (unless valid skip — § Verifier model profile)
+│           • One editing intake for job, pace, and verifier models
 │           • No macro required
 │
 └─ >12 or whole section ──► macro skill (physics-paper-editing-section)
@@ -44,7 +44,7 @@ How many sentences in the target passage?
 | User asks to edit a whole `\section{...}` | **Macro** |
 | Macro Stage D chunk | **Micro** on that chunk's `chunk_text` only |
 | Macro Stage E boundary fix | **Micro** on ≤12-sentence span |
-| Q3 not feasible in micro gate | [gate.md](gate.md) AskQuestion → macro, inline, or narrow |
+| Full-pace sentence split not feasible | [gate.md](gate.md) AskQuestion → macro, inline, or narrow |
 
 **Micro gate canonical:** sentence-count table in [gate.md](gate.md) § Sentence-count thresholds.
 
@@ -57,7 +57,8 @@ How many sentences in the target passage?
 | Pipeline unit | Passage (≤12 sentences) | Section → chunks |
 | Main agent role | **Producer** — authors chunk prose | **Section orchestrator** — structure only |
 | Verification phases | **Phase 1** (polish) · **Phase 2** (always) | Phase 1/2 run **inside Stage D** per chunk |
-| Phase 1 skip | Edit gate Q2 → major rewrite | `edit_gate: rewrite` or `job_mode: rewrite` (frozen Stage A) |
+| Phase 1 skip | `edit_gate: rewrite` | `edit_gate: rewrite` or `job_mode: rewrite` |
+| Pace | `fast` INLINE Phase 1; `full` Task Phase 1 | Frozen in Stage A and passed to every chunk |
 | Grades `OVERALL` | Verifier **synthesizer** only | Same — per chunk; orchestrator never grades |
 | Section-scale review | N/A | Stages **B** and **E** (`Scope: section`) |
 | Disk state | None (optional) | `.physics-edit/<slug>/` — [disk-layout.md](../physics-paper-editing-section/disk-layout.md) |
@@ -71,29 +72,32 @@ How many sentences in the target passage?
 
 ### Standalone micro (no macro)
 
-1. **Phase 1 SUBAGENTS** — `AskQuestion` *Sentence checker model* before sentence Tasks ([sentence-check-subagents.md](sentence-check-subagents.md) §4).
-2. **Phase 2** — `AskQuestion` *Verifier model profile* (three questions) before any verifier Task ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate).
-3. **Valid skip (same chat):** user already chose models for **this draft scope** — reuse slugs on FAIL→fix loops; do not re-ask.
+1. Confirm job, pace, and all three verifier models in one editing intake.
+2. Reuse the profile for Phase 1 full-pace sentence Tasks and all Phase 2 Tasks.
+3. **Valid skip:** user already chose the same setup for this draft scope.
 
 Macro paths below **do not apply** unless a section edit is in progress.
 
 ### Macro (section edit)
 
-1. **Stage A** — one `AskQuestion` (*Verifier model profile*); persist slugs in `session.md`, `section-brief.md`, `manifest.json`.
+1. **Stage A** — one `AskQuestion` (*Editing setup*) for job, pace, and model profile; persist all values in `session.md`, `section-brief.md`, `manifest.json`.
 2. Set **`user_confirmed: true`** only after AskQuestion returns — never from brief/manifest alone.
 3. **Stages B, D, E** — inherit slugs when `user_confirmed: true`; document `Verifier profile: inherited from session.md (Stage A confirmed)`.
 4. **Per chunk (Stage D)** — no re-ask when confirmed; chunk agent uses session table:
 
 | Session row | Used for |
 |-------------|----------|
-| Phase 1 sentence | Phase 1 SUBAGENTS (polish); may equal Phase 2 sentence |
+| Phase 1 sentence | Full-pace polish sentence Tasks; may equal Phase 2 sentence |
 | Phase 2 sentence | Phase 2 changed-sentence Tasks; **default for Phase 1** when Phase 1 row omitted |
 | Phase 2 deep | Narrative + math (macro Stages B/E and micro Phase 2) |
 | Phase 2 synth | Synthesizer only — never fast tier |
 
-**Invalid skips:** `manifest.json` / `section-brief.md` slugs without `session.md` `user_confirmed: true`; skill "(Recommended)" labels; Phase 1 skipped does **not** waive Phase 2 AskQuestion on first iteration (standalone micro).
+**Invalid skips:** `manifest.json` / `section-brief.md` slugs without
+`session.md` `user_confirmed: true`; skill "(Recommended)" labels; Phase 1
+being skipped does not waive the single intake or Phase 2.
 
-**Hard stop:** no verifier `Task` until slugs are resolved ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate).
+**Hard stop:** no editing Task until the single intake resolves slugs
+([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model profile gate).
 
 ---
 
@@ -122,7 +126,7 @@ Do not duplicate these tables in SKILL.md — link here or to the canonical file
 |-----------|------|
 | **Writer ≠ grader** | Producer / chunk agent never sets `OVERALL`; synthesizer only ([phase2-verify-subagents.md](phase2-verify-subagents.md)) |
 | **Orchestrator ≠ self-auditor** | Section orchestrator does not launch micro verifier Tasks or certify task counts; workers Step 0 + synthesizer procedural merge ([compliance-monitoring.md](compliance-monitoring.md)) |
-| **User speed constraints** | Never reduce one-sentence-per-Task count or skip synthesizer |
+| **Pace** | Changes Phase 1 runner only; never reduces Phase 2 or skips synthesizer. (Macro chunks always pass `caller: section-orchestrator`, so this holds exactly — the standalone-micro fast-polish exception in [fast-polish.md](fast-polish.md) never applies to a chunk.) |
 
 ---
 
@@ -132,7 +136,7 @@ When resuming a section edit (new chat, "continue", context compaction):
 
 1. Read `.physics-edit/<slug>/`**session.md`** first.
 2. Read `manifest.json` + `section-brief.md`.
-3. Honor **`job_mode`** / per-chunk **`edit_gate`** — do **not** re-run micro edit gate Q2.
+3. Honor `job_mode`, `pace`, and per-chunk `edit_gate`; do not re-ask.
 4. Honor **User special requests** (standing + `deferred_edits`).
 5. **`user_confirmed: true`** required before verifier Tasks — else AskQuestion and END TURN if awaiting answer.
 6. Execute **Next action** only; rewrite `session.md` before END TURN.

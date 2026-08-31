@@ -4,6 +4,8 @@
 
 Use whenever the text has mathematical objects, equations, or logical arguments — any length. Consider the snippet plus surrounding and earlier paper text.
 
+**Fast polish, standalone micro** (`edit_gate: polish` + `pace: fast` + `caller: micro`): this Task is skipped entirely when the quote and draft have no equations ([fast-polish.md](fast-polish.md) § 1). When it does run, narrow the checks below to what **the edit** changed relative to the user's source, do not search the rest of the manuscript, and report `PACKET_GAP` instead of chasing missing context — see [fast-polish.md](fast-polish.md) § 2–3. Full pace, rewrite, and macro chunks always run the checks below unchanged, against the full manuscript.
+
 **Who runs this file:**
 
 | Phase | Runner | Scope |
@@ -12,6 +14,32 @@ Use whenever the text has mathematical objects, equations, or logical arguments 
 | **Phase 2** | Math **verifier** Task — producer **never** inline ([phase2-verify-subagents.md](phase2-verify-subagents.md)) | **Always** full passage |
 
 **Run Step 0 first, then the checks for each statement's type. Name every check; state how it applies and whether it surfaces an issue. If N/A: not applicable, and why.**
+
+---
+
+## Severity contract
+
+Every finding is `BLOCKER` or `SUGGEST`. Only these closed classes may be a
+BLOCKER:
+
+1. **Invalid or inconsistent mathematics** — an equation, derivation,
+   quantifier, domain, implication, or convention is false or internally
+   inconsistent under the supplied assumptions.
+2. **Undefined essential object** — a symbol, operator, domain, map, or
+   assumption required to interpret or evaluate the statement is unavailable
+   in the supplied manuscript context.
+3. **Formula–prose mismatch** — natural language and formal statement encode
+   materially different assertions.
+4. **Unsupported logical strength** — necessity, sufficiency, equivalence,
+   uniqueness, generality, or “without loss of generality” is stronger than the
+   supplied proof, theorem, citation, or evidence.
+5. **Incorrect import** — a cited result is misstated or its hypotheses do not
+   hold in the present setting.
+
+Unverified-but-plausible imports, optional derivation detail, motivation,
+presentation order, notation preference, and possible strengthening are
+SUGGEST unless they instantiate a class above. SUGGESTS do not fail the
+passage. When unsure, use SUGGEST and identify the missing evidence.
 
 ---
 

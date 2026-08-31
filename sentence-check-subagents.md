@@ -4,7 +4,8 @@
 
 | Phase | Sentence scope | Narrative + math |
 |-------|----------------|------------------|
-| **Phase 1** | All sentences ([gate.md](gate.md) → SUBAGENTS) | Main agent after sentence merge ([verification-loop.md](verification-loop.md)) |
+| **Phase 1 full pace** | All sentences ([gate.md](gate.md) → SUBAGENTS) | Main agent after sentence merge ([verification-loop.md](verification-loop.md)) |
+| **Phase 1 fast pace** | No Tasks; producer checks all sentences INLINE | Main agent |
 | **Phase 2** | **Changed sentences only** ([phase2-verify-subagents.md](phase2-verify-subagents.md)) | Verifier Tasks on full passage; synthesizer decides OVERALL |
 
 Sentence-count thresholds (Phase 1 gates): [gate.md](gate.md) § Sentence-count thresholds.
@@ -23,22 +24,22 @@ Sentence-count thresholds (Phase 1 gates): [gate.md](gate.md) § Sentence-count 
 | ASK USER → proceed anyway | Yes — splittable sentences; note partial coverage |
 | ASK USER → skip | No — inline instead |
 
-Do not re-AskQuestion for *Sentence-level checking* when Q3 was already feasible. Run the sentence-checker AskQuestion (§4) before Phase 1 Tasks unless:
-
-- user already chose a model for **this same quote/draft scope in this chat**, or
-- macro chunk invocation: `session.md` has `user_confirmed: true` with a Phase 1 sentence slug ([SKILL.md](SKILL.md) § Invoked by section macro · [cross-skill.md](cross-skill.md) § Verifier model profile).
-
-`section-brief.md` or `manifest.json` slugs alone are **not** a valid skip.
+Model choice comes from the single editing intake (§4). A confirmed section
+`session.md` may supply it; `section-brief.md` or `manifest.json` alone may not.
 
 ---
 
 ## 2. Split into numbered sentences
 
 1. Strip `[square-bracket user comments]` from the working copy; keep as editing instructions.
-2. Split on sentence boundaries; **do not break** inside `\(...\)`, `$...$`, `\begin{equation}...\end{equation}`, `\cite{...}`, `\ref{...}`, etc.
+2. Split mechanically at terminal `.`, `?`, or `!` followed by whitespace or
+   end of text. Do not split at a decimal, abbreviation, initials, ellipsis, or
+   inside `\(...\)`, `$...$`, `\begin{equation}...\end{equation}`,
+   `\cite{...}`, `\ref{...}`, braces, or brackets.
 3. Label **S1, S2, …** for assignment.
 
-If ambiguous, note in the prompt and include the preceding sentence as context.
+If a boundary is genuinely ambiguous, keep the span together, record the
+decision once in the Task plan, and use the same labels in every phase.
 
 **Phase 2:** after labeling, identify changed labels per [phase2-verify-subagents.md](phase2-verify-subagents.md) § Changed sentences. Only changed labels get Tasks.
 
@@ -50,12 +51,14 @@ If ambiguous, note in the prompt and include the preceding sentence as context.
 
 | Phase | Which sentences get Tasks |
 |-------|---------------------------|
-| Phase 1 | All labels S1…Sn |
+| Phase 1 full pace | All labels S1…Sn |
+| Phase 1 fast pace | No Tasks (`phase1_sentence_tasks: INLINE`) |
 | Phase 2 | Changed labels only |
 
 1. Launch **one Task per assigned sentence** (or per §3.1 batch).
 2. Launch Tasks **in parallel** when practical; `run_in_background: false` — wait before next step.
-3. **M** in the Mode line = number of sentence Tasks launched (must equal N in Phase 1 polish, or C in Phase 2).
+3. **M** in the Mode line = number of sentence Tasks launched (must equal N in
+   Phase 1 full-pace polish, or C in Phase 2).
 
 **Anti-patterns:** See [compliance-monitoring.md](compliance-monitoring.md) § Anti-patterns. Launching one Task for multiple labels when N ≤ 10 is a **compliance violation** — workers will FAIL and synthesizer will block ship.
 
@@ -65,21 +68,21 @@ When the assigned set has **>10** sentences (typically 11–12 under the ≤12 g
 
 ---
 
-## 4. AskQuestion — sentence checker model (fast tier)
+## 4. Model choice
 
-**After** §2–§3 planning and **before** passage summary or Tasks, call **AskQuestion** unless:
+Resolve the sentence-checker model in the single editing intake defined by
+[gate.md](gate.md). Do not ask separately before Phase 1 or Phase 2. Reuse a
+choice for this scope, or inherit a section profile only when `session.md` has
+`user_confirmed: true`.
 
-- user already chose a sentence-checker model for **this same quote/draft scope in this chat**, or
-- macro chunk invocation: `session.md` has `user_confirmed: true` with § Verifier model profile (use `Phase 1 sentence` row, or `Phase 2 sentence` when Phase 1 row omitted — [cross-skill.md](cross-skill.md) § Verifier model profile).
-
-**Hard stop:** do not launch sentence `Task`s until `AskQuestion` returns. Skill recommendations (e.g. fast Composer) are **(Recommended)** options in the form — not silent defaults. Phase 2 uses the three-question *Verifier model profile* instead ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate).
+**Hard stop:** do not launch sentence Tasks until the single intake returns.
 
 | Phase | Title |
 |-------|-------|
-| Phase 1 SUBAGENTS | *Sentence checker model* |
-| Phase 2 | Part of *Verifier model profile* — see [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion (question 1 only) |
+| Phase 1 full pace | Intake sentence-checker choice |
+| Phase 2 | Same intake profile, question 1 |
 
-**Phase 1 SUBAGENTS:** ask for the **sentence checker** model only (fast tier — high volume, mechanical 13-objective pass).
+Use a fast-tier model for this high-volume, wording-only role.
 
 Build options from the **current session Task allowed model list**. Prefer a **fast Composer** model when available; otherwise offer one flagship per provider with the **exact slug in each label**:
 
@@ -91,7 +94,7 @@ Build options from the **current session Task allowed model list**. Prefer a **f
 
 Use the chosen slug on **every** sentence Task. If unavailable, re-AskQuestion with valid options.
 
-**Phase 2:** do not run a separate sentence-model AskQuestion — use question 1 of the three-question *Verifier model profile* form in [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion.
+Both phases reuse the same slug.
 
 ---
 
@@ -122,7 +125,8 @@ Task(
 ## 6. Subagent prompt template
 
 ```text
-You are a sentence-level scientific editor for a physics paper.
+You are a sentence-level wording editor for a physics paper. You are not the
+physics, mathematics, scope, theorem, or evidence adjudicator.
 
 ## Orchestrator task plan (verify in Step 0 — read-only)
 <paste identical block from producer — compliance-monitoring.md § Task plan block>
@@ -130,16 +134,30 @@ You are a sentence-level scientific editor for a physics paper.
 ## Passage summary (shared)
 <identical block in every Task — from §5>
 
-## Local context (read-only)
+## Local context (read-only; never edit)
 - Paper topic: <if not clear from summary>
 - Section / file: <title and .tex path>
-- Adjacent excerpt (1–3 sentences before/after if helpful): <or omit>
+- Previous sentence: <exact text or NONE>
+- Next sentence: <exact text or NONE>
+- Referenced formal excerpt: <every labeled definition/lemma/theorem whose
+  label or defined term is used and already established **earlier** in the
+  manuscript; otherwise NONE. A sentence that only promises to define a term
+  **later** (a roadmap/forward reference) does not trigger this — pulling in
+  the not-yet-reached definition is manuscript-wide reconstruction, not local
+  context. On fast polish, standalone micro, this stays NONE unless the term
+  was already defined before the quote's location — see [fast-polish.md](fast-polish.md) § 3>
+
+Always supply both immediate neighbors when they exist. Do not choose the
+excerpt subjectively. Include a formal block only by the mechanical reference
+rule above, never because the orchestrator expects a particular answer.
 
 ## Step 0 — Assignment compliance (run FIRST)
 
-You monitor the **orchestrator**, not just the prose.
+You monitor the orchestrator, not just the prose. Read `pace` from the plan.
 
-Expected: **exactly ONE** sentence label S<k> in this Task (see `Your assignment` below). Phase 1 polish: your label must appear in `phase1_sentence_tasks`. Phase 2: your label must appear in `phase2_changed_labels`.
+Expected: exactly ONE target label S<k>. Phase 1 sentence Tasks are legal only
+for `pace: full`, and the label must appear in `phase1_sentence_tasks`. Phase 2:
+the label must appear in `phase2_changed_labels`.
 
 If the prompt lists multiple sentences, a range (S1–S3), or "all sentences", or your label is missing from the task plan:
 
@@ -161,13 +179,22 @@ Check ONLY **one** sentence — label S<k>:
 
 User inline comments: <[bracket comments] or "none">
 
-## Sentence-level check rules
+## Role boundary and sentence-level rules
 Read and apply every objective in order from sentence-checks.md (Read tool if needed).
 Run all 13 checks per assigned sentence. Do not skip.
 
+Use neighboring sentences only to judge flow and references. Do not edit them.
+Do not introduce a discourse connective (`however`, `conversely`, `therefore`,
+`thus`, `even though`, and similar) unless that logical relation is explicit in
+the source or immediate context. If uncertain, use no connective. Do not invent
+a mechanism, assumption, operator declaration, equivalence claim, or other
+scientific content.
+
 ## Apply corrections yourself (do not report these)
 
-**Fix silently (obvious):** Unambiguous pronoun, SVO mismatch, "For A, it does B" → "A does B", obvious non-standard term → standard equivalent, clear "if X then" → "because X," when X is stated as fact, clear passive/tentative setup → active scope declaration when the sentence fixes the model.
+**Fix silently (obvious):** Unambiguous pronoun, SVO mismatch, "For A, it does
+B" → "A does B", and obvious non-standard wording → standard wording, provided
+the edit does not add a scientific claim.
 
 **Fix silently (minor):** Typos, punctuation, trivial grammar, polish that does not change meaning.
 
@@ -175,7 +202,12 @@ Respect objective 8 (minimal changes).
 
 ## Report only what you did not fix
 
-Report when wording needs passage-level judgment: ambiguous "it/this/which", intentional terminology, physics-story vs setup-declaration tradeoff (obj. 7), prose-vs-math relocation (obj. 12), confusion-on-first-read ordering depending on neighbors (obj. 13), or risk of changing technical meaning.
+Report when wording needs passage-level judgment. Classify grammar or reference
+failure that makes the target unreadable or reverses/materially changes the
+supplied meaning as `BLOCKER`. Classify every physics, mathematics, scope,
+theorem, evidence, or scientific-correctness concern as `SUGGEST` and add
+`ESCALATE_TO: narrative` or `ESCALATE_TO: math`; never state it as a confident
+physics conclusion.
 
 ## Output format
 
@@ -207,6 +239,8 @@ Reason: <one line>
 13. Confusion-on-first-read ordering:
 
 **Needs user / main-agent judgment:** <items or "none">
+**Severity:** BLOCKER | SUGGEST | none
+**Escalate to:** narrative | math | none
 ---
 ```
 

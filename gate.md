@@ -1,8 +1,9 @@
-# Gate routing (Phase 1 only)
+# Gate routing: job × pace
 
 **For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** when [SKILL.md](SKILL.md) steps **3 or 4** run.
 
-**Phase 2 has no gate** — see [phase2-verify-subagents.md](phase2-verify-subagents.md). Phase comparison: [verification-loop.md](verification-loop.md) (canonical).
+**Phase 2 has no gate** — it always uses independent verifiers. This file routes
+only how the draft is produced and how Phase 1 checks the user's source.
 
 **Do not run sentence-level work until the gate for the current step is done.**
 
@@ -12,40 +13,41 @@
 
 | Count | Effect |
 |-------|--------|
-| **1** (or fragment) | Always **INLINE** |
-| **2–10** | Feasible for **SUBAGENTS** — one Task per sentence |
-| **11–12** | Feasible; may batch 2 sentences per Task |
+| **1** (or fragment) | Micro-eligible; Phase 1 is INLINE |
+| **2–10** | Micro-eligible; full pace may use one Task per sentence |
+| **11–12** | Micro-eligible; full pace may batch 2 sentences per Task |
 | **>12** | **Not feasible** — route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or **ASK USER** to narrow |
 
 ---
 
-## Two gate contexts
+## Independent choices
 
-Same Q1–Q3 decision tree. **Count sentences in the target text for that context:**
+| Choice | Values | Controls |
+|--------|--------|----------|
+| **Job** | `polish` \| `rewrite` | Tighten existing prose vs compose substantially new prose |
+| **Pace** | `fast` \| `full` | Phase 1 runner; at `polish` + standalone micro, also narrows the Phase 2 question and may skip the math Task — see [fast-polish.md](fast-polish.md). Never skips the synthesizer or a changed sentence's Task |
 
-| Context | Step | Count sentences in | Q2 |
-|---------|------|-------------------|-----|
-| Edit gate | 3 | User's quote / selection | Major rewrite? |
-| Source verify gate | 4 (polish only) | User's quote / existing prose | Skipped — always polish |
-
-- **Edit gate** routes production: compose vs polish + Phase 1.
-- **Source verify gate** routes Phase 1 machinery: INLINE vs SUBAGENTS.
+All four combinations are valid. A rewrite may be fast; a polish may be full.
+Ask for both in the single intake after the ≤12-sentence scope check. Skip the
+job question when the user's wording or placeholders make it unambiguous.
 
 ---
 
 ## Decision tree
 
-### Q1: How many sentences?
+### Q1: How many typographic sentences?
 
 ```
 Q1: How many sentences?
     │
-    ├─ 1 (or fragment) ──────────────► INLINE
-    │
-    └─ 2+ ──► Q2 (edit gate) or Q3 (source verify gate)
+    ├─ ≤12 ──► intake: job + pace + models
+    └─ >12 or whole section ──► section skill / narrow scope
 ```
 
-### Q2: Major rewrite? (edit gate only)
+Count by [sentence-check-subagents.md](sentence-check-subagents.md) §2. A source
+line containing three typographic sentences counts as three.
+
+### Q2: Job — rewrite or polish?
 
 **Major rewrite** = substantially new prose, not tightened wording in place.
 
@@ -56,14 +58,33 @@ Q1: How many sentences?
 | Change voice or level so sentences are not tightened originals | Word choice within same sentence roles |
 
 ```
-Q2: Major rewrite?
+Q2: Job?
     │
-    ├─ yes ─► INLINE — skip Phase 1; main agent composes draft (step 5)
-    │
-    └─ no ───► Q3
+    ├─ rewrite ─► skip Phase 1; compose draft
+    └─ polish ──► Q3 pace
 ```
 
-### Q3: Feasible split for subagent sentence checks?
+### Q3: Pace — fast or full?
+
+```
+Q3: Pace?
+    │
+    ├─ fast ─► Phase 1 INLINE: producer runs all 13 checks on source
+    └─ full ─► Phase 1 SUBAGENTS when split is feasible
+```
+
+**Fast does not skip checks.** It changes the Phase 1 runner. Phase 2 remains
+the full independent sentence + narrative + synthesizer suite at every pace,
+and the full narrative + math suite except in the one case below.
+
+**Standalone micro exception:** at `edit_gate: polish` + `pace: fast` +
+`caller: micro` (a direct short-quote edit, not a macro chunk), Phase 2
+narrative and math ask a narrower question — did **this edit** change what
+the source claimed — and math is skipped when there is no equation in the
+quote or draft. Macro chunks and full pace never get this exception. Detail:
+[fast-polish.md](fast-polish.md).
+
+### Full-pace feasibility
 
 **Feasible** when roughly all hold:
 
@@ -75,7 +96,7 @@ Q2: Major rewrite?
 ```
 Q3: Feasible split?
     │
-    ├─ yes ─► SUBAGENTS (mandatory) — model AskQuestion → Tasks → merge
+    ├─ yes ─► SUBAGENTS (mandatory) — Tasks → merge
     │
     └─ no ───► ASK USER — then INLINE or SUBAGENTS per answer
 ```
@@ -88,37 +109,39 @@ Q3: Feasible split?
 
 ## Outcomes
 
-| Situation | Edit gate (step 3) | Source verify gate (step 4) |
-|-----------|-------------------|----------------------------|
-| 1 sentence | INLINE | INLINE |
-| 2+ polish, feasible split | SUBAGENTS | SUBAGENTS (mandatory) |
-| Major rewrite | INLINE (compose); skip Phase 1 | Skipped — **Phase 2 AskQuestion still required** |
-| Q3 not feasible | ASK USER | ASK USER |
-| User requests inline / quick / no subagents | INLINE | INLINE |
-| User chose skip / proceed / narrow (this quote, this chat) | Honor choice | Honor choice |
+| Job | Pace | Phase 1 | Phase 2 |
+|-----|------|---------|---------|
+| polish | fast | INLINE, all sentences | Full independent suite |
+| polish | full | SUBAGENTS when feasible | Full independent suite |
+| rewrite | fast | Skipped | Full independent suite |
+| rewrite | full | Skipped | Full independent suite |
 
-**Skip the Q3 AskQuestion** when Q1 → 1 sentence, Q2 → major rewrite, or Q3 → feasible (go straight to SUBAGENTS).
+For one sentence, Phase 1 is INLINE at either pace.
 
 ---
 
-## Major rewrite path
+## Rewrite path
 
-When Q2 → major rewrite:
+When job → rewrite:
 
 | Step | Runs? | Model AskQuestion? |
 |------|-------|-------------------|
 | Phase 1 (step 4) | **No** | **No** (no Phase 1 Tasks) |
-| Phase 2 (step 6) | **Yes — always** | **Yes** — *Verifier model profile* ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate) |
+| Phase 2 (step 6) | **Yes — always** | Models already confirmed in the single intake |
 
-**Common mistake:** treating "Phase 1 skipped" as "skip all model asks." Phase 2 is independent; compose → **AskQuestion** → verifier Tasks.
+**Common mistake:** treating "Phase 1 skipped" as "skip Phase 2." Phase 2 is
+independent at both paces.
 
 ---
 
 ## Strict mode
 
-When any gate yields **SUBAGENTS**, you **must** use subagents. **Never** substitute INLINE because the passage is short, simple, or you believe you can run the 13 checks yourself.
+At **full** pace, when the gate yields SUBAGENTS, use them. At **fast** pace,
+INLINE is the required Phase 1 route, not a shortcut or compliance violation.
 
-**Forbidden when SUBAGENTS applies:** applying sentence fixes yourself; skipping model AskQuestion; launching zero Tasks; **batching multiple sentences into one Task** when N ≤ 10 ([compliance-monitoring.md](compliance-monitoring.md)).
+**Forbidden when full-pace SUBAGENTS applies:** replacing it with INLINE;
+launching zero Tasks; batching multiple sentences into one Task when N ≤ 10.
+Fast INLINE is **not batching**.
 
 If you edited without subagents when SUBAGENTS was required, stop, report the violation, and re-run the gate before further edits.
 
@@ -128,7 +151,7 @@ If you edited without subagents when SUBAGENTS was required, stop, report the vi
 
 ## AskQuestion prompts
 
-### Sentence-level checking (Q3 not feasible)
+### Sentence-level checking (full-pace split not feasible)
 
 **Title:** *Sentence-level checking*
 
@@ -139,11 +162,15 @@ If you edited without subagents when SUBAGENTS was required, stop, report the vi
 | Proceed with subagents anyway | SUBAGENTS — one Task per splittable sentence; note partial coverage |
 | Narrow the scope | User gives shorter quote; re-run gate |
 
-### Sentence checker model (SUBAGENTS)
+### Editing setup
 
-**Always required** before launching Phase 1 sentence Tasks — [sentence-check-subagents.md](sentence-check-subagents.md) §4 (fast tier). Skip only when user already picked a model for **this same quote in this chat**.
+Use one intake form after scope:
 
-Phase 2 uses the three-question *Verifier model profile* — [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion. **Required on every first Phase 2 iteration**, including major rewrites. Never auto-select defaults.
+1. Job: light polish or substantial rewrite (omit if clear).
+2. Pace: fast or full.
+3. Independent-check model profile.
+
+This replaces separate Phase 1 and Phase 2 model questions.
 
 ---
 
@@ -152,7 +179,7 @@ Phase 2 uses the three-question *Verifier model profile* — [phase2-verify-suba
 **Phase 1** (producer emits when reporting gated work):
 
 ```
-Mode: <inline | subagents | asked-user> · <N> sentences
+Mode: <inline | subagents | asked-user> · pace:<fast|full> · <N> sentences
 ```
 
 Add `· <M> Tasks · <model slug>` when Phase 1 SUBAGENTS runs.

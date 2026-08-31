@@ -49,14 +49,14 @@ Use your platform's skill-creation workflow first, then port the workflow logic 
 1. Read `SKILL.md` and linked detail files to understand the workflow.
 2. Invoke your platform's skill-creation guide (table above) — do not hand-roll folder layout.
 3. **Map Cursor-only constructs** to your platform:
-   - `AskQuestion` → user-choice hard stops (edit gate, verifier models).
+   - `AskQuestion` → one editing-setup hard stop (job, pace, verifier models).
    - `Task` → delegation API; pass per-worker `model` when supported.
    - Linked checklists → read/preload before gates ([SKILL.md](SKILL.md) “Read with the Read tool”).
 4. **Verifier model profile** — preserve the gate and three verifier roles ([cross-skill.md](cross-skill.md) · [phase2-verify-subagents.md](phase2-verify-subagents.md)):
-   - **Fast** — sentence checker (Phase 1 SUBAGENTS + Phase 2 changed sentences).
+   - **Fast-tier model** — Phase 1 full-pace sentence Tasks + Phase 2 changed sentences.
    - **Deep** — narrative + math workers (one model, two roles).
    - **Deep synthesizer** — merges worker reports; **sole** grader of `OVERALL`.
-   - **Gate:** no verifier Tasks until the user confirms model slugs (or valid same-scope reuse).
+   - **Gate:** no editing Tasks until the single intake confirms setup.
    - **Per-platform model assignment** (even within one vendor):
      - Cursor: `Task(model=…)` · SDK/automation: separate agent runs, one model each — no `Task` tool.
      - Claude Code: `Agent` frontmatter or invocation `model`.

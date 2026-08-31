@@ -13,9 +13,9 @@
 | **Step** | 4 | 6 |
 | **Target** | User's existing prose | Producer's generated draft |
 | **When** | Polish only; **skipped** on major rewrite | **Every** edit turn |
-| **Routing** | [gate.md](gate.md) → INLINE or SUBAGENTS | **No gate** |
+| **Routing** | fast → INLINE; full → SUBAGENTS when feasible | **No gate; same at both paces** except the standalone-micro fast-polish scope below |
 | **Sentence checks** | All sentences — main agent or sentence Tasks | **Changed sentences only** — sentence verifier Tasks |
-| **Narrative + math** | Main agent on full passage | Verifier Tasks on **full passage** |
+| **Narrative + math** | Main agent on full passage | Verifier Tasks on **full passage**; math Task skipped when `edit_gate: polish` + `pace: fast` + `caller: micro` and no equations ([fast-polish.md](fast-polish.md)) |
 | **Who decides done** | Main agent (informs step 5) | **Verifier synthesizer** — sole `OVERALL` authority |
 | **CHECKS / hook** | No | Required; hook enforces |
 
@@ -28,9 +28,10 @@
 **Purpose:** Audit source before editing — notation, scope, issues to fix in step 5.
 
 ```
-1. Source verify gate (Q2 skipped — always polish)
-2. Emit Task plan (phase1_sentence_tasks = N labels when polish, N≥2)
-3. Sentence-level — INLINE or SUBAGENTS per gate (SUBAGENTS: **N Tasks**, one per label)
+1. Read the pace confirmed in the single editing intake
+2. Emit Task plan (`INLINE` at fast pace; N labels at full pace, N≥2)
+3. Sentence-level — fast: producer runs all 13 checks INLINE; full: SUBAGENTS
+   (**N Tasks**, one per label)
 4. Passage-level — narrative + math checklists (main agent)
 5. → step 5 (produce draft)
 ```
@@ -48,12 +49,14 @@ If understanding changes materially, revise the edit plan and re-run from step 1
 **Purpose:** Independent agents grade the producer's draft before shipping.
 
 ```
-1. AskQuestion — verifier model profile (hard stop — see phase2-verify-subagents.md § Model selection gate)
+1. Confirm the single intake resolved the verifier model profile
 2. Identify changed sentences → see phase2-verify-subagents.md § Changed sentences
 3. Emit Task plan (phase2_sentence_tasks = changed labels only)
 4. Launch verifier Tasks (only after steps 1–3):
      • narrative — always, full passage (+ Step 0 compliance)
-     • math — full passage when applicable (+ Step 0 compliance)
+     • math — full passage when applicable (+ Step 0 compliance); skipped on
+       `edit_gate: polish` + `pace: fast` + `caller: micro` with no equations
+       ([fast-polish.md](fast-polish.md) § 1)
      • sentence — **one Task per changed label** (+ Step 0 compliance)
    → synthesizer (merges procedural + content)
 5. Synthesizer emits Mode line + CHECKS + OVERALL (procedural FAIL blocks ship)
@@ -74,10 +77,10 @@ Full execution detail: [phase2-verify-subagents.md](phase2-verify-subagents.md).
 ## Non-negotiable rules
 
 - Phase 2: always fresh verifier subagents; no gates; no producer self-grade.
-- **AskQuestion before any Phase 2 verifier `Task`** — major rewrite does not waive this ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate).
+- Single editing intake before any editing Task; rewrite does not waive it.
 - Never auto-select model slugs; skill recommendations require user confirmation via `AskQuestion`.
 - Never skip Phase 2 because Phase 1 ran.
 - Never end the turn without synthesizer `OVERALL: PASS`.
 - Never ship when `compliance_orchestrator_plan: FAIL` or `compliance_worker_reports: FAIL` in CHECKS.
 - After any Phase 2 draft fix, relaunch the verifier suite (new Tasks): narrative + math on full passage; sentence Tasks only for sentences changed in that fix pass.
-- User speed/loop/minor-only constraints **do not** reduce sentence Task count — [compliance-monitoring.md](compliance-monitoring.md).
+- Pace changes Phase 1 routing, and — only on `edit_gate: polish` + `caller: micro` — narrows the Phase 2 narrative/math question and may skip the math Task when there is no equation ([fast-polish.md](fast-polish.md)). It never skips the synthesizer, never skips a changed sentence's Task, and never applies this exception to macro chunks or full pace.

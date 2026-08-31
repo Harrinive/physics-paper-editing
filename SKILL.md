@@ -31,14 +31,17 @@ Expert scientific editor for physics and mathematics at graduate level. **Standa
 
 **Scope overflow (>12 sentences or whole section):** stop the micro pipeline; suggest [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or ask the user to narrow the quote. Detail: [Scope overflow](#scope-overflow).
 
-**First reply when this skill applies:** confirm passage is ≤12 sentences (or route to macro), target `.tex` file, and whether the job is polish vs major rewrite.
+**First reply:** count typographic sentences. If ≤12, ask one compact intake for
+job (`polish` or `rewrite`), pace (`fast` or `full`), model profile, and any
+material ambiguity. Do not split these into repeated interruptions.
 
 ## Invoked by section macro (optional)
 
-Read this section **only** when Stage D passes `chunk_text` + `edit_gate` + `session.md` via [chunk-contract.md](../physics-paper-editing-section/chunk-contract.md). Otherwise ignore.
+Read this section only when Stage D passes `chunk_text` + `edit_gate` + `pace` +
+`session.md` via [chunk-contract.md](../physics-paper-editing-section/chunk-contract.md).
 
 - Run the same steps 1–7 on `chunk_text` only.
-- **Skip micro edit gate Q2** — use supplied `edit_gate` (`polish` \| `rewrite`).
+- Use supplied `edit_gate` and `pace`; do not re-ask.
 - **Verifier models:** inherit from `session.md` when `user_confirmed: true`; else AskQuestion. Handoff rules: [cross-skill.md](cross-skill.md) § Verifier model profile.
 - Set `caller: section-orchestrator` in the Task plan ([compliance-monitoring.md](compliance-monitoring.md)).
 
@@ -64,7 +67,7 @@ The **producer** (main agent) writes the draft and applies fixes. It **must not*
 
 Passages **>12 sentences** are out of scope — see [Scope overflow](#scope-overflow).
 
-**Verifier models (standalone):** `AskQuestion` per [phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate (same-chat reuse is the only skip).
+**Verifier models (standalone):** confirm in the single editing intake.
 
 ---
 
@@ -74,10 +77,10 @@ Default path when only this skill is attached and the quote is **≤12 sentences
 
 1. **Scope** — confirm ≤12 sentences ([Scope overflow](#scope-overflow) if not).
 2. **Read** — step 2 table below (+ detail files for steps 3–7).
-3. **Edit gate** — polish vs major rewrite ([gate.md](gate.md)).
+3. **Single intake** — polish/rewrite × fast/full + verifier models ([gate.md](gate.md)).
 4. **Phase 1** — if polish; skip if major rewrite.
 5. **Produce draft** — step 5.
-6. **Phase 2** — `AskQuestion` (*Verifier model profile*) on first iteration unless same-chat reuse ([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate).
+6. **Phase 2** — full independent verifier suite at either pace.
 7. **Ship** — `.tex` + synthesizer CHECKS only after `OVERALL: PASS`.
 
 ---
@@ -107,10 +110,16 @@ That is the **only** macro awareness required on a standalone micro job. Do not 
 | **COMPLIANCE** | Worker Step 0 — PASS/FAIL on assignment before specialist work ([compliance-monitoring.md](compliance-monitoring.md)) |
 | **Edit gate** | Step 3 — compose vs polish + whether Phase 1 runs ([gate.md](gate.md)) |
 | **Source verify gate** | Step 4 — INLINE vs SUBAGENTS for Phase 1 ([gate.md](gate.md)) |
+| **Fast pace** | Same checks; producer runs Phase 1 INLINE |
+| **Full pace** | Same checks; Phase 1 uses sentence Tasks when feasible |
+| **BLOCKER** | Closed-list defect that prevents shipping |
+| **SUGGEST** | Non-blocking improvement; never triggers a re-loop |
 | **INLINE** | Main agent runs sentence checks directly (no sentence Tasks) |
 | **SUBAGENTS** | Task subagents run sentence checks ([sentence-check-subagents.md](sentence-check-subagents.md)) |
 | **Changed sentences** | Phase 2: labels **S*k*** whose text differs from the prior baseline ([phase2-verify-subagents.md](phase2-verify-subagents.md)) |
 | **CHECKS block** | HTML comment with per-check results and `OVERALL: PASS\|FAIL` — Phase 2 only; synthesizer is sole authority |
+| **Fast polish scope** | `polish` + `pace: fast` + standalone quote only: Phase 2 narrows to a delta-vs-source question and may skip the math Task ([fast-polish.md](fast-polish.md)) |
+| **PACKET_GAP** | A fast-polish worker's note that a finding needs manuscript context beyond the supplied passage — not a BLOCKER, surfaced in CHECKS |
 
 **Sentence-count thresholds:** see [gate.md](gate.md) § Sentence-count thresholds. **Scope:** ≤12 sentences micro; >12 route to macro.
 
@@ -132,13 +141,12 @@ Decompose by **which agent runs**, not abstract job titles. One worker subagent 
 
 ```mermaid
 flowchart TD
-    start[1 Context + 2 Read checklists] --> editGate[3 Edit gate]
+    start[1 Scope + 2 Read checklists] --> editGate[3 One intake: job + pace + models]
     editGate -->|major rewrite| produceCompose[5 Produce draft — compose]
     editGate -->|polish| sourceLoop[4 Phase 1 source verify]
     sourceLoop --> produceEdit[5 Produce draft — from audit]
-    produceCompose --> askModels[6a AskQuestion — verifier model profile]
-    produceEdit --> askModels
-    askModels --> verifySuite[6b Phase 2 verifier Tasks]
+    produceCompose --> verifySuite[6 Phase 2 verifier Tasks]
+    produceEdit --> verifySuite
     verifySuite -->|synthesizer FAIL| fixDraft[Producer fixes draft]
     fixDraft --> verifySuite
     verifySuite -->|synthesizer PASS| ship[7 Ship .tex + CHECKS]
@@ -157,22 +165,24 @@ Complete steps in order.
 - Do not write `.tex` until the synthesizer reports `OVERALL: PASS`.
 - Producer must not grade its own draft or set OVERALL.
 - Never skip Phase 2 because Phase 1 ran.
-- When any gate yields **SUBAGENTS**, use subagents — no inline shortcut ([gate.md](gate.md)).
-- **Never launch verifier `Task`s without model AskQuestion** — see [Model selection gate](phase2-verify-subagents.md#model-selection-gate-hard-stop). Skipping Phase 1 does **not** waive this.
+- Full-pace SUBAGENTS is mandatory when feasible; fast-pace INLINE is the
+  required route, not an exception.
+- Never launch an editing Task before the single intake resolves model choices.
 - **Publish Task plan** and pass it to every worker — see [compliance-monitoring.md](compliance-monitoring.md) § Task plan block. **Never** batch ≤10 sentences into one sentence Task.
 
 ```
 [ ] 1. Context — file, neighbors, [bracket comments] as editing instructions
 [ ] 2. Read checklists — see table below + [compliance-monitoring.md](compliance-monitoring.md)
-[ ] 3. Edit gate — routes steps 4–5 ([gate.md](gate.md))
+[ ] 3. Single intake — job + pace + model profile; routes steps 4–5
 [ ] 4. Phase 1 source verify — polish only; skip on major rewrite ([verification-loop.md](verification-loop.md))
       [ ] 4a. Label S1…SN on source
-      [ ] 4b. Emit Task plan (phase1_sentence_tasks = N labels if polish, N≥2)
-      [ ] 4c. If **SUBAGENTS:** launch one Task per label (never batch ≤10); if **INLINE:** main agent runs sentence checks inline (no Tasks)
+      [ ] 4b. Emit pace-aware Task plan (`INLINE` fast; N labels full)
+      [ ] 4c. Fast: all 13 checks INLINE. Full: one Task per label (never batch ≤10)
       [ ] 4d. Main agent: narrative + math on source ([verification-loop.md](verification-loop.md))
-[ ] 5. Produce draft — compose (major rewrite) or apply Phase 1 audit (polish)
+[ ] 5. Produce draft — compose or apply Phase 1 audit; do not add a discourse
+      connective unless its logical relation is explicit in the source/context
 [ ] 6. Phase 2 output verify — mandatory verifier subagents ([phase2-verify-subagents.md](phase2-verify-subagents.md))
-      [ ] 6a. AskQuestion — *Verifier model profile* (unless valid skip — phase2-verify-subagents.md § Model selection gate; macro chunk: session.md per § Invoked by section macro)
+      [ ] 6a. Confirm model profile from the single intake
       [ ] 6b. Update Task plan (phase2_sentence_tasks = changed labels only)
       [ ] 6c. Launch narrative + math + **one Task per changed sentence** + synthesizer
 [ ] 7. Ship — write .tex; synthesizer CHECKS block in user response (procedural PASS required)
@@ -197,6 +207,7 @@ Complete steps in order.
 | Steps 3–4 | + [gate.md](gate.md) |
 | Phase 1 SUBAGENTS or Phase 2 | + [sentence-check-subagents.md](sentence-check-subagents.md), [compliance-monitoring.md](compliance-monitoring.md) |
 | Step 6 | + [verification-loop.md](verification-loop.md), [phase2-verify-subagents.md](phase2-verify-subagents.md) |
+| Step 6, `polish` + `pace: fast` + standalone (not a macro chunk) | + [fast-polish.md](fast-polish.md) |
 | Before any verifier Task | + [compliance-monitoring.md](compliance-monitoring.md) § Task plan block |
 
 When length is ambiguous, load sentence + narrative. When math might appear, load math too.
@@ -211,15 +222,11 @@ When length is ambiguous, load sentence + narrative. When math might appear, loa
 | 6 Phase 2 | [phase2-verify-subagents.md](phase2-verify-subagents.md) |
 | 7 Ship | Write `.tex`; include synthesizer CHECKS verbatim in user response |
 
-### AskQuestion prompts
+### Single intake
 
-| When | Title | Detail |
-|------|-------|--------|
-| Q3 not feasible (steps 3–4) | *Sentence-level checking* | [gate.md](gate.md) |
-| Phase 1 SUBAGENTS | *Sentence checker model* | [sentence-check-subagents.md](sentence-check-subagents.md) §4 — fast tier |
-| Phase 2 (each iteration) | *Verifier model profile* | [phase2-verify-subagents.md](phase2-verify-subagents.md) § AskQuestion — three questions (sentence · narrative+logic · synthesizer) |
-
-**Model selection (standalone):** [phase2-verify-subagents.md](phase2-verify-subagents.md) § Model selection gate · Phase 1 sentence: [sentence-check-subagents.md](sentence-check-subagents.md) §4. Skip only same-chat reuse for this draft scope. Major rewrite skips Phase 1 only — Phase 2 AskQuestion still required on first iteration.
+After scope, use one `AskQuestion` form for unresolved job, pace, and the three
+model choices. Describe fast as “same checks, quicker source review” and full
+as “same final verification, plus independent source sentence review.”
 
 **Model selection (macro chunk):** § Invoked by section macro below.
 
@@ -237,9 +244,10 @@ Structure every editing response as follows.
 
 ### 2. Check report
 
-- **First line — `Mode:`**
+- **First line — progress:** `Editing progress: [■■■■□□□□] 50% — <plain-language stage>`
+- **Next line — `Mode:`**
   - **Phase 2:** copy **verbatim** from the verifier synthesizer.
-  - **Phase 1 only:** `Mode: inline|subagents|asked-user · N sentences` (+ `· M Tasks · model` when SUBAGENTS ran).
+  - **Phase 1 only:** include `pace:fast|full` and sentence count.
 - **Sentence / narrative / math:** Summarize verifier reports (Phase 2) or Phase 1 audit.
 - Include user editing directions and `[bracket comment]` resolutions.
 - **CHECKS block** — copy **verbatim** from synthesizer after Phase 2 PASS; producer must not edit OVERALL:
@@ -285,6 +293,7 @@ For other papers, use only the generic workflow above.
 | [phase2-verify-subagents.md](phase2-verify-subagents.md) | Phase 2 — verifiers, prompts, synthesizer |
 | [sentence-check-subagents.md](sentence-check-subagents.md) | Sentence Task splitting, batching, prompts |
 | [compliance-monitoring.md](compliance-monitoring.md) | Task plan, Step 0, synthesizer procedural checks |
+| [fast-polish.md](fast-polish.md) | Fast polish, standalone quote: narrower Phase 2 question, math-Task skip test, model guidance |
 
 **Checklists**
 

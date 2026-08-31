@@ -4,7 +4,7 @@
 
 Required for **every** micro edit — standalone or macro chunk. **Canonical for:** model selection gate · changed-sentence scope · Phase 2 workflow. Macro verifier inheritance: [cross-skill.md](cross-skill.md) § Verifier model profile (chunk agents only).
 
-Also read: [verification-loop.md](verification-loop.md) · [sentence-check-subagents.md](sentence-check-subagents.md) · [compliance-monitoring.md](compliance-monitoring.md).
+Also read: [verification-loop.md](verification-loop.md) · [sentence-check-subagents.md](sentence-check-subagents.md) · [compliance-monitoring.md](compliance-monitoring.md). When `edit_gate: polish` + `pace: fast` + `caller: micro`: also read [fast-polish.md](fast-polish.md) before step 6.
 
 ---
 
@@ -13,8 +13,10 @@ Also read: [verification-loop.md](verification-loop.md) · [sentence-check-subag
 | Always run (full passage) | Run only on changed sentences |
 |---------------------------|-------------------------------|
 | Narrative verifier | Sentence verifiers (all 13 objectives each) |
-| Math verifier (when passage has math or logical argument) | |
+| Math verifier (when passage has math or logical argument — see footnote) | |
 | Verifier synthesizer (after all verifiers complete) | |
+
+Footnote — **fast polish, standalone micro only:** the math verifier Task is not launched when the quote and draft have no equations ([fast-polish.md](fast-polish.md) § 1). Every other combination of pace/`edit_gate`/`caller` launches math whenever math or a logical argument is present, exactly as before.
 
 - **No gate.** Fresh verifier Tasks every iteration — never resume old Tasks.
 - **Producer** must not inline-check the draft or set `OVERALL: PASS|FAIL`.
@@ -56,34 +58,33 @@ Before launching sentence verifier Tasks, the **producer** labels **S1, S2, …*
 
 ---
 
-## Model selection gate (hard stop)
+## Model profile gate (hard stop)
 
 **Do not launch any verifier `Task` until model slugs are resolved.**
 
-```
-Draft ready (step 5) ──► AskQuestion (*Verifier model profile*) ──► user answers ──► Tasks
-                              ▲
-                              │ skip only if valid (see below)
-```
+Resolve the profile in the **single editing intake**, together with job and
+pace, after the ≤12-sentence scope check. Do not launch any editing Task before
+that intake returns. Do not interrupt again when the draft becomes ready.
 
 | Valid skip | Action |
 |------------|--------|
-| User already chose a profile for **this draft scope in this chat** | Reuse same three slugs (FAIL→fix loops) |
+| User already chose a profile for **this draft scope in this chat** | Reuse same three slugs (including FAIL→fix loops) |
 | Section `session.md` has `user_confirmed: true` and complete § Verifier model profile | Inherit `{ sentence, deep, synth }`; note `inherited from session.md (Stage A confirmed)` — no re-ask |
 | Section brief supplied `verifier_profile` **only** | **Not a valid skip by itself** — must also have `session.md` `user_confirmed: true` from Stage A AskQuestion |
 
 **Not a valid skip:** Phase 1 skipped; major rewrite; polish path; skill "recommended" slugs; your guess at good models; manifest/brief slugs without `session.md` `user_confirmed: true`.
 
-**Forbidden before AskQuestion:**
+**Forbidden before the single intake:**
 
 - Any `Task(...)` call for sentence, narrative, math, or synthesizer verifiers.
-- Announcing "default model profile" or silently picking slugs from § AskQuestion recommendations.
+- Announcing a "default model profile" or silently picking recommended slugs.
 
-**Major rewrite path:** Phase 1 is skipped, but step 6 **always** runs. On the **first** Phase 2 iteration you **must** call `AskQuestion` — there is no Phase 1 sentence-model ask to substitute for it.
+**Rewrite path:** Phase 1 is skipped, but Phase 2 always runs with the profile
+confirmed in intake.
 
 **Pre-launch self-check** (all must be true before the first `Task`):
 
-- [ ] `AskQuestion` returned user choices, **or** a valid skip condition is documented.
+- [ ] Single editing intake returned job, pace, and model choices, **or** valid skip conditions are documented.
 - [ ] Three slugs recorded: sentence (Q1), deep (Q2), synth (Q3).
 - [ ] **Task plan** published in response and pasted into every worker prompt ([compliance-monitoring.md](compliance-monitoring.md) § Task plan block).
 - [ ] Phase 2: `phase2_sentence_tasks` lists **one label per changed sentence**; no batching when C ≤ 10.
@@ -94,19 +95,23 @@ Draft ready (step 5) ──► AskQuestion (*Verifier model profile*) ──► 
 ## Workflow
 
 ```
-1. AskQuestion — verifier model profile (unless valid skip — § Model selection gate)
+1. Confirm the intake already resolved the verifier model profile
 2. Write passage summary → paste into every verifier prompt
 3. Label S1, S2, … and identify changed labels (§ Changed sentences)
 4. Emit Task plan (phase2_sentence_tasks = changed labels only)
 5. Launch in parallel when practical (run_in_background: false):
      • narrative verifier — full passage (deep tier)
-     • math verifier — full passage when applicable (deep tier; or N/A report if no math)
+     • math verifier — full passage when applicable (deep tier; or N/A report if no math);
+       on `edit_gate: polish` + `pace: fast` + `caller: micro` with no equations in quote or
+       draft, **do not launch this Task** — record `phase2_math_task: skipped (no equations)`
+       ([fast-polish.md](fast-polish.md) § 1)
      • sentence verifiers — one Task per changed label (fast tier)
 6. Launch synthesizer — deep tier; pass Task plan + all reports + changed/skipped label lists
+   (math report is "skipped — no equations per Task plan" when § 5 skipped it)
 7. PASS (content + procedural) → step 7 ship  |  FAIL → fix draft and/or relaunch with corrected Task plan
 ```
 
-**Task count:** narrative + math (if applicable) + synthesizer + **C** sentence Tasks (C = changed count). Mode line **M** must equal C.
+**Task count:** narrative + math (if applicable, else 0) + synthesizer + **C** sentence Tasks (C = changed count). Mode line **M** must equal C.
 
 ---
 
@@ -116,7 +121,7 @@ Draft ready (step 5) ──► AskQuestion (*Verifier model profile*) ──► 
 
 **Forbidden:**
 
-- Launching verifier `Task`s before `AskQuestion` resolves model slugs (§ Model selection gate).
+- Launching verifier Tasks before the single intake resolves model slugs.
 - Auto-selecting recommended/default slugs without user input.
 - Running [sentence-checks.md](sentence-checks.md), [narrative-checks.md](narrative-checks.md), or [math-checks.md](math-checks.md) inline on the draft.
 - Writing or guessing `OVERALL` without synthesizer output.
@@ -128,17 +133,20 @@ Draft ready (step 5) ──► AskQuestion (*Verifier model profile*) ──► 
 
 ---
 
-## AskQuestion — verifier model profile
+## Single intake — verifier model profile
 
-**Mandatory on first Phase 2 iteration** unless a valid skip in § Model selection gate applies. Reuse the same three slugs across every FAIL→fix loop iteration — do **not** re-ask on re-loops.
+Include these three questions in the same form as job and pace. Reuse the same
+slugs across every FAIL→fix iteration.
 
 **Title:** *Verifier model profile*
 
-**One form, three questions** — each option = one flagship (or fast tier) per provider, **exact slug in each label**, built from the session's allowed Task model list. Mark the skill's recommended pick with **(Recommended)** in the option label — the user must still confirm via `AskQuestion`; recommendations are **not** permission to skip asking.
+Each model question offers one flagship (or fast tier) per provider, with the
+exact slug in each label and a recommended first option. Recommendations are
+not permission to skip asking.
 
 1. **Sentence checker** (high volume, fast tier) — recommend **Cursor Composer (fast)** when available.
-2. **Narrative & logic checker** (passage-level reasoning) — recommend **Claude flagship**.
-3. **Synthesizer** (sets `OVERALL`; never fast tier) — recommend **Claude flagship**.
+2. **Narrative & logic checker** (passage-level reasoning) — at `pace: full` or `edit_gate: rewrite`, recommend a **flagship, high-reasoning-effort** model (e.g. Claude thinking-high). At `pace: fast` + `edit_gate: polish`, recommend a **medium-effort** flagship instead — not an "xhigh"/"thinking-high" reasoning variant, not a coding-specialist slug — and note on the form: "a high-reasoning-effort model adds several minutes at fast pace." ([fast-polish.md](fast-polish.md) § 5)
+3. **Synthesizer** (sets `OVERALL`; never fast tier) — same pace-conditional recommendation as question 2.
 
 Narrative and math verifier Tasks share the slug from question 2. Sentence verifier Tasks use question 1. The synthesizer Task uses question 3.
 
@@ -200,11 +208,33 @@ You are a narrative verifier for a physics paper. You did NOT write this draft.
 ## Adjacent context (if helpful)
 <1–3 sentences before/after from .tex, or omit>
 
+## User's original source (only when edit_gate: polish, pace: fast, caller: micro)
+<the user's quoted source, exactly as given, before this turn's edit>
+
 ## Step 0 — Assignment compliance (run FIRST)
-Confirm you received the **full passage** (all N sentences) and a valid Task plan. If fragment only, or polish + N≥2 but plan shows fewer Phase 1 labels than N, emit COMPLIANCE: FAIL and stop. See compliance-monitoring.md § Narrative worker.
+Confirm you received the full passage and a valid Task plan. Audit Phase 1
+against `pace`: fast polish requires `phase1_sentence_tasks: INLINE`; full
+polish with N≥2 requires N labels. See compliance-monitoring.md.
 
 ## Instructions
-If COMPLIANCE: PASS — read and run every group and bullet in narrative-checks.md (Read tool if needed).
+
+**If `edit_gate: polish`, `pace: fast`, `caller: micro` (fast polish scope):**
+Read and run every group and bullet in narrative-checks.md, but narrow classes
+1–5 to what **this edit changed** relative to "User's original source" above —
+do not chase a defect that exists unedited in that source against other parts
+of the manuscript; report it as `SUGGEST — pre-existing in source` instead.
+Also apply the closed word-delta class: a change to *only / all / any /
+uniform / iff / equivalent / necessary / sufficient / always* ↔ *may / can /
+does* (or the reverse) relative to the source is BLOCKER-eligible on its own.
+Do not `Grep` or `Read` beyond what is in this prompt; if a finding needs more
+manuscript context than supplied, report `PACKET_GAP: <what's missing>`
+instead of searching for it. Full detail: fast-polish.md § 2–3.
+
+**Otherwise (`pace: full`, `edit_gate: rewrite`, or `caller: section-orchestrator`):**
+Read and run every group and bullet in narrative-checks.md against the full
+manuscript context as usual. Apply its closed BLOCKER list; findings outside
+it are SUGGEST.
+
 Do not edit the draft. Report each group in file order.
 
 ## Output format
@@ -219,10 +249,16 @@ Reason: <one line>
 **Group 3 — Consistency and economy:** <findings or PASS>
 **Group 4 — Claims and audience:** <findings or PASS>
 
-**FAIL items:** <bulleted list with check name and one-line reason; or "none">
+**BLOCKER items:** <class + check + one-line reason; or "none">
+**SUGGEST items:** <bulleted list; include "pre-existing in source" items here; or "none">
+**PACKET_GAP:** <bulleted list, fast polish only; or "none">
 ```
 
 ### Math verifier
+
+**Skip this Task entirely** when `edit_gate: polish`, `pace: fast`, `caller: micro`, and the quote and draft contain no equations ([fast-polish.md](fast-polish.md) § 1). Record `phase2_math_task: skipped (no equations)` in the Task plan and pass `### Math report: skipped — no equations per Task plan` to the synthesizer in place of a worker report. Do not launch this Task in that case.
+
+Otherwise, launch as follows:
 
 ```text
 Task(
@@ -246,11 +282,27 @@ You are a math/logic verifier for a physics paper. You did NOT write this draft.
 ## Draft under review
 <full generated passage — LaTeX/text>
 
+## User's original source (only when edit_gate: polish, pace: fast, caller: micro)
+<the user's quoted source, exactly as given, before this turn's edit>
+
 ## Step 0 — Assignment compliance (run FIRST)
 Confirm full passage + Task plan present. See compliance-monitoring.md § Math worker.
 
 ## Instructions
-If COMPLIANCE: PASS — read math-checks.md (Read tool if needed). Run Step 0 (classify statements), then type-specific checks.
+
+**If `edit_gate: polish`, `pace: fast`, `caller: micro` (fast polish scope):**
+Read and run Step 0, then type-specific checks in math-checks.md, but narrow
+to what **this edit changed** relative to "User's original source" above — a
+defect that exists unedited in that source is `SUGGEST — pre-existing in
+source`, not a BLOCKER, and is not chased against other parts of the
+manuscript. Also apply the closed word-delta class from fast-polish.md § 2. Do
+not `Grep` or `Read` beyond what is in this prompt; report `PACKET_GAP:
+<what's missing>` instead of searching.
+
+**Otherwise:** read math-checks.md and run the full audit against the
+manuscript context as usual. Apply its closed BLOCKER list; findings outside
+it are SUGGEST.
+
 If no math or logical argument: state that and mark math checks N/A — still complete the report.
 
 ## Output format
@@ -264,7 +316,9 @@ Reason: <one line>
 
 **Per-statement / per-type findings:** <findings in file order>
 
-**FAIL items:** <bulleted list with check name and one-line reason; or "none">
+**BLOCKER items:** <class + check + one-line reason; or "none">
+**SUGGEST items:** <bulleted list; include "pre-existing in source" items here; or "none">
+**PACKET_GAP:** <bulleted list, fast polish only; or "none">
 ```
 
 ### Verifier synthesizer
@@ -295,6 +349,29 @@ You are the verifier synthesizer. You did NOT write the draft. You decide whethe
 Total sentences: <N>. Changed (sentence-verified): <list>. Skipped (unchanged): <list>.
 Expected Phase 2 sentence Tasks launched (C): <count>. Mode line M must equal C.
 
+## Closed BLOCKER lists (apply these — do not open narrative-checks.md or math-checks.md)
+
+Narrative (5 classes): (1) contradiction or false relation, incl. an
+unsupported transition/causal/contrast connective; (2) unbound essential
+object; (3) broken reasoning (non-sequitur, reversed implication, omitted
+essential premise); (4) claim-strength mismatch (necessity, sufficiency,
+equivalence, generality, novelty, or evidence stronger than supplied);
+(5) meaning loss or invention (dropped limitation, or a mechanism/assumption/
+conclusion absent from the source). Everything else is SUGGEST.
+
+Math (5 classes): (1) invalid or inconsistent mathematics; (2) undefined
+essential object; (3) formula–prose mismatch; (4) unsupported logical
+strength (necessity, sufficiency, equivalence, uniqueness, generality, "WLOG"
+stronger than supplied); (5) incorrect import (misstated citation or
+hypotheses that do not hold here). Everything else is SUGGEST.
+
+Fast polish only (standalone micro — [fast-polish.md](fast-polish.md) § 2):
+also treat a change to *only/all/any/uniform/iff/equivalent/necessary/
+sufficient/always* ↔ *may/can/does* (or the reverse) relative to the user's
+source as BLOCKER-eligible. A defect reported as "pre-existing in source" is
+SUGGEST, not BLOCKER, regardless of severity — it was not introduced by this
+edit.
+
 ## Verifier reports
 ### Sentence reports (changed only)
 <paste sentence verifier outputs, or "none — 0 changed sentences">
@@ -303,16 +380,32 @@ Expected Phase 2 sentence Tasks launched (C): <count>. Mode line M must equal C.
 <paste narrative verifier output>
 
 ### Math report
-<paste math verifier output>
+<paste math verifier output, or "skipped — no equations per Task plan" when phase2_math_task: skipped>
 
 ## Instructions
-1. **Procedural compliance first:** Any worker `COMPLIANCE: FAIL` → `compliance_worker_reports: FAIL` → OVERALL: FAIL. Audit Task plan: Phase 2 requires M=C sentence Tasks; forbid `sentence_S1-S3` range lines — one line per label (`sentence_S1`, `sentence_S2`, …).
-2. Merge specialist FAIL items from workers that passed Step 0. Any unresolved FAIL → OVERALL: FAIL.
-3. Unchanged sentences were not sentence-verified; do not FAIL for sentence-level issues on skipped labels unless narrative or math caught them.
-4. Emit the CHECKS block. You are the **only** agent that may set OVERALL.
-5. If OVERALL: FAIL, list concrete fixes — distinguish **procedural** (relaunch Tasks with correct plan) vs **content**.
+1. **Procedural compliance first:** Any worker `COMPLIANCE: FAIL` →
+   `compliance_worker_reports: FAIL` → OVERALL: FAIL. Audit Phase 1 against
+   pace and Phase 2 as M=C sentence Tasks. Audit `phase2_math_task`: `skipped`
+   is only valid on `edit_gate: polish` + `pace: fast` + `caller: micro`; a
+   "skipped — no equations per Task plan" math report under those conditions
+   is **not** a missing report and does not fail procedurally.
+2. Adjudicate every reported BLOCKER against the pasted closed lists above.
+   Downgrade out-of-list items to SUGGEST and record the downgrade. Never
+   upgrade a SUGGEST without naming the matching class. On fast polish, a
+   BLOCKER a worker labeled "pre-existing in source" is SUGGEST regardless of
+   class.
+3. Deduplicate blockers by root defect. Any unresolved BLOCKER → OVERALL: FAIL.
+   SUGGEST-only → OVERALL: PASS.
+4. Unchanged sentences were not sentence-verified; do not fail for wording
+   issues on skipped labels unless narrative or math identifies a BLOCKER.
+5. Sum every `PACKET_GAP` line across worker reports into `packet_gap` in
+   CHECKS (count, 0 if none). A PACKET_GAP never fails the passage on its own.
+6. Emit the CHECKS block. You are the only agent that may set OVERALL.
+7. If OVERALL: FAIL, return `FAILED_SET`: the minimal deduplicated set of
+   procedural defects and unresolved BLOCKERs. Keep SUGGESTS separate.
 
-## Output format (required)
+## Output format (required — this is the final output of this Task; do not
+## add commentary, explanation, or a follow-up message after this block)
 Mode: verify-subagents · <N> sentences · <C> changed · <M> Tasks · sentence:<Q1 slug> · deep:<Q2 slug> · synth:<Q3 slug>
 
 <!-- CHECKS
@@ -321,7 +414,9 @@ compliance_worker_reports: PASS|FAIL
 sentence_S1: PASS|FAIL|skipped
 ...
 narrative_group1: PASS|FAIL
-math_step0: PASS|FAIL|N/A
+math_step0: PASS|FAIL|N/A|N/A (skipped)
+severity_downgrades: <count>
+packet_gap: <count>
 OVERALL: PASS|FAIL
 -->
 
