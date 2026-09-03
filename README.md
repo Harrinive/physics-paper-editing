@@ -4,7 +4,7 @@ Cursor skill for graduate-level LaTeX editing in physics and mathematics papers.
 
 ## What it does
 
-This skill **decouples editing from verification**: the main agent rewrites your LaTeX passage and applies fixes; separate subagents check the draft against the style guide and return a pass/fail verdict. That split keeps quality review independent of the draft. On a failing verdict, the producer revises and verification runs again—iteration continues until the draft passes.
+This skill **decouples editing from verification**: the main agent writes a marked draft into your `.tex` immediately; separate subagents check a frozen snapshot in the background and flush findings to disk. You can keep editing. Each check round three-way-merges with your live text. The synthesizer sets a job-round status (`PASS` / `CONFLICTS` / `PARTIAL`) — it does not block the first write.
 
 **Scope:** one short passage of **≤12 sentences**. For longer material, use the companion **macro skill** [physics-paper-editing-section](https://github.com/Harrinive/physics-paper-editing-section).
 
@@ -22,7 +22,7 @@ git clone https://github.com/Harrinive/physics-paper-editing-section.git ~/.curs
 
 ## Entry point
 
-Read **`SKILL.md`** first. Linked detail files (`gate.md`, `phase2-verify-subagents.md`, etc.) hold the full rules.
+Read **`SKILL.md`** first, then [user-communication.md](user-communication.md) and [coworker-loop.md](coworker-loop.md). Linked detail files hold marks, merge, and checker prompts.
 
 ---
 
@@ -49,14 +49,14 @@ Use your platform's skill-creation workflow first, then port the workflow logic 
 1. Read `SKILL.md` and linked detail files to understand the workflow.
 2. Invoke your platform's skill-creation guide (table above) — do not hand-roll folder layout.
 3. **Map Cursor-only constructs** to your platform:
-   - `AskQuestion` → one editing-setup hard stop (job, pace, verifier models).
+   - `AskQuestion` → job (polish/rewrite) only when unclear; inherit or default pace and models.
    - `Task` → delegation API; pass per-worker `model` when supported.
    - Linked checklists → read/preload before gates ([SKILL.md](SKILL.md) “Read with the Read tool”).
 4. **Verifier model profile** — preserve the gate and three verifier roles ([cross-skill.md](cross-skill.md) · [phase2-verify-subagents.md](phase2-verify-subagents.md)):
-   - **Fast-tier model** — Phase 1 full-pace sentence Tasks + Phase 2 changed sentences.
+   - **Fast-tier model** — background changed-sentence Tasks.
    - **Deep** — narrative + math workers (one model, two roles).
-   - **Deep synthesizer** — merges worker reports; **sole** grader of `OVERALL`.
-   - **Gate:** no editing Tasks until the single intake confirms setup.
+   - **Deep synthesizer** — merges worker reports; **sole** grader of job-round `OVERALL`.
+   - **Intake:** inherit models or use defaults; do not block every job on AskQuestion.
    - **Per-platform model assignment** (even within one vendor):
      - Cursor: `Task(model=…)` · SDK/automation: separate agent runs, one model each — no `Task` tool.
      - Claude Code: `Agent` frontmatter or invocation `model`.

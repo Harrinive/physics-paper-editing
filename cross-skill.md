@@ -2,9 +2,9 @@
 
 **For agents:** Start with the skill that matches scope — micro [SKILL.md](SKILL.md) § Agent read order for ≤12 sentences; macro [physics-paper-editing-section/SKILL.md](../physics-paper-editing-section/SKILL.md) § Agent read order for whole sections. Read this file only when routing, resuming, or handing off verifier models between macro and micro.
 
-**Audience:** macro orchestrator · micro agents **invoked from macro Stage D** · skill maintainers (canonical index).
+**Audience:** macro orchestrator · micro agents **invoked from macro Stage D** · skill maintainers.
 
-**Do not read this file** for a standalone short-passage edit (≤12 sentences, only micro skill attached). That path is fully specified in [SKILL.md](SKILL.md) and the pipeline detail files — no macro context required.
+**Do not read this file** for a standalone short-passage edit (≤12 sentences, only micro skill attached). That path is fully specified in [SKILL.md](SKILL.md) plus [coworker-loop.md](coworker-loop.md).
 
 | Read cross-skill when… | Section |
 |------------------------|---------|
@@ -15,10 +15,10 @@
 
 | Skill | Path | Scope |
 |-------|------|-------|
-| **Micro** | [physics-paper-editing/SKILL.md](SKILL.md) | One passage **≤12 sentences** — self-contained |
+| **Micro** | [physics-paper-editing/SKILL.md](SKILL.md) | One passage **≤12 sentences** — coworker loop |
 | **Macro** | [physics-paper-editing-section/SKILL.md](../physics-paper-editing-section/SKILL.md) | Whole `\section{...}` or **>12 sentences** |
 
-Standalone micro needs only one fact about macro: **if the quote exceeds 12 sentences, stop** and suggest [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or ask the user to narrow — see [SKILL.md](SKILL.md) § Scope overflow. No other macro knowledge is required on that path.
+Standalone micro needs only one fact about macro: **if the quote exceeds 12 sentences, stop** and suggest the section skill or ask the user to narrow — [SKILL.md](SKILL.md) § Scope overflow.
 
 ---
 
@@ -27,13 +27,13 @@ Standalone micro needs only one fact about macro: **if the quote exceeds 12 sent
 ```
 How many sentences in the target passage?
 │
-├─ ≤12 ──► micro skill (this repo: physics-paper-editing)
-│           • Run full steps 1–7 in micro SKILL.md
-│           • One editing intake for job, pace, and verifier models
+├─ ≤12 ──► micro skill
+│           • Coworker loop in micro SKILL.md
+│           • Intake: job if unclear; inherit pace + models
 │           • No macro required
 │
-└─ >12 or whole section ──► macro skill (physics-paper-editing-section)
-                            • Stages A–E; prose only via micro per chunk
+└─ >12 or whole section ──► macro skill
+                            • Stages A–E; prose via micro per chunk
                             • Do not run micro on the full section in one turn
 ```
 
@@ -42,11 +42,10 @@ How many sentences in the target passage?
 | User quotes ≤12 sentences | **Micro only** |
 | User quotes >12 sentences | **Macro** (or ask user to narrow) |
 | User asks to edit a whole `\section{...}` | **Macro** |
-| Macro Stage D chunk | **Micro** on that chunk's `chunk_text` only |
+| Macro Stage D chunk | **Micro** coworker loop on that `chunk_text` only |
 | Macro Stage E boundary fix | **Micro** on ≤12-sentence span |
-| Full-pace sentence split not feasible | [gate.md](gate.md) AskQuestion → macro, inline, or narrow |
 
-**Micro gate canonical:** sentence-count table in [gate.md](gate.md) § Sentence-count thresholds.
+**Micro gate canonical:** [gate.md](gate.md) § Sentence-count thresholds.
 
 ---
 
@@ -55,16 +54,17 @@ How many sentences in the target passage?
 | Concept | Micro | Macro |
 |---------|-------|-------|
 | Pipeline unit | Passage (≤12 sentences) | Section → chunks |
-| Main agent role | **Producer** — authors chunk prose | **Section orchestrator** — structure only |
-| Verification phases | **Phase 1** (polish) · **Phase 2** (always) | Phase 1/2 run **inside Stage D** per chunk |
-| Phase 1 skip | `edit_gate: rewrite` | `edit_gate: rewrite` or `job_mode: rewrite` |
-| Pace | `fast` INLINE Phase 1; `full` Task Phase 1 | Frozen in Stage A and passed to every chunk |
-| Grades `OVERALL` | Verifier **synthesizer** only | Same — per chunk; orchestrator never grades |
+| Main agent role | **Producer** — drafts, marks, merges | **Section orchestrator** — structure only |
+| Verification | Background snapshot check; per-round synthesizer | Same **inside Stage D** per chunk |
+| Source-audit Phase 1 | **Does not run** | **Does not run** |
+| Pace | Background-check scope only | Frozen in Stage A; passed to every chunk |
+| Grades `OVERALL` | Synthesizer only — job-round `PASS` \| `CONFLICTS` \| `PARTIAL` | Same per chunk; orchestrator never grades |
+| First `.tex` write | Before checks finish (marked) | Same per chunk |
 | Section-scale review | N/A | Stages **B** and **E** (`Scope: section`) |
-| Disk state | None (optional) | `.physics-edit/<slug>/` — [disk-layout.md](../physics-paper-editing-section/disk-layout.md) |
-| Resume boot | N/A | Read **`session.md` first** — § ON RESUME below |
+| Disk state | `.physics-edit/micro/<job_id>/` | `.physics-edit/<slug>/` + `jobs/<id>/` |
+| Resume boot | Live marks + `jobs/` | Read **`session.md` first** — § ON RESUME |
 
-**Chunk agent** = micro Producer invoked by macro Stage D. Same steps 1–7; extra inputs in [chunk-contract.md](../physics-paper-editing-section/chunk-contract.md).
+**Chunk agent** = micro producer invoked by macro Stage D. Same coworker loop; extra inputs in [chunk-contract.md](../physics-paper-editing-section/chunk-contract.md).
 
 ---
 
@@ -72,45 +72,40 @@ How many sentences in the target passage?
 
 ### Standalone micro (no macro)
 
-1. Confirm job, pace, and all three verifier models in one editing intake.
-2. Reuse the profile for Phase 1 full-pace sentence Tasks and all Phase 2 Tasks.
-3. **Valid skip:** user already chose the same setup for this draft scope.
-
-Macro paths below **do not apply** unless a section edit is in progress.
+1. Ask polish vs rewrite only if unclear.
+2. Inherit pace + the three slugs from this chat, **or** use recommended defaults and mention once ([user-communication.md](user-communication.md)).
+3. Reuse the profile for every wave of this draft scope.
 
 ### Macro (section edit)
 
-1. **Stage A** — one `AskQuestion` (*Editing setup*) for job, pace, and model profile; persist all values in `session.md`, `section-brief.md`, `manifest.json`.
-2. Set **`user_confirmed: true`** only after AskQuestion returns — never from brief/manifest alone.
-3. **Stages B, D, E** — inherit slugs when `user_confirmed: true`; document `Verifier profile: inherited from session.md (Stage A confirmed)`.
-4. **Per chunk (Stage D)** — no re-ask when confirmed; chunk agent uses session table:
+1. **Stage A** — freeze `job_mode`; persist pace and slugs (inherit, disclosed defaults, or AskQuestion) in `session.md`, `section-brief.md`, `manifest.json`.
+2. Set **`user_confirmed: true`** after inherit / disclosed defaults / AskQuestion — never from brief/manifest alone without that.
+3. **Stages B, D, E** — inherit slugs when `user_confirmed: true`.
+4. **Per chunk (Stage D)** — no re-ask when confirmed:
 
 | Session row | Used for |
 |-------------|----------|
-| Phase 1 sentence | Full-pace polish sentence Tasks; may equal Phase 2 sentence |
-| Phase 2 sentence | Phase 2 changed-sentence Tasks; **default for Phase 1** when Phase 1 row omitted |
-| Phase 2 deep | Narrative + math (macro Stages B/E and micro Phase 2) |
-| Phase 2 synth | Synthesizer only — never fast tier |
+| sentence | Background changed-sentence Tasks |
+| deep | Narrative + math (Stages B/E and micro) |
+| synth | Synthesizer only — never fast tier |
 
-**Invalid skips:** `manifest.json` / `section-brief.md` slugs without
-`session.md` `user_confirmed: true`; skill "(Recommended)" labels; Phase 1
-being skipped does not waive the single intake or Phase 2.
+**Invalid skips:** `manifest.json` / `section-brief.md` slugs without `session.md` `user_confirmed: true`.
 
-**Hard stop:** no editing Task until the single intake resolves slugs
-([phase2-verify-subagents.md](phase2-verify-subagents.md) § Model profile gate).
+**Hard stop:** no editing Task until slugs are resolved (inherit or defaults). Do not block every job on AskQuestion.
 
 ---
 
 ## Canonical rules (single source per topic)
 
-Do not duplicate these tables in SKILL.md — link here or to the canonical file.
-
 | Topic | Canonical file | Section |
 |-------|----------------|---------|
-| Phase 1 vs Phase 2 | [verification-loop.md](verification-loop.md) | Phase comparison |
-| Edit gate · source verify gate | [gate.md](gate.md) | Decision tree · Sentence-count thresholds |
-| Phase 2 workflow · changed sentences | [phase2-verify-subagents.md](phase2-verify-subagents.md) | Full file |
-| Task plan · COMPLIANCE · anti-patterns | [compliance-monitoring.md](compliance-monitoring.md) | Full file |
+| Coworker loop | [coworker-loop.md](coworker-loop.md) | Full file |
+| Marks / snapshot / interrupt | [job-state.md](job-state.md) | Full file |
+| Merge | [merge-policy.md](merge-policy.md) | Full file |
+| User-facing UX | [user-communication.md](user-communication.md) | Full file |
+| Job × pace | [gate.md](gate.md) | Decision tree · Sentence-count thresholds |
+| Background verify | [phase2-verify-subagents.md](phase2-verify-subagents.md) | Full file |
+| Task plan · COMPLIANCE | [compliance-monitoring.md](compliance-monitoring.md) | Full file |
 | Sentence Task count · batching | [sentence-check-subagents.md](sentence-check-subagents.md) | §3 |
 | Macro stages A–E | [stages.md](../physics-paper-editing-section/stages.md) | Full file |
 | Chunk I/O | [chunk-contract.md](../physics-paper-editing-section/chunk-contract.md) | Full file |
@@ -124,21 +119,22 @@ Do not duplicate these tables in SKILL.md — link here or to the canonical file
 
 | Invariant | Rule |
 |-----------|------|
-| **Writer ≠ grader** | Producer / chunk agent never sets `OVERALL`; synthesizer only ([phase2-verify-subagents.md](phase2-verify-subagents.md)) |
-| **Orchestrator ≠ self-auditor** | Section orchestrator does not launch micro verifier Tasks or certify task counts; workers Step 0 + synthesizer procedural merge ([compliance-monitoring.md](compliance-monitoring.md)) |
-| **Pace** | Changes Phase 1 runner only; never reduces Phase 2 or skips synthesizer. (Macro chunks always pass `caller: section-orchestrator`, so this holds exactly — the standalone-micro fast-polish exception in [fast-polish.md](fast-polish.md) never applies to a chunk.) |
+| **Writer ≠ grader** | Producer / chunk agent never sets `OVERALL`; synthesizer only. `OVERALL` is a **job-round** status, not a ship gate. |
+| **Orchestrator ≠ self-auditor** | Section orchestrator does not launch micro verifier Tasks or certify task counts |
+| **Pace** | Changes background-check scope only; never makes the user wait; never skips the synthesizer. Macro chunks always pass `caller: section-orchestrator`, so the standalone-micro fast-polish math skip never applies to a chunk. |
 
 ---
 
 ## ON RESUME (macro only)
 
-When resuming a section edit (new chat, "continue", context compaction):
+When resuming a section edit (new chat, **next piece**, context compaction):
 
 1. Read `.physics-edit/<slug>/`**session.md`** first.
-2. Read `manifest.json` + `section-brief.md`.
-3. Honor `job_mode`, `pace`, and per-chunk `edit_gate`; do not re-ask.
-4. Honor **User special requests** (standing + `deferred_edits`).
-5. **`user_confirmed: true`** required before verifier Tasks — else AskQuestion and END TURN if awaiting answer.
-6. Execute **Next action** only; rewrite `session.md` before END TURN.
+2. Read `manifest.json` + `section-brief.md` + any `jobs/*/agents.json`.
+3. If any job is `checking` → micro wake protocol (related hashes → interrupt → harvest → merge) **before** a new piece.
+4. Honor `job_mode`, `pace`, and per-chunk `edit_gate`; do not re-ask.
+5. Honor **User special requests**.
+6. Profile must be resolved (`user_confirmed: true` or disclosed defaults) before verifier Tasks.
+7. Execute **Next action**; rewrite `session.md` before ending the turn.
 
-Detail: [disk-layout.md](../physics-paper-editing-section/disk-layout.md) § session.md · [automation.md](../physics-paper-editing-section/automation.md) § Context compaction recovery.
+Detail: [disk-layout.md](../physics-paper-editing-section/disk-layout.md) § session.md · [automation.md](../physics-paper-editing-section/automation.md).

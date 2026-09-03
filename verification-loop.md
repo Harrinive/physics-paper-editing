@@ -1,86 +1,66 @@
-# Verification loops
+# Verification (background, per round)
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** when [SKILL.md](SKILL.md) steps **4 or 6** run.
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. Canonical loop: [coworker-loop.md](coworker-loop.md). Execution: [phase2-verify-subagents.md](phase2-verify-subagents.md). Marks/harvest: [job-state.md](job-state.md). Merge: [merge-policy.md](merge-policy.md).
 
-**Canonical phase comparison** (this file). Execution: [gate.md](gate.md) (Phase 1) · [phase2-verify-subagents.md](phase2-verify-subagents.md) (Phase 2).
-
----
-
-## Phase comparison
-
-| | Phase 1 — source verify | Phase 2 — output verify |
-|--|-------------------------|-------------------------|
-| **Step** | 4 | 6 |
-| **Target** | User's existing prose | Producer's generated draft |
-| **When** | Polish only; **skipped** on major rewrite | **Every** edit turn |
-| **Routing** | fast → INLINE; full → SUBAGENTS when feasible | **No gate; same at both paces** except the standalone-micro fast-polish scope below |
-| **Sentence checks** | All sentences — main agent or sentence Tasks | **Changed sentences only** — sentence verifier Tasks |
-| **Narrative + math** | Main agent on full passage | Verifier Tasks on **full passage**; math Task skipped when `edit_gate: polish` + `pace: fast` + `caller: micro` and no equations ([fast-polish.md](fast-polish.md)) |
-| **Who decides done** | Main agent (informs step 5) | **Verifier synthesizer** — sole `OVERALL` authority |
-| **CHECKS / hook** | No | Required; hook enforces |
+There is **no Phase 1 source-audit gate**. Checklists are drafting principles plus background-checker objectives.
 
 ---
 
-## Phase 1 — source verify (step 4)
+## What runs
 
-**When:** Edit gate Q2 = polish. **Skipped** on major rewrite.
+| | Background output verify |
+|--|--------------------------|
+| **When** | After the marked draft is in the `.tex` — every job, including rewrite |
+| **Target** | Frozen **snapshot** of the marked interior, not the live file |
+| **Sentence checks** | Changed labels only (all labels on rewrite or first draft vs source) |
+| **Narrative + math** | Full snapshot; math skipped only on standalone-micro fast polish with no equations ([fast-polish.md](fast-polish.md)) |
+| **Who decides the round** | **Verifier synthesizer** — `OVERALL`: `PASS` \| `CONFLICTS` \| `PARTIAL` |
+| **CHECKS / hook** | Audit drawer after a round. Hook does **not** reloop on FAIL. `verify:running` / `verify:partial` may end without CHECKS |
 
-**Purpose:** Audit source before editing — notation, scope, issues to fix in step 5.
-
-```
-1. Read the pace confirmed in the single editing intake
-2. Emit Task plan (`INLINE` at fast pace; N labels at full pace, N≥2)
-3. Sentence-level — fast: producer runs all 13 checks INLINE; full: SUBAGENTS
-   (**N Tasks**, one per label)
-4. Passage-level — narrative + math checklists (main agent)
-5. → step 5 (produce draft)
-```
-
-If understanding changes materially, revise the edit plan and re-run from step 1.
-
-**Do not** skip Phase 1 because Phase 2 will run later.
+Workers launch with `run_in_background: true` and append `findings.jsonl` as they go.
 
 ---
 
-## Phase 2 — output verify (step 6)
-
-**When:** Every edit turn, including major rewrites.
-
-**Purpose:** Independent agents grade the producer's draft before shipping.
+## Launch (after mark + snapshot)
 
 ```
-1. Confirm the single intake resolved the verifier model profile
-2. Identify changed sentences → see phase2-verify-subagents.md § Changed sentences
+1. Confirm models (inherited or defaults — gate.md)
+2. Label S1…SN; identify changed labels vs source (first wave) or prior snapshot
 3. Emit Task plan (phase2_sentence_tasks = changed labels only)
-4. Launch verifier Tasks (only after steps 1–3):
-     • narrative — always, full passage (+ Step 0 compliance)
-     • math — full passage when applicable (+ Step 0 compliance); skipped on
-       `edit_gate: polish` + `pace: fast` + `caller: micro` with no equations
-       ([fast-polish.md](fast-polish.md) § 1)
-     • sentence — **one Task per changed label** (+ Step 0 compliance)
-   → synthesizer (merges procedural + content)
-5. Synthesizer emits Mode line + CHECKS + OVERALL (procedural FAIL blocks ship)
-6. FAIL → fix draft and/or Task plan → restart from step 2 (fresh Tasks)
-7. PASS → step 7 (ship)
+4. Launch in parallel, run_in_background: true:
+     • narrative — full snapshot
+     • math — when applicable (or skip per fast-polish.md)
+     • sentence — one Task per changed label
+   Record Task ids in agents.json
+5. End the turn — Mode: … · verify:running
+6. Synthesizer runs at **round end** (wave complete or interrupt harvest), not as a ship gate
 ```
 
-**Producer must not** run checklists inline or set OVERALL.
+**Producer must not** run checklists inline on the draft or set `OVERALL`.
 
-**CHECKS block:** Copy **verbatim** from synthesizer into the final user response.
+---
 
-**Hook:** `~/.cursor/hooks/check-editing-session.sh` on `stop` — missing CHECKS or `OVERALL: FAIL` → follow-up (up to `loop_limit: 3` in `~/.cursor/hooks.json`).
+## Wake (every later turn while a job is live)
 
-Full execution detail: [phase2-verify-subagents.md](phase2-verify-subagents.md).
+```
+1. Re-read marked interior; rehash ([job-state.md](job-state.md))
+2. Related change → interrupt still-running Tasks (flush then stop)
+3. Harvest findings.jsonl; tag valid / stale / open
+4. One merge ([merge-policy.md](merge-policy.md)); rewrite interior once
+5. Synthesizer: job-round OVERALL from harvest + merge
+6. New snapshot; relaunch open + newly dirty labels — or unmark
+```
 
 ---
 
 ## Non-negotiable rules
 
-- Phase 2: always fresh verifier subagents; no gates; no producer self-grade.
-- Single editing intake before any editing Task; rewrite does not waive it.
-- Never auto-select model slugs; skill recommendations require user confirmation via `AskQuestion`.
-- Never skip Phase 2 because Phase 1 ran.
-- Never end the turn without synthesizer `OVERALL: PASS`.
-- Never ship when `compliance_orchestrator_plan: FAIL` or `compliance_worker_reports: FAIL` in CHECKS.
-- After any Phase 2 draft fix, relaunch the verifier suite (new Tasks): narrative + math on full passage; sentence Tasks only for sentences changed in that fix pass.
-- Pace changes Phase 1 routing, and — only on `edit_gate: polish` + `caller: micro` — narrows the Phase 2 narrative/math question and may skip the math Task when there is no equation ([fast-polish.md](fast-polish.md)). It never skips the synthesizer, never skips a changed sentence's Task, and never applies this exception to macro chunks or full pace.
+- Always independent verifier subagents on the snapshot; no producer self-grade.
+- Never wait to write `.tex` until `OVERALL: PASS`.
+- Never end the draft-ready turn by blocking on checkers.
+- Never auto-select a new model profile when one can be inherited; defaults are allowed and must be mentioned once ([user-communication.md](user-communication.md)).
+- Never skip background checks because the producer “already followed the principles.”
+- After a merge that changed labels, relaunch only those labels (plus still-`open` ones).
+- Pace never makes the user wait. Fast-polish narrowing is standalone-micro polish only ([fast-polish.md](fast-polish.md)).
+
+**Hook:** `~/.cursor/hooks/check-editing-session.sh` — `verify:running` / `verify:partial` / `draft-ready` may end without CHECKS. No auto-reloop on `OVERALL: FAIL|CONFLICTS|PARTIAL`.

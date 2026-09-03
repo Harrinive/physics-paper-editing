@@ -1,172 +1,166 @@
-# User communication (plain language)
+# User communication (workbench)
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. Read on **every turn** when editing for a user — micro ([SKILL.md](SKILL.md)) or macro ([physics-paper-editing-section/SKILL.md](../physics-paper-editing-section/SKILL.md)).
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. Read on **every turn** when editing for a user — micro or section.
 
-**Audience split:** Skill files, Task prompts, disk state (`session.md`, `manifest.json`), and the **Audit log** block use internal pipeline terms. The **main narrative** of every user response uses plain language from this file.
+Level 1 (the message) answers three anxieties only: *will it overwrite me, is it stuck, what can I do now*. The itinerary lives in the **Audit log** drawer at the end. Do not narrate the harness.
 
-**Hard rule:** Never drop or rewrite the verbatim `Mode:` line or `<!-- CHECKS -->` / `<!-- SECTION DONE -->` blocks — hooks depend on them. Place them only in **Audit log (for resume)** at the **end** of the response.
-
----
-
-## Communication rules
-
-1. **Lead with Status** — one plain-English sentence plus a rough progress bar
-   on every working turn, for example `Progress: [■■■■□□□□] 50%`.
-2. **First turn of a job** — add a short **What to expect** (three bullets):
-   - **Micro:** pre-edit review → draft changes → independent quality check → apply to `.tex`
-   - **Macro:** setup → structure review → plan editable pieces → edit each piece → final read-through
-3. **When pausing** — say why and give an exact reply (`continue`, answer the model form, etc.).
-4. **Never expose agent architecture** in the user narrative — no Producer, synthesizer, COMPLIANCE, Task plan, Phase 1/2, Stage A–E, END TURN, micro/macro, chunk agent — unless the user asks how the skill works.
-5. **Summarize checks in plain language** under **What happened** — e.g. “wording and notation look consistent” not “narrative_group2: PASS”. On a fast light polish, if the math check was skipped or a finding hit a packet gap, say so plainly: “No equations here, so I skipped the separate math check” / “One point needs the rest of the paper to verify — flagged, not blocking.” If a check found something already present in the user’s original wording (not introduced by this edit), say “this was already in your original text” rather than presenting it as a new problem.
-6. **Link paths once** — edit workspace (`.physics-edit/<slug>/`), review notes (`findings-ledger.md`).
+**Hard rule:** Never drop or rewrite the verbatim `Mode:` line or `<!-- CHECKS -->` / `<!-- SECTION DONE -->` blocks — hooks and resume depend on them. Place them **only** in the Audit log at the **end**.
 
 ---
 
-## Glossary — internal → say to user
+## Decision rule
 
-| Internal (agent-only) | Say to user (examples) |
-|-----------------------|-------------------------|
-| Micro skill / ≤12 sentences | “This short passage edit” |
-| Macro / section skill | “Whole-section edit” |
-| Phase 1 / source verify | “Pre-edit review of your original text” |
-| Phase 2 / output verify | “Independent quality check on the revised draft” |
-| Edit gate: polish | “Light polish — tighten wording, keep your structure” |
-| Edit gate: rewrite | “Substantial rewrite from placeholders / draft notes” |
-| Pace: fast | “Fast — quicker pre-edit review; on a light polish, the final check also focuses on what changed rather than re-auditing the whole paper” |
-| Pace: full | “Full — adds independent sentence review before drafting, and the final check re-audits the whole passage against the paper” |
-| BLOCKER | “Must fix before applying the edit” |
-| SUGGEST | “Optional improvement; does not hold up the edit” |
-| PACKET_GAP (fast polish) | “Something I couldn’t check without reading more of the paper” |
-| `phase2_math_task: skipped` | “No equations in this quote, so I skipped the separate math check” |
-| Ship / step 7 | “Applying verified edits to your `.tex` file” |
-| `OVERALL: PASS` | “All checks passed” |
-| `OVERALL: FAIL` | “Some checks need fixes — revising the draft” |
-| Stage A | “Setup — read the section and confirm check settings” |
-| Stage B | “Structure review — order, signposts, placeholders (no new body prose yet)” |
-| Stage C | “Planning — split into editable pieces (≤12 sentences each)” |
-| Stage D / chunk *k* of *N* | “Editing piece *k* of *N*” |
-| Stage E / integration | “Final read-through — transitions between pieces” |
-| `findings-ledger.md` | “Review notes” |
-| `.physics-edit/` | “Edit workspace” |
-| END TURN | “Pausing here — reply **continue** when ready” |
-| Manifest / `session.md` | Do not mention unless user asks about resume |
+If it is not a named state, a receipt of a file change, or a decision the user must make, it does not belong in the narrative.
 
 ---
 
-## Status templates
+## Level 1 — every turn
 
-### Micro — short passage edit
+One named state, then a receipt, then at most one decision. No percents. No progress bars. No seven-section form.
 
-| Internal step | Status template |
-|---------------|-----------------|
-| Intake (step 3) | “Progress: [■□□□□] 20% — confirming edit depth, pace, and check models.” |
-| Phase 1 (step 4) | “Pre-edit review (step 1 of 3): reading your {N}-sentence passage before drafting changes.” |
-| Produce draft (step 5) | “Drafting revisions (step 2 of 3).” |
-| Phase 2 (step 6) | “Running an independent quality check on the revised draft (step 3 of 3).” |
-| Ship (step 7) | “All checks passed — applying edits to `{file}`.” |
-| Phase 2 FAIL (fix loop) | “Some checks flagged issues — revising the draft and re-checking.” |
+### Named states (say these)
 
-### Macro — whole-section edit
+| State | Say |
+|-------|-----|
+| **Draft in the file** | Passage is between the `PPE` marks; I am still reading it |
+| **Updated the marked passage** | A check pass finished; here is what I kept / changed |
+| **Need your call** | One serious conflict; your text is still in the file |
+| **Done** | Marks removed |
 
-| Internal stage | Status template |
-|----------------|-----------------|
-| A | “Whole-section edit — setup: reading the section and confirming check settings.” |
-| B | “Whole-section edit — structure review (no new body prose yet).” |
-| C | “Whole-section edit — planning {N} editable pieces.” |
-| D (chunk) | “Whole-section edit — piece {k}/{N} ({id}) revised and checked; {M} pieces left.” |
-| E | “Whole-section edit — final read-through at piece boundaries.” |
-| Done | “Whole-section edit complete — all pieces checked and transitions reviewed.” |
+### Receipt (1–3 bullets)
 
-### Pause templates (macro)
+- Where: `{file}`, between `% PPE-BEGIN` / `% PPE-END`
+- What changed in the **prose** (physics or wording), not which workers ran
+- What happened to **their** edits: kept / auto-fixed an untouched sentence / asking
 
-| After | Next step (user-facing) |
-|-------|-------------------------|
-| Stage A (await continue) | “Setup is ready. Reply **continue** when you want the structure review.” |
-| Stage B | “Structure review is done. Skim the [review notes]({path}) if you like. Reply **continue** to split the section into editable pieces.” |
-| Stage C | “Planning is done — {N} pieces ready. Reply **continue** to start editing piece 1.” |
-| Stage D (each chunk) | “Piece {id} is done. Reply **continue** for piece {next_id}.” |
-| Stage E complete | “Section edit complete. Your `.tex` is updated; review notes are in the edit workspace.” |
+### Decision (omit if none)
+
+Quote the one conflicting sentence. One clause for their version, one for the check. Ask which to keep. Never a queue of optional nits.
+
+### You can (one line, not a command)
+
+Keep editing inside the marks · say **stop** · say **next piece** on a section job.
+
+Do **not** say “reply continue” to unlock the next stage.
 
 ---
 
-## Scope overflow message
+## Level 1 — first turn of a job only
 
-When the passage has **>12 sentences** or the user asked for a whole `\section{...}`:
+After the draft is in the file, **three lines** (not a tutorial):
 
-> This selection is longer than a single short-passage edit (more than 12 sentences). I can either:
-> 1. **Edit the whole section** — structure review first, then piece-by-piece edits with checks (recommended for long text), or
-> 2. **Narrow the quote** — pick ≤12 sentences and I will edit that passage directly.
->
-> Tell me which you prefer, or attach the whole-section editing skill if you want option 1.
+> The revised passage is already in `{file}`, between `% PPE-BEGIN` and `% PPE-END` (created `{timestamp}`). You can edit those lines while I keep reading. If we both change the same sentence I keep your wording unless it contradicts the physics — then I ask, and I only rewrite that block when a check pass finishes.
 
-Do **not** say “micro scope”, “macro skill”, or “attach physics-paper-editing-section” in the user message.
+Show the draft in chat **this once**. Later wakes do not re-paste the passage (except a conflict quote).
+
+Do not repeat this orientation unless the marks were just created for a new job.
 
 ---
 
-## Single intake framing
+## Status copy formula
 
-After confirming ≤12-sentence scope, explain once:
+*Action + specific item + limit.* Never “Working…”, “Running verifiers…”, or “Loading…”.
 
-> Before editing, I need one setup choice: light polish or substantial rewrite,
-> fast or full pace, and which models should run the checks. Fast keeps the same
-> final independent checks but reviews the original text inline; full also uses
-> independent sentence reviews before drafting.
+- “I put the flux-jump definition in `{file}` and I am still reading it. You can edit inside the marks.”
+- “I updated the marked block: kept your second sentence; fixed the sign in the lemma sentence (you had not touched it).”
+- “I need your call on one sentence — your version says X; the check says Y. I left yours in the file.”
 
-Then call one `AskQuestion` form titled *Editing setup*. Omit any question the
-user has already answered unambiguously. Do not ask separate model questions
-later.
+---
+
+## Forbidden in the narrative
+
+Phase, Stage, Task, synthesizer, COMPLIANCE, BLOCKER, snapshot, hash, jsonl, interrupt, `rev`, `job=`, worker counts, Producer, END TURN, micro/macro, chunk agent.
+
+| Internal | Say only if needed |
+|----------|-------------------|
+| Construction area / PPE marks | “the marked lines” / “between `% PPE-BEGIN` and `% PPE-END`” |
+| Job-round OVERALL PASS | “I finished reading this passage — marks are gone.” |
+| OVERALL CONFLICTS | “I need your call on one sentence.” |
+| OVERALL PARTIAL | “I am still reading the rest.” |
+| polish / rewrite | “light polish” / “rewrite” — only at intake if unclear |
+| fast / full | Do not teach pace. Inherit; mention once they can change checkers. |
+
+If they ask “how did you check this?”, answer then — not before.
 
 ---
 
 ## Response skeleton
 
-Use this order in **every** editing response to the user:
-
 ```markdown
-### Status
-Progress: [■■■■□□□□] <percent>% — <plain-language stage>
+**{Named state}.** {action + item + limit}
 
-### What to expect
-<only on first turn of a job — three bullets>
+{first turn only: the three-line orientation}
 
-### Context
-<passage/section summary: physics, placement, main claim — 2–4 sentences>
+{receipt, 1–3 bullets — omit on a pure “still reading” wake with no file write}
 
-### What happened
-<2–5 bullets: substance and check outcomes in plain language; [bracket comment] resolutions; deferred edits if any>
+{Decision — omit if none}
 
-### Clarify
-<one focused question if needed; omit if none>
+You can keep editing inside the marks{, say **next piece**,} or say **stop**.
 
-### Your text
-<edited passage, preview, or “not written yet — checks in progress”>
-
-### Next step
-<exact user action, or “Done — `{file}` updated”>
+{first turn only: the draft}
 
 ---
-### Audit log (for resume)
-<verbatim Mode: line — from synthesizer (micro) or orchestrator (macro)>
-<verbatim <!-- CHECKS ... --> or <!-- SECTION DONE ... --> when applicable>
+### Audit log
+Mode: …
+<!-- CHECKS … -->   <!-- when a round has a synthesizer result -->
 ```
 
-**Phase 1-only and progress turns:** no CHECKS block is required. If an audit
-line is present, include pace: `Mode: inline|subagents|asked-user ·
-pace:fast|full · N sentences`.
+### Mode lines (audit drawer only)
 
-**Macro Stages A–C:** Audit log contains `Mode: section-edit · stage:<A|B|C> · <slug>` — no CHECKS required.
+```
+Mode: draft-ready · verify:running · <N> sentences
+Mode: verify-subagents · verify:running · <N> sentences · sentence:<slug> · deep:<slug> · synth:<slug>
+Mode: verify-subagents · verify:partial · <N> sentences · …
+Mode: verify-subagents · verify:complete · <N> sentences · …
+Mode: section-edit · stage:<A|B|C|E> · <slug>
+Mode: section-edit · chunk:<id> · verify:running · …
+```
 
-**Macro Stage D:** Audit log contains `Mode: section-edit · chunk:<id> · <micro Mode line verbatim>` plus micro CHECKS when chunk passes.
+`OVERALL` in CHECKS is `PASS` | `CONFLICTS` | `PARTIAL` (job-round). Do not invent a percent from these.
 
 ---
 
-## What not to put in the user narrative
+## Intake (first reply)
+
+1. Count typographic sentences. If >12, use the scope-overflow message below — do not start this loop on the full section.
+2. Ask **polish vs rewrite** only when that is actually unclear.
+3. **Do not** ask pace or three models every job. Inherit the last confirmed profile in this chat or `session.md`. If none, use the recommended slugs in [phase2-verify-subagents.md](phase2-verify-subagents.md) and mention once: “I’ll use the usual checkers; say if you want different models.”
+4. Then draft, mark, launch, end the turn. Follow this file’s first-turn orientation.
+
+---
+
+## Section jobs
+
+Do not babysit “piece 3 of 7, reply continue.”
+
+Say how many pieces are **in the file**, which one is still being read, and that they can start the next piece or keep editing this one.
+
+Structure review is one receipt: “I reordered X and left placeholders at Y — no new body prose.”
+
+---
+
+## Scope overflow
+
+When the passage has **>12 sentences** or the user asked for a whole `\section{...}`:
+
+> This selection is longer than a single short-passage edit (more than 12 sentences). I can either:
+> 1. **Edit the whole section** — structure first, then piece-by-piece (recommended for long text), or
+> 2. **Narrow the quote** — pick ≤12 sentences and I will edit that passage directly.
+>
+> Tell me which you prefer.
+
+Do not say “micro scope”, “macro skill”, or the skill file names unless they ask how the skill works.
+
+---
+
+## What not to put on the bench
 
 | Avoid | Use instead |
 |-------|-------------|
-| “Phase 2 verifier Tasks launched” | “Running an independent quality check on the draft” |
-| “Stage E integration PASS” | “Final read-through passed — section edit complete” |
-| “Synthesizer reported OVERALL: PASS” | “All checks passed” |
-| “END TURN — await continue for Stage C” | “Reply **continue** when ready to plan editable pieces” |
-| “findings-ledger open: 3” | “Three open items in the review notes” |
-| “chunk c03 pass” | “Piece 3 of 7 complete” |
+| Fake `Progress: [■■■■□□□□] 50%` | A named state |
+| “What to expect: pre-edit → check → ship” | First-turn three lines, then receipts |
+| “Reply **continue** for piece 4” | “You can keep editing or say **next piece**.” |
+| “4 of 11 sentence checks” | “I am still reading it.” |
+| “Phase 2 verifier Tasks launched” | “I put the draft in `{file}` and I am still reading it.” |
+| Merge-algorithm / hash lecture | “I kept your definition sentence.” |
+| A standing “don’t worry” paragraph | Orientation once; then silence |

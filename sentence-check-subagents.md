@@ -1,16 +1,12 @@
 # Sentence checks via Task subagents
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before splitting the passage or launching sentence Tasks.
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before splitting the snapshot or launching sentence Tasks.
 
-| Phase | Sentence scope | Narrative + math |
-|-------|----------------|------------------|
-| **Phase 1 full pace** | All sentences ([gate.md](gate.md) → SUBAGENTS) | Main agent after sentence merge ([verification-loop.md](verification-loop.md)) |
-| **Phase 1 fast pace** | No Tasks; producer checks all sentences INLINE | Main agent |
-| **Phase 2** | **Changed sentences only** ([phase2-verify-subagents.md](phase2-verify-subagents.md)) | Verifier Tasks on full passage; synthesizer decides OVERALL |
+Background checkers grade **changed sentences only** ([phase2-verify-subagents.md](phase2-verify-subagents.md)). There is no Phase 1 source-audit wave. Narrative + math are separate Tasks on the full snapshot. The synthesizer sets job-round `OVERALL` after the round.
 
-Sentence-count thresholds (Phase 1 gates): [gate.md](gate.md) § Sentence-count thresholds.
+Sentence-count thresholds: [gate.md](gate.md).
 
-**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before the 13 objectives — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) → `COMPLIANCE: FAIL`.
+**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before the 13 objectives — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) when N ≤ 10 → `COMPLIANCE: FAIL`.
 
 ---
 
@@ -18,14 +14,11 @@ Sentence-count thresholds (Phase 1 gates): [gate.md](gate.md) § Sentence-count 
 
 | Context | Use this file? |
 |---------|----------------|
-| INLINE | No — run [sentence-checks.md](sentence-checks.md) inline |
-| Phase 1 SUBAGENTS | Yes — all sentences |
-| Phase 2 output verify | Yes — **changed labels only** |
+| Producer drafting | No — producer uses [sentence-checks.md](sentence-checks.md) as **principles** |
+| Background verify | Yes — **changed labels only** |
 | ASK USER → proceed anyway | Yes — splittable sentences; note partial coverage |
-| ASK USER → skip | No — inline instead |
 
-Model choice comes from the single editing intake (§4). A confirmed section
-`session.md` may supply it; `section-brief.md` or `manifest.json` alone may not.
+Model choice: inherit or defaults ([gate.md](gate.md) · [phase2-verify-subagents.md](phase2-verify-subagents.md)). `section-brief.md` / `manifest.json` alone are not enough without `session.md` `user_confirmed: true`.
 
 ---
 
@@ -39,28 +32,21 @@ Model choice comes from the single editing intake (§4). A confirmed section
 3. Label **S1, S2, …** for assignment.
 
 If a boundary is genuinely ambiguous, keep the span together, record the
-decision once in the Task plan, and use the same labels in every phase.
+decision once in the Task plan, and use the same labels every wave.
 
-**Phase 2:** after labeling, identify changed labels per [phase2-verify-subagents.md](phase2-verify-subagents.md) § Changed sentences. Only changed labels get Tasks.
+After labeling, identify changed labels per [phase2-verify-subagents.md](phase2-verify-subagents.md) § Changed sentences. Only changed labels get Tasks.
 
 ---
 
 ## 3. Task assignment
 
-**Default:** one Task per sentence — each subagent audits one sentence against all 13 checks.
-
-| Phase | Which sentences get Tasks |
-|-------|---------------------------|
-| Phase 1 full pace | All labels S1…Sn |
-| Phase 1 fast pace | No Tasks (`phase1_sentence_tasks: INLINE`) |
-| Phase 2 | Changed labels only |
+**Default:** one Task per changed sentence — each subagent audits one sentence against all 13 checks.
 
 1. Launch **one Task per assigned sentence** (or per §3.1 batch).
-2. Launch Tasks **in parallel** when practical; `run_in_background: false` — wait before next step.
-3. **M** in the Mode line = number of sentence Tasks launched (must equal N in
-   Phase 1 full-pace polish, or C in Phase 2).
+2. Launch Tasks **in parallel** with `run_in_background: true`. Do not wait before ending the turn.
+3. **M** in the Mode line = number of sentence Tasks launched (must equal C).
 
-**Anti-patterns:** See [compliance-monitoring.md](compliance-monitoring.md) § Anti-patterns. Launching one Task for multiple labels when N ≤ 10 is a **compliance violation** — workers will FAIL and synthesizer will block ship.
+**Anti-patterns:** See [compliance-monitoring.md](compliance-monitoring.md). Launching one Task for multiple labels when N ≤ 10 is a **compliance violation**.
 
 ### 3.1 Batching (11–12 sentences, or user chose proceed on longer quote)
 
@@ -70,17 +56,9 @@ When the assigned set has **>10** sentences (typically 11–12 under the ≤12 g
 
 ## 4. Model choice
 
-Resolve the sentence-checker model in the single editing intake defined by
-[gate.md](gate.md). Do not ask separately before Phase 1 or Phase 2. Reuse a
-choice for this scope, or inherit a section profile only when `session.md` has
-`user_confirmed: true`.
-
-**Hard stop:** do not launch sentence Tasks until the single intake returns.
-
-| Phase | Title |
-|-------|-------|
-| Phase 1 full pace | Intake sentence-checker choice |
-| Phase 2 | Same intake profile, question 1 |
+Inherit the sentence-checker slug or use the recommended fast-tier default
+([phase2-verify-subagents.md](phase2-verify-subagents.md)). Do not ask a
+separate model question.
 
 Use a fast-tier model for this high-volume, wording-only role.
 
@@ -92,15 +70,13 @@ Build options from the **current session Task allowed model list**. Prefer a **f
 | OpenAI | Highest-tier GPT model in the allowed list |
 | Anthropic | Highest-tier Claude model in the allowed list |
 
-Use the chosen slug on **every** sentence Task. If unavailable, re-AskQuestion with valid options.
-
-Both phases reuse the same slug.
+Use the chosen slug on **every** sentence Task. If unavailable, pick the closest fast-tier slug in the session list and mention once.
 
 ---
 
 ## 5. Passage summary
 
-**Before any Task**, write one **passage summary** for the full S1…Sn scope ([SKILL.md](SKILL.md) § Response — passage summary):
+**Before any Task**, write one **passage summary** for the full S1…Sn scope (keep it for prompts; do not put the itinerary in the user narrative):
 
 - Passage role and logical flow.
 - Placement (section, `.tex` path, neighbors).
@@ -112,13 +88,14 @@ Paste the **identical** block into every subagent prompt under `## Passage summa
 Task(
   subagent_type: "generalPurpose",
   readonly: true,
-  model: <sentence-checker slug — fast tier from §4 or Phase 2 profile Q1>,
-  description: "Phase1 sentence: S<k>" | "Phase2 sentence verify: S<k>",
+  model: <sentence-checker slug — fast tier from §4>,
+  run_in_background: true,
+  description: "background sentence: S<k>",
   prompt: <template §6>
 )
 ```
 
-**Task description must include the label** (`Phase1 sentence: S2`) — not `sentence verify c11` or `all sentences`.
+**Task description must include the label** (`background sentence: S2`) — not `sentence verify c11` or `all sentences`.
 
 ---
 
@@ -155,9 +132,9 @@ rule above, never because the orchestrator expects a particular answer.
 
 You monitor the orchestrator, not just the prose. Read `pace` from the plan.
 
-Expected: exactly ONE target label S<k>. Phase 1 sentence Tasks are legal only
-for `pace: full`, and the label must appear in `phase1_sentence_tasks`. Phase 2:
-the label must appear in `phase2_changed_labels`.
+Expected: exactly ONE target label S<k>, listed in `phase2_changed_labels`.
+`phase1_sentence_tasks` must be `0`. Also append findings to `findings_path`
+as you go (job-state.md).
 
 If the prompt lists multiple sentences, a range (S1–S3), or "all sentences", or your label is missing from the task plan:
 
@@ -178,6 +155,11 @@ Check ONLY **one** sentence — label S<k>:
 <exact LaTeX/text>
 
 User inline comments: <[bracket comments] or "none">
+
+## Incremental ledger
+Append each finding (and a `done` line for S<k>) to `findings_path` from the
+Task plan as JSON lines the moment you have them (job-state.md). Do not edit
+the .tex. On interrupt: flush then stop.
 
 ## Role boundary and sentence-level rules
 Read and apply every objective in order from sentence-checks.md (Read tool if needed).
@@ -246,19 +228,10 @@ Reason: <one line>
 
 ---
 
-## 7. After sentence Tasks complete
+## 7. After sentence Tasks complete (or on interrupt)
 
-### Phase 1
+1. Harvest `findings.jsonl` ([job-state.md](job-state.md)). Keep stale lines.
+2. Pass harvest + any final reports to the **round synthesizer** with changed/skipped label lists.
+3. Producer does **not** run narrative/math inline or grade OVERALL. Apply [merge-policy.md](merge-policy.md).
 
-1. **Assemble** from each **Edited** line (S1, S2, …). Resolve boundary conflicts minimally.
-2. **Collect** unresolved **Checks** and **Needs user / main-agent judgment** → focused questions.
-3. **Run** [narrative-checks.md](narrative-checks.md) and [math-checks.md](math-checks.md) on the full passage (main agent).
-4. Summarize sentence-level from subagent reports; do not re-run all 13 inline unless a subagent failed.
-5. → step 5 (produce draft).
-
-### Phase 2
-
-1. Pass changed-sentence outputs to the **verifier synthesizer** with changed/skipped label lists.
-2. Producer does **not** run narrative/math inline or grade OVERALL.
-
-On timeout or incomplete report: relaunch the Task; producer must not grade inline.
+On timeout or incomplete report: treat that label as `open`; do not grade inline.

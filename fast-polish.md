@@ -1,18 +1,18 @@
 # Fast polish scope (standalone micro only)
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before step 6 when `edit_gate: polish`, `pace: fast`, `caller: micro`.
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before launching background checkers when `edit_gate: polish`, `pace: fast`, `caller: micro`.
 
 **Applies only when all three hold:** `edit_gate: polish` **and** `pace: fast` **and** `caller: micro` (standalone quote — not a macro chunk). If any is false, this file does not apply — run [phase2-verify-subagents.md](phase2-verify-subagents.md), [narrative-checks.md](narrative-checks.md), and [math-checks.md](math-checks.md) exactly as written, full whole-passage-vs-manuscript audit, no exceptions.
 
 Macro chunks always pass `caller: section-orchestrator` ([chunk-contract.md](../physics-paper-editing-section/chunk-contract.md)) — this file's exceptions **never** apply to chunks, regardless of pace.
 
-This file changes **what Phase 2 asks and whether the math Task launches**. It does not change who may set `OVERALL` (synthesizer only), does not skip the synthesizer, and does not skip sentence Tasks for changed sentences.
+This file changes **what background narrative/math ask and whether the math Task launches**. It does not change who may set `OVERALL` (synthesizer only), does not skip the synthesizer, and does not skip sentence Tasks for changed sentences.
 
 ---
 
 ## 1. Equation-detection test (run once; mechanical)
 
-Run against the **quoted source** before the Task plan, and again against the **producer's draft** after step 5 — if the draft adds math the quote lacked, re-run and re-emit the Task plan.
+Run against the **quoted source** before the Task plan, and again against the **marked draft** — if the draft adds math the quote lacked, re-run and re-emit the Task plan.
 
 **Launch the math Task** (skip nothing) if the quote **or** the draft contains any of:
 
@@ -45,25 +45,25 @@ Do not `Grep` or `Read` beyond: the supplied passage, the immediate neighbor sen
 PACKET_GAP: <one line — what context would be needed and why>
 ```
 
-`PACKET_GAP` is not a BLOCKER and not silently dropped — the synthesizer surfaces it in CHECKS (`packet_gap: <count>`) and the producer discloses it to the user in plain language: "This fast check compared your edit to your quoted source, not the rest of the paper."
+`PACKET_GAP` is not a must-fix and not silently dropped — the synthesizer surfaces it in CHECKS (`packet_gap: <count>`). Mention it in a receipt only if it matters to the user ("I could not check this against the rest of the paper").
 
 ## 4. Compliance mirror (math skip is not a violation)
 
 On `pace: fast` + `polish` + `caller: micro`:
 
 - `phase2_math_task: skipped (no equations)` is a **valid, compliant** plan when § 1's test finds no math in quote or draft. The math worker Step 0 in [compliance-monitoring.md](compliance-monitoring.md) does not apply — there is no math Task to grade.
-- `COMPLIANCE: FAIL` only if the plan **disagrees** with the mechanical test: math launched with no equations present (compliance violation: unnecessary Task, but not a content defect), or math skipped while equations are present in quote or draft (this is the real violation — never ship on this).
+- `COMPLIANCE: FAIL` only if the plan **disagrees** with the mechanical test: math launched with no equations present (unnecessary Task, not a content defect), or math skipped while equations are present in quote or draft (relaunch math; do not hide the gap).
 - The synthesizer accepts `### Math report: skipped — no equations per Task plan` in place of a math verifier report; CHECKS records `math_step0: N/A (skipped)`. This is **not** a procedural FAIL.
 
 ## 5. Model recommendation (fast pace only)
 
-At `pace: fast`, recommend a capable **medium-effort** flagship (not an "xhigh" / "thinking-high" reasoning variant, and not a coding-specialist slug) as the **first** option for the narrative/math (Q2) and synthesizer (Q3) roles in the single intake. Note on the form: "a high-reasoning-effort model adds several minutes at fast pace." The user may still pick a thinking-high model — this changes the recommended default only, never a silent substitution. At `pace: full` (or `rewrite`), keep the existing flagship / thinking-high recommendation unchanged.
+At `pace: fast`, the default deep/synth slugs are a capable **medium-effort** flagship (not an "xhigh" / "thinking-high" variant, not a coding-specialist slug). Mention once if defaults are used. At `pace: full` or `rewrite`, default to a flagship / thinking-high slug when available.
 
 ---
 
 ## What does not change
 
 - Sentence Tasks: still one Task per **changed** label, same 13 objectives, same fast-tier model, unaffected by this file.
-- Synthesizer: still the sole `OVERALL` authority; still fresh Tasks every iteration; still fails on any unresolved BLOCKER.
+- Synthesizer: still the sole job-round `OVERALL` authority (`PASS` | `CONFLICTS` | `PARTIAL`); still fresh Tasks every wave.
 - Narrative Task: still runs all four groups, full passage — this file only narrows classes 1–5 relative to the **edit**, and adds § 2's word-delta class; it does not remove any check.
 - `caller: section-orchestrator` (macro chunks): none of this applies. Chunks always get the math Task when applicable and the full whole-passage audit, at either pace.

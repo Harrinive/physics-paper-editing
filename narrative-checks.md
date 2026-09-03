@@ -6,10 +6,10 @@ Use for anything longer than one standalone sentence: paragraph, subsection, sec
 
 **Who runs this file:**
 
-| Phase | Runner | Scope |
-|-------|--------|-------|
-| **Phase 1** | Main agent after sentence work ([verification-loop.md](verification-loop.md)) | Full passage under edit |
-| **Phase 2** | Narrative **verifier** Task — producer **never** inline ([phase2-verify-subagents.md](phase2-verify-subagents.md)) | **Always** full passage |
+| Role | Runner | Scope |
+|------|--------|-------|
+| **Drafting principles** | Producer (does not grade `OVERALL`) | Full passage being written |
+| **Background verify** | Narrative **verifier** Task — producer **never** inline ([phase2-verify-subagents.md](phase2-verify-subagents.md)) | **Always** full snapshot |
 
 **Scope the unit under review:** one paragraph → "the whole" means that paragraph; a section → that section; full paper → the paper. When a check needs broader context (e.g. vs abstract), read surrounding material first.
 
