@@ -210,10 +210,12 @@ For other papers, use only the generic workflow above.
 | [merge-policy.md](merge-policy.md) | Three-way merge rubric |
 | [user-communication.md](user-communication.md) | Workbench UX — every user-facing turn |
 | [gate.md](gate.md) | Job × pace; inherit models; sentence-count thresholds |
+| [verification-loop.md](verification-loop.md) | What background verify covers each round (no Phase 1 audit gate) |
 | [phase2-verify-subagents.md](phase2-verify-subagents.md) | Background checkers, prompts, per-round synthesizer |
 | [sentence-check-subagents.md](sentence-check-subagents.md) | Sentence split, one Task per label, jsonl flush |
 | [compliance-monitoring.md](compliance-monitoring.md) | Task plan, Step 0, synthesizer procedural checks |
 | [fast-polish.md](fast-polish.md) | Fast standalone polish: narrower question, possible math skip |
+| [cross-skill.md](cross-skill.md) | Macro routing, terminology, verifier handoff, ON RESUME (macro / overflow only) |
 
 **Checklists**
 
