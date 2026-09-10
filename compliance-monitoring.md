@@ -2,7 +2,7 @@
 
 **For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before launching any verifier `Task` or closing a job round.
 
-Applies to **standalone micro** and **macro Stage D** chunk agents. **Writer ≠ grader:** producer never sets `OVERALL`; synthesizer only. **Orchestrator ≠ self-auditor:** section orchestrator does not launch micro verifier Tasks ([cross-skill.md](cross-skill.md)).
+Applies to **standalone micro** and **macro Stage D** chunk agents. **Writer ≠ grader:** producer never sets `OVERALL`; synthesizer only. **Orchestrator ≠ self-auditor:** section orchestrator does not launch micro verifier Tasks ([cross-skill.md](../physics-paper-editing-section/cross-skill.md)).
 
 Workers grade **orchestrator dispatch** before specialist work. The **synthesizer** grades worker homework **and** merges procedural compliance. The producer **never** self-certifies task counts.
 
@@ -60,7 +60,7 @@ caller: micro | section-orchestrator
 
 `phase1_sentence_tasks` is always `0` — there is no blocking source-audit wave.
 
-`phase2_math_task` is `launched` except on `edit_gate: polish` + `pace: fast` + `caller: micro`, where it may be `skipped (no equations)` per [fast-polish.md](fast-polish.md) § 1.
+`phase2_math_task` is `launched` except on `edit_gate: polish` + `pace: fast` + `caller: micro`, where it may be `skipped (no equations)` per [fast-polish.md](fast-polish.md) § 1 (no equations **and** no named-object introduction).
 
 **Rules the plan must satisfy:**
 
@@ -69,7 +69,7 @@ caller: micro | section-orchestrator
 | Any job | `phase1_sentence_tasks: 0` |
 | Background wave | `phase2_sentence_tasks` = one label per **changed** sentence only |
 | N ≤ 10 | `batching: none` |
-| `phase2_math_task: skipped (no equations)` | Only when `edit_gate: polish`, `pace: fast`, `caller: micro`, no equations |
+| `phase2_math_task: skipped (no equations)` | Only when `edit_gate: polish`, `pace: fast`, `caller: micro`, and [fast-polish.md](fast-polish.md) § 1 finds nothing to launch |
 
 **Forbidden launches** (workers must `COMPLIANCE: FAIL`):
 
@@ -128,9 +128,10 @@ Merge in **order**:
 
 1. **Procedural compliance** — any worker `COMPLIANCE: FAIL` → `compliance_worker_reports: FAIL`. Relaunch that wave with a corrected plan (fresh Tasks). Do **not** block the user or withhold the marked draft.
 2. **Task plan audit** — `phase1_sentence_tasks == 0`; `len(phase2_sentence_tasks) == C`; `phase2_math_task` skip only when legal; one sentence report (or jsonl `done`) per launched label; **no** `sentence_S1-S3` ranges.
-3. **Severity adjudication** — closed BLOCKER classes in [narrative-checks.md](narrative-checks.md) and [math-checks.md](math-checks.md). Downgrade out-of-list BLOCKERs to SUGGEST. On fast polish, also apply [fast-polish.md](fast-polish.md) § 2.
+3. **Severity adjudication** — closed BLOCKER classes in [severity.md](severity.md). Downgrade out-of-list BLOCKERs to SUGGEST. On fast polish, also apply [fast-polish.md](fast-polish.md) § 2.
 4. **Content vs live text** — apply [merge-policy.md](merge-policy.md):
    - unresolved must-fix on **untouched** sentences → producer will auto-apply; not `CONFLICTS`
+   - construction-as-definition / missing physical lead (math class 6, or narrative class 6 if math skipped) → always `OVERALL: CONFLICTS`; never auto-apply a guessed criterion
    - serious clash with user edits → `OVERALL: CONFLICTS`
    - interrupt / open labels and no serious clash → `OVERALL: PARTIAL`
    - otherwise → `OVERALL: PASS`
@@ -166,6 +167,7 @@ OVERALL: PASS | CONFLICTS | PARTIAL
 | ❌ Violation | ✅ Correct |
 |-------------|-----------|
 | Wait to write `.tex` until PASS | Mark + write, then background check |
+| Write a construction-only definition of a named physical object | Definition halt; ask for the operational criterion first |
 | `Task(..., run_in_background: false)` and block the turn | `run_in_background: true`; end the turn |
 | One Task for S1–S3 when N ≤ 10 | One Task per label |
 | Phase 1 source-audit Tasks | `phase1_sentence_tasks: 0` |

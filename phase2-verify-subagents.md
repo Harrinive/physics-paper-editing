@@ -2,9 +2,9 @@
 
 **For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before launching checkers or closing a round ([coworker-loop.md](coworker-loop.md)).
 
-Required for **every** micro edit — standalone or macro chunk. Checkers grade a **frozen snapshot**. The live `.tex` is already written.
+Required for **every** micro edit — standalone or macro chunk. Checkers grade a **frozen snapshot** against **`physics-paper-principles`**. The live `.tex` is already written.
 
-Also read: [verification-loop.md](verification-loop.md) · [sentence-check-subagents.md](sentence-check-subagents.md) · [compliance-monitoring.md](compliance-monitoring.md) · [job-state.md](job-state.md). When `edit_gate: polish` + `pace: fast` + `caller: micro`: also [fast-polish.md](fast-polish.md).
+Also read: [severity.md](severity.md) · [sentence-check-subagents.md](sentence-check-subagents.md) · [compliance-monitoring.md](compliance-monitoring.md) · [job-state.md](job-state.md). When `edit_gate: polish` + `pace: fast` + `caller: micro`: also [fast-polish.md](fast-polish.md).
 
 ---
 
@@ -12,11 +12,11 @@ Also read: [verification-loop.md](verification-loop.md) · [sentence-check-subag
 
 | Always run (full snapshot) | Run only on changed sentences |
 |---------------------------|-------------------------------|
-| Narrative verifier | Sentence verifiers (all 13 objectives each) |
+| Narrative verifier | Sentence verifiers (all 14 sentence principles each) |
 | Math verifier (when math or logical argument — see footnote) | |
 | Synthesizer (**after the round** — wave complete or interrupt harvest) | |
 
-Footnote — **fast polish, standalone micro only:** skip the math Task when the quote and draft have no equations ([fast-polish.md](fast-polish.md) § 1).
+Footnote — **fast polish, standalone micro only:** skip the math Task only when [fast-polish.md](fast-polish.md) § 1's mechanical test finds nothing to launch.
 
 - Fresh Tasks every wave — never resume old Tasks except `interrupt: true` to flush.
 - **Producer** must not inline-check the draft or set `OVERALL`.
@@ -112,9 +112,10 @@ If a recommended slug is not in the session list, pick the closest available fla
 **Forbidden:**
 
 - Waiting to write `.tex` until `OVERALL: PASS`
+- Writing a construction-only definition of a named physical object (definition halt — ask first)
 - Launching with `run_in_background: false` and blocking the user
 - Auto-selecting a **new** profile when one can be inherited (defaults are OK if mentioned)
-- Running checklists inline on the draft or setting `OVERALL`
+- Running principles inline on the draft or setting `OVERALL`
 - Sentence Tasks for unchanged labels
 - Batching ≤10 sentences in one Task
 - Dropping `findings.jsonl` on interrupt
@@ -189,13 +190,14 @@ as JSON lines the moment you have them. Do not edit the .tex.
 ## Instructions
 
 **If `edit_gate: polish`, `pace: fast`, `caller: micro`:**
-Read narrative-checks.md; narrow classes 1–5 to what **this edit changed**
+Read ../physics-paper-principles/narrative.md and physics-paper-editing/severity.md;
+narrow classes 1–5 to what **this edit changed**
 relative to "User's original source". Pre-existing defects are
 `SUGGEST — pre-existing in source`. Apply the word-delta class in fast-polish.md § 2.
 Do not Grep/Read beyond this prompt; use PACKET_GAP instead.
 
-**Otherwise:** run narrative-checks.md against the full manuscript context.
-Closed BLOCKER list; everything else is SUGGEST.
+**Otherwise:** run narrative.md against the full manuscript context.
+Closed BLOCKER list in severity.md; everything else is SUGGEST.
 
 Do not edit the draft. Report each group in file order.
 
@@ -218,7 +220,7 @@ Reason: <one line>
 
 ### Math verifier
 
-**Skip** when `edit_gate: polish`, `pace: fast`, `caller: micro`, and no equations ([fast-polish.md](fast-polish.md) § 1). Record `phase2_math_task: skipped (no equations)`.
+**Skip** when `edit_gate: polish`, `pace: fast`, `caller: micro`, and [fast-polish.md](fast-polish.md) § 1 finds nothing to launch. Record `phase2_math_task: skipped (no equations)`.
 
 Otherwise:
 
@@ -257,10 +259,15 @@ Do not edit the .tex.
 
 ## Instructions
 
-**If fast polish scope:** narrow to what this edit changed; pre-existing → SUGGEST;
-word-delta class from fast-polish.md § 2; PACKET_GAP instead of searching.
+**If fast polish scope:** narrow to what this edit changed; pre-existing → SUGGEST
+except construction-as-definition / missing physical lead on an object this
+quote introduces (fast-polish.md § 2); word-delta class from fast-polish.md § 2;
+PACKET_GAP instead of searching. Still run physical-lead.md on any named
+object the quote or draft introduces.
 
-**Otherwise:** full math-checks.md audit. Closed BLOCKER list.
+**Otherwise:** full math.md + physical-lead.md audit. Closed BLOCKER list in severity.md.
+Named objects in the physical or protocol story: run physical lead.
+Missing criterion is BLOCKER class 6 — report; do not invent the criterion.
 
 If no math or logical argument: mark N/A — still complete the report and a done line.
 
@@ -311,17 +318,23 @@ valid / stale / open per job-state.md — paste findings.jsonl summary
 ## Sentence scope
 Total N. Changed: <list>. Skipped: <list>. C = sentence Tasks launched.
 
-## Closed BLOCKER lists (do not open the checklist files)
+## Closed BLOCKER lists (do not open the principle files for this)
 
-Narrative (5): (1) contradiction or false relation, incl. unsupported connective;
+Use physics-paper-editing/severity.md. Paste:
+
+Narrative (6): (1) contradiction or false relation, incl. unsupported connective;
 (2) unbound essential object; (3) broken reasoning; (4) claim-strength mismatch;
-(5) meaning loss or invention. Else SUGGEST.
+(5) meaning loss or invention;
+(6) construction-as-definition (when math did not already report it — never
+auto-apply a guessed criterion). Else SUGGEST.
 
-Math (5): (1) invalid or inconsistent mathematics; (2) undefined essential object;
-(3) formula–prose mismatch; (4) unsupported logical strength; (5) incorrect import.
+Math (6): (1) invalid or inconsistent mathematics; (2) undefined essential object;
+(3) formula–prose mismatch; (4) unsupported logical strength; (5) incorrect import;
+(6) construction-as-definition (named physical object introduced only by a
+labeling/computation recipe — never auto-apply a guessed criterion).
 Else SUGGEST.
 
-Fast polish only: word-delta class in fast-polish.md § 2. Pre-existing in source → SUGGEST.
+Fast polish only: word-delta class in fast-polish.md § 2. Pre-existing in source → SUGGEST, except construction-as-definition on an object this quote introduces.
 
 ## Verifier reports
 <paste worker reports and/or jsonl harvest; math may be "skipped — no equations">
@@ -331,6 +344,8 @@ Fast polish only: word-delta class in fast-polish.md § 2. Pre-existing in sourc
    compliance_* FAIL; do not treat that as a user-blocking ship gate.
 2. Adjudicate BLOCKERs against the closed lists. Downgrade out-of-list items.
 3. Apply merge-policy.md mentally: untouched + must-fix → not CONFLICTS;
+   construction-as-definition / missing physical lead (math class 6) → always
+   CONFLICTS (never auto-apply a guessed criterion);
    serious clash with live user text → CONFLICTS; open/stale-only wave → PARTIAL;
    else PASS.
 4. SUGGEST and PACKET_GAP never set CONFLICTS by themselves.

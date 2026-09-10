@@ -1,19 +1,22 @@
 # Coworker loop
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. This file is canonical for draft-first background checking. Marks and disk: [job-state.md](job-state.md). Merge: [merge-policy.md](merge-policy.md). User-facing copy: [user-communication.md](user-communication.md).
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. This file is canonical for draft-first background checking. Marks and disk: [job-state.md](job-state.md). Merge: [merge-policy.md](merge-policy.md). User-facing copy: [user-communication.md](user-communication.md). Canon: **`physics-paper-principles`**.
 
-The producer writes working text immediately, marks a construction area, and launches independent checkers on a **frozen snapshot**. The user keeps editing. A check **round** ends when the wave finishes or an interrupt harvest runs. Then one merge updates the marked interior.
+The producer writes working text immediately, marks a construction area, and launches independent checkers on a **frozen snapshot**. The user keeps editing. A check **round** ends when the wave finishes or an interrupt harvest runs. Then one merge updates the marked interior. **Exception:** do not write a construction-only definition of a named physical object — see § Definition halt.
 
-**Phase 1 as a blocking pre-edit audit does not run.** Checklists are drafting principles for the producer and objectives for background checkers.
+**Phase 1 as a blocking pre-edit audit does not run.** Principles are drafting rules for the producer and objectives for background checkers. **Definition halt** (below) is intake, not Phase 1: it only fires when a named physical object has no honest operational criterion.
+
+**Hook:** `~/.cursor/hooks/check-editing-session.sh` — `verify:running` / `verify:partial` / `draft-ready` may end without CHECKS. No auto-reloop on `OVERALL: FAIL|CONFLICTS|PARTIAL`.
 
 ---
 
 ## Loop
 
 ```
-1. Scope ≤12 sentences (else route to the section skill)
+1. Scope ≤12 sentences (else route to the parent section skill)
 2. Intake — polish vs rewrite if unclear; inherit pace + models (gate.md)
-3. Draft — principles from sentence-checks.md / narrative-checks.md / math-checks.md
+2a. Definition halt if the passage introduces or rewrites a named physical object and no honest operational criterion is available (below)
+3. Draft — physics-paper-principles (sentence / narrative / math / physical-lead as applicable)
 4. Mark construction area + write .tex (job-state.md)
 5. Snapshot interior → sentences.json + snapshot.tex
 6. Launch background checkers (run_in_background: true) — phase2-verify-subagents.md
@@ -23,7 +26,21 @@ The producer writes working text immediately, marks a construction area, and lau
 10. New snapshot; relaunch only open + newly dirty labels — or unmark if done
 ```
 
-Never wait for `OVERALL` before the first `.tex` write. Never end a draft-ready turn by blocking on checkers.
+Never wait for `OVERALL` before the first `.tex` write. Never end a draft-ready turn by blocking on checkers. **Definition halt is not an `OVERALL` wait** — it is intake, like scope overflow: do not start the loop on a construction-only definition you cannot repair.
+
+Never skip background checks because the producer “already followed the principles.”
+
+---
+
+## Definition halt (before first write)
+
+When the passage **introduces or rewrites** a named object in the physical or protocol story (`definition` environment, "we define", first-use coinage):
+
+1. Run the **Physical lead** diagnostic ([physical-lead.md](../physics-paper-principles/physical-lead.md)). Diagnosis is always possible.
+2. If an operational criterion can be stated honestly → draft with definition layering (criterion → labeling/computation → coincidence pointer) and continue the loop.
+3. If it cannot → **do not write** the construction as the definition and **do not invent** a criterion. Named state **Need your call** ([user-communication.md](user-communication.md)). Quote the construction; ask what membership test the lead should state (or confirm the object is purely formal). Finalize that definition before further edits of the object.
+
+No halt when the passage only *uses* an already-defined term. Changing a construction-led definition into a physically led one is **rewrite**, not in-place polish ([gate.md](gate.md)).
 
 ---
 

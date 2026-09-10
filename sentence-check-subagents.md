@@ -6,7 +6,7 @@ Background checkers grade **changed sentences only** ([phase2-verify-subagents.m
 
 Sentence-count thresholds: [gate.md](gate.md).
 
-**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before the 13 objectives — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) when N ≤ 10 → `COMPLIANCE: FAIL`.
+**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before the 14 sentence principles — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) when N ≤ 10 → `COMPLIANCE: FAIL`.
 
 ---
 
@@ -14,7 +14,7 @@ Sentence-count thresholds: [gate.md](gate.md).
 
 | Context | Use this file? |
 |---------|----------------|
-| Producer drafting | No — producer uses [sentence-checks.md](sentence-checks.md) as **principles** |
+| Producer drafting | No — producer uses [sentence.md](../physics-paper-principles/sentence.md) as **principles** |
 | Background verify | Yes — **changed labels only** |
 | ASK USER → proceed anyway | Yes — splittable sentences; note partial coverage |
 
@@ -40,7 +40,7 @@ After labeling, identify changed labels per [phase2-verify-subagents.md](phase2-
 
 ## 3. Task assignment
 
-**Default:** one Task per changed sentence — each subagent audits one sentence against all 13 checks.
+**Default:** one Task per changed sentence — each subagent audits one sentence against all 14 sentence principles.
 
 1. Launch **one Task per assigned sentence** (or per §3.1 batch).
 2. Launch Tasks **in parallel** with `run_in_background: true`. Do not wait before ending the turn.
@@ -162,8 +162,9 @@ Task plan as JSON lines the moment you have them (job-state.md). Do not edit
 the .tex. On interrupt: flush then stop.
 
 ## Role boundary and sentence-level rules
-Read and apply every objective in order from sentence-checks.md (Read tool if needed).
-Run all 13 checks per assigned sentence. Do not skip.
+Read and apply every principle in order from ../physics-paper-principles/sentence.md (Read tool if needed).
+Also read physics-paper-editing/severity.md § Sentence workers.
+Run all 14 per assigned sentence. Do not skip.
 
 Use neighboring sentences only to judge flow and references. Do not edit them.
 Do not introduce a discourse connective (`however`, `conversely`, `therefore`,
@@ -180,7 +181,9 @@ the edit does not add a scientific claim.
 
 **Fix silently (minor):** Typos, punctuation, trivial grammar, polish that does not change meaning.
 
-Respect objective 8 (minimal changes).
+**Do not silent-fix:** tautological or type-gloss clauses (principle 14). Deleting a clause whose claim is already in an adjacent clause is allowed as a silent minor fix. Supplying the missing contrast or consequence is passage-level judgment — report it as `SUGGEST` with a proposed `Edited:` line; do not invent a scientific point. Missing physical lead on a newly named object (principle 11 / physical-lead.md): do not invent the criterion; `ESCALATE_TO: math` (or narrative if no math Task) and `Needs user / main-agent judgment`.
+
+Respect principle 8 (minimal changes).
 
 ## Report only what you did not fix
 
@@ -219,6 +222,7 @@ Reason: <one line>
 11. Physics story:
 12. Use math for math:
 13. Confusion-on-first-read ordering:
+14. Every clause must carry a claim:
 
 **Needs user / main-agent judgment:** <items or "none">
 **Severity:** BLOCKER | SUGGEST | none
