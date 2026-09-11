@@ -6,7 +6,7 @@ Background checkers grade **changed sentences only** ([phase2-verify-subagents.m
 
 Sentence-count thresholds: [gate.md](gate.md).
 
-**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before the 14 sentence principles — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) when N ≤ 10 → `COMPLIANCE: FAIL`.
+**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before specialist work — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) when N ≤ 10 → `COMPLIANCE: FAIL`. Specialist work is **artifact-first** ([sentence.md](../physics-paper-principles/sentence.md) Detect names); do not walk 1–14 as the primary loop.
 
 ---
 
@@ -40,7 +40,7 @@ After labeling, identify changed labels per [phase2-verify-subagents.md](phase2-
 
 ## 3. Task assignment
 
-**Default:** one Task per changed sentence — each subagent audits one sentence against all 14 sentence principles.
+**Default:** one Task per changed sentence — each subagent runs the artifact-first workflow, then reports unresolved items against all 14 sentence principles.
 
 1. Launch **one Task per assigned sentence** (or per §3.1 batch).
 2. Launch Tasks **in parallel** with `run_in_background: true`. Do not wait before ending the turn.
@@ -162,9 +162,9 @@ Task plan as JSON lines the moment you have them (job-state.md). Do not edit
 the .tex. On interrupt: flush then stop.
 
 ## Role boundary and sentence-level rules
-Read and apply every principle in order from ../physics-paper-principles/sentence.md (Read tool if needed).
-Also read physics-paper-editing/severity.md § Sentence workers.
-Run all 14 per assigned sentence. Do not skip.
+Read ../physics-paper-principles/sentence.md (Detect column) and
+physics-paper-editing/severity.md § Sentence workers (Read tool if needed).
+Do **not** walk principles 1–14 as the primary loop. Run the workflow below.
 
 Use neighboring sentences only to judge flow and references. Do not edit them.
 Do not introduce a discourse connective (`however`, `conversely`, `therefore`,
@@ -172,6 +172,32 @@ Do not introduce a discourse connective (`however`, `conversely`, `therefore`,
 the source or immediate context. If uncertain, use no connective. Do not invent
 a mechanism, assumption, operator declaration, equivalence claim, or other
 scientific content.
+
+## Workflow (run in this order; do not skip an artifact)
+
+1. Produce artifacts (tests named in sentence.md Detect column). One line each.
+2. Under each artifact, check only the listed principles.
+3. Silent-fix only what those checks force. Cite the artifact that forced each
+   silent fix. Principle 8 last.
+4. Then fill **Checks — unresolved only** (existing 1–14 list).
+
+### Artifacts → principles
+**Kernel** (drop modifiers; one SVO per clause; head must survive)
+  Then: 4 SVO, 6 wording, 9 voice, 10 "For A, it", 3 coined heads
+**Antecedent map** (substitution; distant labels get a content reminder + number)
+  Then: 1 local refs, 2 cross-boundary
+**Topic / stress** (old at start, new at end; first-read pause)
+  Then: 5 streamline, 9 voice, 13 ordering
+**Clause-claim list** (one claim per clause or DELETE)
+  Then: 12 math-for-math, 14 clause-must-claim
+**Speech-act** (setup | hypothesis | proof-strategy | N/A)
+  Then: 7 declare setup
+**Membership without recipe** (or ESCALATE_TO math)
+  Then: 11 physics story / physical lead
+**Principle 8** after the rest: change only what the artifacts forced
+
+Empty Diagnostics field → stop specialist work; incomplete homework (synthesizer
+marks this label open / OVERALL PARTIAL). Fast polish does not skip Diagnostics.
 
 ## Apply corrections yourself (do not report these)
 
@@ -207,6 +233,15 @@ Reason: <one line>
 ---
 ### Sentence <label>
 **Edited:** <final LaTeX after silent fixes; if unchanged, repeat original>
+**Silent fixes cited:** <artifact → what changed; or "none">
+
+**Diagnostics** (required; empty field → incomplete homework):
+- Kernel: <one SVO per clause; no modifiers>
+- Antecedent map: <pronoun → noun, or none>
+- Topic / stress: <old → new; pause + tier or none>
+- Clause-claim list: <one claim per clause, or DELETE>
+- Speech-act: setup | hypothesis | proof-strategy | N/A
+- Membership without recipe: <one clause> | N/A | ESCALATE
 
 **Checks — unresolved only** (if all fixed: "All checks addressed in **Edited** (none to report)."):
 1. Clarify local references:

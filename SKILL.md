@@ -9,7 +9,7 @@ description: >-
 
 # Physics Paper Editing (micro)
 
-**Process** for editing a short LaTeX physics/mathematics passage. Canon — what the prose should be — is **`physics-paper-principles`**. This skill does not restate those principles.
+**Process** for editing a short LaTeX physics/mathematics passage. Canon — what the prose should be — is **`physics-paper-principles`**. This skill does not restate those principles. Verifier workers use the **inverted** Detect lookup: artifact first, then the principles listed under it ([sentence-check-subagents.md](sentence-check-subagents.md), [phase2-verify-subagents.md](phase2-verify-subagents.md)).
 
 **Standalone** for passages **≤12 sentences**. Parent: **`physics-paper-editing-section`** for whole `\section{...}` or **>12 sentences**.
 
@@ -101,7 +101,7 @@ That is the **only** parent-skill awareness required on a standalone micro job. 
 | Term | Meaning |
 |------|---------|
 | **Producer** | Main agent — drafts, marks, applies merge; never sets `OVERALL` |
-| **Sentence verifier** | Background Task — one sentence; 14 sentence principles; appends `findings.jsonl` |
+| **Sentence verifier** | Background Task — one sentence; artifact-first then unresolved 1–14; appends `findings.jsonl` |
 | **Narrative verifier** | Background Task — full snapshot; four narrative groups |
 | **Math verifier** | Background Task — full snapshot when math or logical argument present |
 | **Verifier synthesizer** | Per **round** — sole `OVERALL` authority (`PASS` \| `CONFLICTS` \| `PARTIAL`) |
@@ -201,12 +201,14 @@ Follow [user-communication.md](user-communication.md) exactly — named state, r
 | [user-communication.md](user-communication.md) | Workbench UX — every user-facing turn |
 | [gate.md](gate.md) | Job × pace; inherit models; sentence-count thresholds |
 | [severity.md](severity.md) | Closed BLOCKER lists; SUGGEST; construction-as-definition never auto-applies |
-| [phase2-verify-subagents.md](phase2-verify-subagents.md) | Background checkers, prompts, per-round synthesizer |
-| [sentence-check-subagents.md](sentence-check-subagents.md) | Sentence split, one Task per label, jsonl flush |
-| [compliance-monitoring.md](compliance-monitoring.md) | Task plan, Step 0, synthesizer procedural checks |
+| [phase2-verify-subagents.md](phase2-verify-subagents.md) | Background checkers, artifact-first prompts, per-round synthesizer |
+| [sentence-check-subagents.md](sentence-check-subagents.md) | Sentence split, artifact-first sentence Tasks, jsonl flush |
+| [compliance-monitoring.md](compliance-monitoring.md) | Task plan, Step 0, Diagnostics homework, synthesizer procedural checks |
 | [fast-polish.md](fast-polish.md) | Fast standalone polish: narrower question, possible math skip |
 
 **Canon (sibling skill)** — [physics-paper-principles/SKILL.md](../physics-paper-principles/SKILL.md)
+
+**Sibling sync:** this skill and **`physics-paper-principles`** are a paired split (harness vs canon). Changing a Detect test name or principle ID in the canon lookup requires the same name in this skill’s worker **artifact → principles** list, **same pass**. Changing a worker artifact, silent-fix list, or its principle list requires the canon Detect column still to point at that artifact. Grep the sibling for the old name before finishing. Drift is a bug. Do not copy Detect paragraphs into prompts — name the test; require the same artifact label. `physics-paper-editing-section` only if it duplicates prompt text; otherwise it already points here.
 
 ## Related skills
 

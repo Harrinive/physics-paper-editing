@@ -12,7 +12,7 @@ Also read: [severity.md](severity.md) · [sentence-check-subagents.md](sentence-
 
 | Always run (full snapshot) | Run only on changed sentences |
 |---------------------------|-------------------------------|
-| Narrative verifier | Sentence verifiers (all 14 sentence principles each) |
+| Narrative verifier (artifact-first, then groups 1–4) | Sentence verifiers (artifact-first, then unresolved 1–14) |
 | Math verifier (when math or logical argument — see footnote) | |
 | Synthesizer (**after the round** — wave complete or interrupt harvest) | |
 
@@ -189,17 +189,50 @@ as JSON lines the moment you have them. Do not edit the .tex.
 
 ## Instructions
 
+Read ../physics-paper-principles/narrative.md (Detect lines) and
+physics-paper-editing/severity.md. Do **not** walk groups 1–4 as the
+primary loop. Run the workflow below. Fast polish does not skip Diagnostics.
+
 **If `edit_gate: polish`, `pace: fast`, `caller: micro`:**
-Read ../physics-paper-principles/narrative.md and physics-paper-editing/severity.md;
 narrow classes 1–5 to what **this edit changed**
 relative to "User's original source". Pre-existing defects are
 `SUGGEST — pre-existing in source`. Apply the word-delta class in fast-polish.md § 2.
 Do not Grep/Read beyond this prompt; use PACKET_GAP instead.
 
-**Otherwise:** run narrative.md against the full manuscript context.
-Closed BLOCKER list in severity.md; everything else is SUGGEST.
+**Otherwise:** full manuscript context. Closed BLOCKER list in severity.md;
+everything else is SUGGEST.
 
-Do not edit the draft. Report each group in file order.
+Do not edit the draft.
+
+## Workflow
+1. Produce artifacts (do not write a weakness until the artifact exists).
+2. Under each artifact, check only the listed bullets.
+3. Then fill **Group 1–4**.
+
+### Artifacts → groups
+**Reverse outline** (one phrase per sentence)
+  Then: G1 central / novelty roles; G2 motivation, prose-vs-math, ordering; G3 economy
+**Because-chain** (S_n because S_{n-1}, or named gap)
+  Then: G2 logical arc; G2 signposting (connectives licensed by the chain)
+**Takeaway** (one sentence, no hedge stacks)
+  Then: G1 central message, G1 framing
+**CARS tags** (territory | niche:<type> | occupy | N/A)
+  Then: G2 motivation
+**Connective inventory**
+  Then: G2 signposting
+**CRE + strength words**
+  Then: G4 scope
+**Entry-point list**
+  Then: G4 audience
+**Promise / payoff**
+  Then: G3 consistency
+**Membership without recipe**
+  Then: G2 physical lead
+**Speech-act**
+  Then: G2 model setup
+
+Empty Diagnostics field → incomplete homework (synthesizer: this role open /
+OVERALL PARTIAL).
 
 ## Output format
 ### Assignment compliance
@@ -208,6 +241,18 @@ Role: narrative
 Reason: <one line>
 
 ### Narrative verification
+**Diagnostics** (required):
+- Reverse outline: <one phrase per sentence>
+- Because-chain: <or named gap>
+- Takeaway: <one sentence>
+- CARS tags: territory | niche:<type> | occupy | N/A
+- Connective inventory: <word → licensed by chain? yes/no; or none>
+- CRE + strength words: <claim / reason / evidence; strength list or none>
+- Entry-point list: <or none>
+- Promise / payoff: <or none>
+- Membership without recipe: <or N/A>
+- Speech-act: setup | hypothesis | proof-strategy | N/A
+
 **Group 1 — Core message and framing:** <findings or PASS>
 **Group 2 — Logical arc and motivation:** <findings or PASS>
 **Group 3 — Consistency and economy:** <findings or PASS>
@@ -259,6 +304,10 @@ Do not edit the .tex.
 
 ## Instructions
 
+Read ../physics-paper-principles/math.md (Required products) and
+physical-lead.md. Do **not** walk type-check lists as the primary loop.
+Run the workflow below. Fast polish does not skip Diagnostics.
+
 **If fast polish scope:** narrow to what this edit changed; pre-existing → SUGGEST
 except construction-as-definition / missing physical lead on an object this
 quote introduces (fast-polish.md § 2); word-delta class from fast-polish.md § 2;
@@ -269,7 +318,32 @@ object the quote or draft introduces.
 Named objects in the physical or protocol story: run physical lead.
 Missing criterion is BLOCKER class 6 — report; do not invent the criterion.
 
-If no math or logical argument: mark N/A — still complete the report and a done line.
+If no math or logical argument: mark N/A — still complete Diagnostics as N/A,
+the report, and a done line.
+
+## Workflow (per statement)
+1. Classify type (Step 0).
+2. Produce only the artifacts that type needs.
+3. Under each artifact, run the listed checks.
+4. Then fill **Per-statement / per-type findings**.
+
+### Artifacts → checks
+**Type tag** — all statements
+**Implication arrow + leap words + where hypotheses are used**
+  Then: Type 1 completeness, direction, implicit assumptions
+**Independent formalization** (prose-only, then compare)
+  Then: Type 2 round-trip, back-translation, formula–prose mismatch
+**Excluded pathology**
+  Then: Type 2 negative-space, first-use
+**Membership without recipe**
+  Then: physical lead, Type 2 physical-lead / layering
+**Import: quoted hypotheses vs used; status; theorem/page**
+  Then: Type 3
+**WLOG-reason** (symmetry named | unjustified)
+  Then: Type 4
+
+Empty Diagnostics field → incomplete homework (synthesizer: this role open /
+OVERALL PARTIAL).
 
 ## Output format
 ### Assignment compliance
@@ -279,6 +353,14 @@ Reason: <one line>
 
 ### Math verification
 **Step 0 — Classifications:** <or "no math statements">
+**Diagnostics** (per statement; required):
+- Type tag:
+- Implication arrow + leap words + where hypotheses are used: P⇒Q | Q⇒P | iff | N/A; <leap/hyp-use or N/A>
+- Independent formalization: <prose-only, or N/A>
+- Excluded pathology: <or cannot-name → flag>
+- Membership without recipe: <or construction-only FAIL | N/A>
+- Import: quoted hypotheses vs used; status; theorem/page | N/A
+- WLOG-reason: <symmetry named | unjustified | N/A>
 **Per-statement / per-type findings:** <file order>
 **BLOCKER items:** <or "none">
 **SUGGEST items:** <or "none">
@@ -342,14 +424,17 @@ Fast polish only: word-delta class in fast-polish.md § 2. Pre-existing in sourc
 ## Instructions
 1. Procedural compliance first (compliance-monitoring.md). Plan defects →
    compliance_* FAIL; do not treat that as a user-blocking ship gate.
-2. Adjudicate BLOCKERs against the closed lists. Downgrade out-of-list items.
-3. Apply merge-policy.md mentally: untouched + must-fix → not CONFLICTS;
+2. Missing or empty **Diagnostics** on a worker report → that role is `open`;
+   OVERALL: PARTIAL. This is incomplete homework, not a user-text CONFLICTS.
+   Do not add it to the closed BLOCKER lists.
+3. Adjudicate BLOCKERs against the closed lists. Downgrade out-of-list items.
+4. Apply merge-policy.md mentally: untouched + must-fix → not CONFLICTS;
    construction-as-definition / missing physical lead (math class 6) → always
    CONFLICTS (never auto-apply a guessed criterion);
    serious clash with live user text → CONFLICTS; open/stale-only wave → PARTIAL;
    else PASS.
-4. SUGGEST and PACKET_GAP never set CONFLICTS by themselves.
-5. Emit Mode + CHECKS. You are the only agent that may set OVERALL.
+5. SUGGEST and PACKET_GAP never set CONFLICTS by themselves.
+6. Emit Mode + CHECKS. You are the only agent that may set OVERALL.
 
 ## Output format (final output — no extra commentary)
 Mode: verify-subagents · verify:<partial|complete> · <N> sentences · <C> changed · <M> Tasks · sentence:<slug> · deep:<slug> · synth:<slug>

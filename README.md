@@ -2,7 +2,7 @@
 
 Cursor skill for the **coworker-loop process**: draft a short LaTeX physics/mathematics passage into the file, background-check a frozen snapshot, merge. Conventions developed through work with Prof. Jens Koch.
 
-**Canon** (what the prose should be) is the sibling skill [physics-paper-principles](https://github.com/Harrinive/physics-paper-principles). This skill does not restate those principles.
+**Canon** (what the prose should be) is the sibling skill [physics-paper-principles](https://github.com/Harrinive/physics-paper-principles). This skill does not restate those principles. Sentence, narrative, and math workers run an **artifact-first** check (Detect names from the sibling), then report unresolved principles. Changing a Detect name in one skill requires the same name in the other, same pass.
 
 ## What it does
 

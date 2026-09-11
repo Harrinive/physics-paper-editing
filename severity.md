@@ -54,7 +54,7 @@ Unverified-but-plausible imports, optional derivation detail, motivation, presen
 
 ## Sentence workers
 
-Sentence Tasks grade wording against [sentence.md](../physics-paper-principles/sentence.md) (all 14). They are **not** the physics/math adjudicator.
+Sentence Tasks run the artifact-first workflow against [sentence.md](../physics-paper-principles/sentence.md) (all 14, via shared artifacts). They are **not** the physics/math adjudicator.
 
 | Finding | Severity |
 |---------|----------|

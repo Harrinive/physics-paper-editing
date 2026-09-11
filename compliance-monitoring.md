@@ -118,6 +118,8 @@ Reason: <one line if FAIL; "assignment matches task plan" if PASS>
 
 **Also append** to `findings_path` as soon as each finding (or `done`) is known — [job-state.md](job-state.md). Do not wait for the final report.
 
+After `COMPLIANCE: PASS`, specialist work is **artifact-first** ([sentence-check-subagents.md](sentence-check-subagents.md) · [phase2-verify-subagents.md](phase2-verify-subagents.md)). Names match the Detect / Required-products columns in **`physics-paper-principles`**. An empty or missing **Diagnostics** block is incomplete specialist homework — the synthesizer marks that role `open` and `OVERALL: PARTIAL`. It is not a closed BLOCKER and not `CONFLICTS`. Fast polish does not skip Diagnostics.
+
 Workers **must not** fix orchestrator mistakes — only report `COMPLIANCE: FAIL`.
 
 ---
@@ -128,14 +130,15 @@ Merge in **order**:
 
 1. **Procedural compliance** — any worker `COMPLIANCE: FAIL` → `compliance_worker_reports: FAIL`. Relaunch that wave with a corrected plan (fresh Tasks). Do **not** block the user or withhold the marked draft.
 2. **Task plan audit** — `phase1_sentence_tasks == 0`; `len(phase2_sentence_tasks) == C`; `phase2_math_task` skip only when legal; one sentence report (or jsonl `done`) per launched label; **no** `sentence_S1-S3` ranges.
-3. **Severity adjudication** — closed BLOCKER classes in [severity.md](severity.md). Downgrade out-of-list BLOCKERs to SUGGEST. On fast polish, also apply [fast-polish.md](fast-polish.md) § 2.
-4. **Content vs live text** — apply [merge-policy.md](merge-policy.md):
+3. **Diagnostics present** — each launched worker’s specialist report includes the required **Diagnostics** fields (not empty). Missing → that label/role `open`; `OVERALL: PARTIAL`. Not a closed BLOCKER.
+4. **Severity adjudication** — closed BLOCKER classes in [severity.md](severity.md). Downgrade out-of-list BLOCKERs to SUGGEST. On fast polish, also apply [fast-polish.md](fast-polish.md) § 2.
+5. **Content vs live text** — apply [merge-policy.md](merge-policy.md):
    - unresolved must-fix on **untouched** sentences → producer will auto-apply; not `CONFLICTS`
    - construction-as-definition / missing physical lead (math class 6, or narrative class 6 if math skipped) → always `OVERALL: CONFLICTS`; never auto-apply a guessed criterion
    - serious clash with user edits → `OVERALL: CONFLICTS`
    - interrupt / open labels and no serious clash → `OVERALL: PARTIAL`
    - otherwise → `OVERALL: PASS`
-5. SUGGESTS do not fail a round. `PACKET_GAP` never fails a round.
+6. SUGGESTS do not fail a round. `PACKET_GAP` never fails a round.
 
 Emit in CHECKS:
 
