@@ -112,7 +112,7 @@ If a recommended slug is not in the session list, pick the closest available fla
 **Forbidden:**
 
 - Waiting to write `.tex` until `OVERALL: PASS`
-- Writing a construction-only definition of a named physical object (definition halt — ask first)
+- Inventing physical meaning or choosing between unresolved scientific alternatives (definition halt only when essential to faithful drafting)
 - Launching with `run_in_background: false` and blocking the user
 - Auto-selecting a **new** profile when one can be inherited (defaults are OK if mentioned)
 - Running principles inline on the draft or setting `OVERALL`
@@ -226,7 +226,7 @@ Do not edit the draft.
   Then: G4 audience
 **Promise / payoff**
   Then: G3 consistency
-**Membership without recipe**
+**Physical meaning and definition choice**
   Then: G2 physical lead
 **Speech-act**
   Then: G2 model setup
@@ -250,7 +250,7 @@ Reason: <one line>
 - CRE + strength words: <claim / reason / evidence; strength list or none>
 - Entry-point list: <or none>
 - Promise / payoff: <or none>
-- Membership without recipe: <or N/A>
+- Physical meaning and definition choice: <role; operational option; chosen form and reason, or N/A>
 - Speech-act: setup | hypothesis | proof-strategy | N/A
 
 **Group 1 — Core message and framing:** <findings or PASS>
@@ -309,14 +309,16 @@ physical-lead.md. Do **not** walk type-check lists as the primary loop.
 Run the workflow below. Fast polish does not skip Diagnostics.
 
 **If fast polish scope:** narrow to what this edit changed; pre-existing → SUGGEST
-except construction-as-definition / missing physical lead on an object this
+except unresolved physical meaning (class 6) on an object this
 quote introduces (fast-polish.md § 2); word-delta class from fast-polish.md § 2;
 PACKET_GAP instead of searching. Still run physical-lead.md on any named
 object the quote or draft introduces.
 
 **Otherwise:** full math.md + physical-lead.md audit. Closed BLOCKER list in severity.md.
 Named objects in the physical or protocol story: run physical lead.
-Missing criterion is BLOCKER class 6 — report; do not invent the criterion.
+Use severity.md class 6 only for unresolved essential scientific ambiguity.
+A valid construction or missing operational criterion alone is not a BLOCKER;
+thin motivation is SUGGEST. Do not invent physical meaning.
 
 If no math or logical argument: mark N/A — still complete Diagnostics as N/A,
 the report, and a done line.
@@ -331,11 +333,11 @@ the report, and a done line.
 **Type tag** — all statements
 **Implication arrow + leap words + where hypotheses are used**
   Then: Type 1 completeness, direction, implicit assumptions
-**Independent formalization** (prose-only, then compare)
+**Independent formalization** (exact prose characterization, then compare; motivation-only → N/A)
   Then: Type 2 round-trip, back-translation, formula–prose mismatch
-**Excluded pathology**
+**Excluded pathology** (or intended use / N/A when no exclusion is claimed)
   Then: Type 2 negative-space, first-use
-**Membership without recipe**
+**Physical meaning and definition choice**
   Then: physical lead, Type 2 physical-lead / layering
 **Import: quoted hypotheses vs used; status; theorem/page**
   Then: Type 3
@@ -356,9 +358,9 @@ Reason: <one line>
 **Diagnostics** (per statement; required):
 - Type tag:
 - Implication arrow + leap words + where hypotheses are used: P⇒Q | Q⇒P | iff | N/A; <leap/hyp-use or N/A>
-- Independent formalization: <prose-only, or N/A>
-- Excluded pathology: <or cannot-name → flag>
-- Membership without recipe: <or construction-only FAIL | N/A>
+- Independent formalization: <exact prose characterization, or N/A with reason>
+- Excluded pathology: <or intended use / N/A with reason>
+- Physical meaning and definition choice: <role; operational option; chosen form and reason; any unresolved scientific choice | N/A>
 - Import: quoted hypotheses vs used; status; theorem/page | N/A
 - WLOG-reason: <symmetry named | unjustified | N/A>
 **Per-statement / per-type findings:** <file order>
@@ -407,16 +409,17 @@ Use physics-paper-editing/severity.md. Paste:
 Narrative (6): (1) contradiction or false relation, incl. unsupported connective;
 (2) unbound essential object; (3) broken reasoning; (4) claim-strength mismatch;
 (5) meaning loss or invention;
-(6) construction-as-definition (when math did not already report it — never
-auto-apply a guessed criterion). Else SUGGEST.
+(6) unresolved physical meaning (essential scientific choice needed to define
+the object; when math did not already report it — never guess). Else SUGGEST.
 
 Math (6): (1) invalid or inconsistent mathematics; (2) undefined essential object;
 (3) formula–prose mismatch; (4) unsupported logical strength; (5) incorrect import;
-(6) construction-as-definition (named physical object introduced only by a
-labeling/computation recipe — never auto-apply a guessed criterion).
-Else SUGGEST.
+(6) unresolved physical meaning (essential scientific choice needed to define
+the object cannot be settled from supplied context — never guess).
+A construction, thin motivation, or missing operational criterion alone is not
+class 6. Else SUGGEST.
 
-Fast polish only: word-delta class in fast-polish.md § 2. Pre-existing in source → SUGGEST, except construction-as-definition on an object this quote introduces.
+Fast polish only: word-delta class in fast-polish.md § 2. Pre-existing in source → SUGGEST, except unresolved physical meaning (class 6) on an object this quote introduces.
 
 ## Verifier reports
 <paste worker reports and/or jsonl harvest; math may be "skipped — no equations">
@@ -429,8 +432,8 @@ Fast polish only: word-delta class in fast-polish.md § 2. Pre-existing in sourc
    Do not add it to the closed BLOCKER lists.
 3. Adjudicate BLOCKERs against the closed lists. Downgrade out-of-list items.
 4. Apply merge-policy.md mentally: untouched + must-fix → not CONFLICTS;
-   construction-as-definition / missing physical lead (math class 6) → always
-   CONFLICTS (never auto-apply a guessed criterion);
+   unresolved physical meaning (math/narrative class 6) →
+   CONFLICTS (never invent the scientific choice);
    serious clash with live user text → CONFLICTS; open/stale-only wave → PARTIAL;
    else PASS.
 5. SUGGEST and PACKET_GAP never set CONFLICTS by themselves.

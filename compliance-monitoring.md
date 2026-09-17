@@ -134,7 +134,7 @@ Merge in **order**:
 4. **Severity adjudication** — closed BLOCKER classes in [severity.md](severity.md). Downgrade out-of-list BLOCKERs to SUGGEST. On fast polish, also apply [fast-polish.md](fast-polish.md) § 2.
 5. **Content vs live text** — apply [merge-policy.md](merge-policy.md):
    - unresolved must-fix on **untouched** sentences → producer will auto-apply; not `CONFLICTS`
-   - construction-as-definition / missing physical lead (math class 6, or narrative class 6 if math skipped) → always `OVERALL: CONFLICTS`; never auto-apply a guessed criterion
+   - unresolved physical meaning (math class 6, or narrative class 6 if math skipped) → `OVERALL: CONFLICTS`; never invent the missing scientific choice. Thin motivation alone is SUGGEST
    - serious clash with user edits → `OVERALL: CONFLICTS`
    - interrupt / open labels and no serious clash → `OVERALL: PARTIAL`
    - otherwise → `OVERALL: PASS`
@@ -170,7 +170,7 @@ OVERALL: PASS | CONFLICTS | PARTIAL
 | ❌ Violation | ✅ Correct |
 |-------------|-----------|
 | Wait to write `.tex` until PASS | Mark + write, then background check |
-| Write a construction-only definition of a named physical object | Definition halt; ask for the operational criterion first |
+| Invent a physical criterion or resolve essential scientific ambiguity by guessing | Retain valid definitions; use definition halt only for the unresolved scientific choice |
 | `Task(..., run_in_background: false)` and block the turn | `run_in_background: true`; end the turn |
 | One Task for S1–S3 when N ≤ 10 | One Task per label |
 | Phase 1 source-audit Tasks | `phase1_sentence_tasks: 0` |

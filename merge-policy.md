@@ -27,7 +27,7 @@ Do **not** patch the file each time a single checker finishes.
 | Situation | Action |
 |-----------|--------|
 | User did not touch the sentence; finding is a must-fix (`valid` BLOCKER) | **Auto-apply** the agent fix |
-| Finding is construction-as-definition / missing physical lead ([severity.md](severity.md) math/narrative class 6), whether or not the user touched the sentence | **Do not apply.** Never invent an operational criterion at merge. Leave yours. Report **Need your call** |
+| Finding is unresolved physical meaning ([severity.md](severity.md) math/narrative class 6), whether or not the user touched the sentence | **Do not apply.** Leave yours and report **Need your call** with the unresolved scientific choice. Definition form or thin motivation alone is not class 6. |
 | User made a reasonable edit (already fixed it, or an intentional rephrase that does not reintroduce the defect) | **Accept yours** |
 | Minor conflict (style, equivalent wording, punctuation) | **Auto-resolve**; prefer yours when both are valid |
 | Serious conflict (contradictory physics, sign/equation, changed claim or quantifier) | **Do not apply.** Leave yours. Report that sentence |
@@ -46,7 +46,7 @@ SUGGEST items never auto-apply and never create a decision.
 - Sign, operator, or equation disagreement that changes the result
 - Changed claim, quantifier, or scope word (*only / all / iff / necessary / sufficient / always* vs *may / can*)
 - Notation that changes meaning (not a typo)
-- Construction-as-definition / missing physical lead ([severity.md](severity.md) class 6) — always report; never auto-apply a guessed criterion
+- Unresolved physical meaning ([severity.md](severity.md) class 6) — report the scientific choice; never resolve it by guessing
 
 **Minor** (auto-resolve, prefer yours):
 
@@ -81,7 +81,7 @@ When unsure whether a clash is serious, **leave yours** and report. Do not guess
 | Result | When |
 |--------|------|
 | `PASS` | No unresolved must-fix on live text; no serious conflict waiting |
-| `CONFLICTS` | At least one serious item reported to the user (including any physical-lead / construction-as-definition finding) |
+| `CONFLICTS` | At least one serious item reported to the user (including unresolved physical meaning under class 6, not mere presentation suggestions) |
 | `PARTIAL` | Harvest after interrupt, or labels still `open`, and no `CONFLICTS` |
 
 `FAIL` in old CHECKS maps to: procedural plan defect → relaunch that wave (fresh Tasks, do not block the user); content must-fix on **untouched** sentences → auto-apply then continue; content vs user → `CONFLICTS`.

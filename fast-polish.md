@@ -25,14 +25,14 @@ Run against the **quoted source** before the Task plan, and again against the **
 
 **Skip the math Task** only when none of the above appear anywhere in the quote or the draft. Record the outcome in the Task plan field `phase2_math_task: launched | skipped (no equations)` ([compliance-monitoring.md](compliance-monitoring.md) § Task plan block).
 
-A sentence that only *uses* an already-defined term, with no math notation, does not launch math on this test. Construction-as-definition on an object **this quote introduces** is still in scope for the narrative Task if math was skipped ([severity.md](severity.md) narrative class 6).
+A sentence that only *uses* an already-defined term, with no math notation, does not launch math on this test. Unresolved physical meaning (class 6) on an object **this quote introduces** is still in scope for the narrative Task if math was skipped ([severity.md](severity.md) narrative class 6).
 
 ## 2. Delta scope (narrative Task always; math Task too, when it runs)
 
 The question narrows from "is this passage correct against the whole paper" to: **did the producer's edit change what the sentence claims, relative to the user's own quoted source?**
 
 - **In scope:** the edit invents a relation the source didn't state; reverses an implication; strengthens or weakens a hedge, quantifier, or scope word; or drops a stated limitation.
-- **Out of scope for a BLOCKER:** a defect that was **already present, unedited, in the user's quoted source**. Report it as `SUGGEST — pre-existing in source (not introduced by this edit)`, name the sentence, and stop — do not chase it against later definitions, lemmas, or theorems elsewhere in the manuscript. **Exception:** construction-as-definition / missing physical lead on a named object **this quote introduces or rewrites** is not waived as pre-existing. Report it (math class 6 or narrative class 6). Do not invent the operational criterion.
+- **Out of scope for a BLOCKER:** a defect that was **already present, unedited, in the user's quoted source**. Report it as `SUGGEST — pre-existing in source (not introduced by this edit)`, name the sentence, and stop — do not chase it against later definitions, lemmas, or theorems elsewhere in the manuscript. **Exception:** unresolved physical meaning (class 6) on a named object **this quote introduces or rewrites** is not waived as pre-existing. Report it (math class 6 or narrative class 6). Do not invent the missing scientific choice. A valid construction or weak motivation alone is not class 6.
 
 **Closed word-delta class** (BLOCKER-eligible on its own, no manuscript lookup required): the edit changes any of *only / all / any / uniform / iff / equivalent / necessary / sufficient / always* ↔ *may / can / does* (or the symmetric reverse) relative to the source wording for the same claim. This is in addition to — not a replacement for — the closed BLOCKER lists in [severity.md](severity.md); those lists still apply to what the **edit** does.
 
@@ -66,5 +66,5 @@ At `pace: fast`, the default deep/synth slugs are a capable **medium-effort** fl
 
 - Sentence Tasks: still one Task per **changed** label, same fast-tier model, **artifact-first** Diagnostics then unresolved 1–14. This file does not skip Diagnostics.
 - Synthesizer: still the sole job-round `OVERALL` authority (`PASS` | `CONFLICTS` | `PARTIAL`); still fresh Tasks every wave. Empty Diagnostics → `PARTIAL`, not a BLOCKER.
-- Narrative Task: still artifact-first then all four groups, full passage — this file only narrows classes 1–5 relative to the **edit**, and adds § 2's word-delta class; class 6 (construction-as-definition) is **not** waived as pre-existing when this quote introduces the object.
+- Narrative Task: still artifact-first then all four groups, full passage — this file only narrows classes 1–5 relative to the **edit**, and adds § 2's word-delta class; class 6 (unresolved physical meaning) is **not** waived as pre-existing when this quote introduces the object.
 - `caller: section-orchestrator` (macro chunks): none of this applies. Chunks always get the math Task when applicable and the full whole-passage audit, at either pace.

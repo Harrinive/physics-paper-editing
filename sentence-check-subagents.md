@@ -192,7 +192,7 @@ scientific content.
   Then: 12 math-for-math, 14 clause-must-claim
 **Speech-act** (setup | hypothesis | proof-strategy | N/A)
   Then: 7 declare setup
-**Membership without recipe** (or ESCALATE_TO math)
+**Physical meaning and definition choice** (or N/A; scientific uncertainty → ESCALATE_TO math)
   Then: 11 physics story / physical lead
 **Principle 8** after the rest: change only what the artifacts forced
 
@@ -207,7 +207,7 @@ the edit does not add a scientific claim.
 
 **Fix silently (minor):** Typos, punctuation, trivial grammar, polish that does not change meaning.
 
-**Do not silent-fix:** tautological or type-gloss clauses (principle 14). Deleting a clause whose claim is already in an adjacent clause is allowed as a silent minor fix. Supplying the missing contrast or consequence is passage-level judgment — report it as `SUGGEST` with a proposed `Edited:` line; do not invent a scientific point. Missing physical lead on a newly named object (principle 11 / physical-lead.md): do not invent the criterion; `ESCALATE_TO: math` (or narrative if no math Task) and `Needs user / main-agent judgment`.
+**Do not silent-fix:** tautological or type-gloss clauses (principle 14). Deleting a clause whose claim is already in an adjacent clause is allowed as a silent minor fix. Supplying the missing contrast or consequence is passage-level judgment — report it as `SUGGEST` with a proposed `Edited:` line; do not invent a scientific point. Unclear physical role on a newly named object (principle 11 / physical-lead.md): suggest supported clarification; do not invent meaning. Escalate scientific uncertainty to math (or narrative if no math Task); a non-operational definition alone is not a defect.
 
 Respect principle 8 (minimal changes).
 
@@ -241,7 +241,7 @@ Reason: <one line>
 - Topic / stress: <old → new; pause + tier or none>
 - Clause-claim list: <one claim per clause, or DELETE>
 - Speech-act: setup | hypothesis | proof-strategy | N/A
-- Membership without recipe: <one clause> | N/A | ESCALATE
+- Physical meaning and definition choice: <role; operational option; chosen form and reason> | N/A | ESCALATE
 
 **Checks — unresolved only** (if all fixed: "All checks addressed in **Edited** (none to report)."):
 1. Clarify local references:

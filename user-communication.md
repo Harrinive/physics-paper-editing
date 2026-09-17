@@ -41,7 +41,7 @@ Quote the one conflicting sentence. One clause for their version, one for the ch
 
 Keep editing inside the marks · say **stop** · say **next piece** on a section job.
 
-On a **definition halt** before marks exist: state the membership test, confirm the object is purely formal, or say **stop**. Do not invite editing a construction-only definition in place.
+On a **definition halt** before marks exist, ask the specific unresolved scientific question and explain why the answer changes the definition. Do not demand a membership test or confirmation of purely formal status merely because the author used a construction.
 
 Do **not** say “reply continue” to unlock the next stage.
 
@@ -68,7 +68,7 @@ Do not repeat this orientation unless the marks were just created for a new job.
 - “I put the flux-jump definition in `{file}` and I am still reading it. You can edit inside the marks.”
 - “I updated the marked block: kept your second sentence; fixed the sign in the lemma sentence (you had not touched it).”
 - “I need your call on one sentence — your version says X; the check says Y. I left yours in the file.”
-- “I need your call on the definition of X — the text says how to compute it, not what it is physically. I have not rewritten it. What should the lead sentence use as the membership test?”
+- “I need your call on the definition of X: the text leaves [specific scientific choice] unresolved, and the alternatives give different objects. I have left that definition unchanged.”
 
 ---
 
@@ -130,7 +130,7 @@ Mode: section-edit · chunk:<id> · verify:running · …
 1. Count typographic sentences. If >12, use the scope-overflow message below — do not start this loop on the full section.
 2. Ask **polish vs rewrite** only when that is actually unclear.
 3. **Do not** ask pace or three models every job. Inherit the last confirmed profile in this chat or `session.md`. If none, use the recommended slugs in [phase2-verify-subagents.md](phase2-verify-subagents.md) and mention once: “I’ll use the usual checkers; say if you want different models.”
-4. If the quote **introduces or rewrites** a named object in the physics or protocol story: run the physical-lead diagnostic ([physical-lead.md](../physics-paper-principles/physical-lead.md)). If you cannot state an operational criterion honestly, **Need your call** — do not mark a construction-only definition. Quote the construction; ask for the membership test (or confirmation it is purely formal). Finalize that definition before further edits of the object.
+4. If the quote **introduces or rewrites** a named physical/protocol object, run [physical-lead.md](../physics-paper-principles/physical-lead.md). Consider physical meaning and choose a suitable definition form. Use **Need your call** only for the essential scientific ambiguity described in [coworker-loop.md](coworker-loop.md) § Definition halt; otherwise draft with supported interpretation.
 5. Otherwise draft, mark, launch, end the turn. Follow this file’s first-turn orientation.
 
 ---

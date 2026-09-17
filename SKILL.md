@@ -31,7 +31,7 @@ description: >-
 
 **Use this skill alone** (plus **`physics-paper-principles`**) when the user gives a passage of **≤12 sentences**. No parent skill, no `cross-skill.md` on that path. Standalone jobs still write `.physics-edit/micro/<job_id>/` ([job-state.md](job-state.md)).
 
-**First reply:** count typographic sentences. If ≤12, ask polish vs rewrite only if unclear; inherit pace and models ([gate.md](gate.md)). If the passage introduces or rewrites a named physical object, run the physical-lead diagnostic ([physical-lead.md](../physics-paper-principles/physical-lead.md)); **halt and ask** when no honest operational criterion is available ([coworker-loop.md](coworker-loop.md) § Definition halt). Otherwise draft from principles, mark, launch background checks, **end the turn**. User-facing copy: [user-communication.md](user-communication.md).
+**First reply:** count typographic sentences. If ≤12, ask polish vs rewrite only if unclear; inherit pace and models ([gate.md](gate.md)). If the passage introduces or rewrites a named physical object, run the physical-lead diagnostic ([physical-lead.md](../physics-paper-principles/physical-lead.md)); **halt and ask** only when an essential scientific ambiguity prevents faithful drafting ([coworker-loop.md](coworker-loop.md) § Definition halt). Otherwise draft from principles, mark, launch background checks, **end the turn**. User-facing copy: [user-communication.md](user-communication.md).
 
 ## Invoked by section macro (optional)
 
@@ -110,12 +110,12 @@ That is the **only** parent-skill awareness required on a standalone micro job. 
 | **Round** | Full wave completion **or** interrupt harvest, then one merge write |
 | **Edit gate** | `polish` \| `rewrite` — how the draft is produced |
 | **Fast / full** | Background-check scope only — never whether the user waits ([fast-polish.md](fast-polish.md)) |
-| **BLOCKER** | Must-fix on untouched text (auto-apply) or serious vs user (report). Construction-as-definition never auto-applies ([severity.md](severity.md)) |
+| **BLOCKER** | Must-fix on untouched text (auto-apply) or serious vs user (report). Unresolved physical meaning (class 6) never auto-applies ([severity.md](severity.md)) |
 | **SUGGEST** | Never auto-applies; never a decision |
 | **Changed sentences** | Labels whose text differs from the prior snapshot / source |
 | **CHECKS block** | Audit-drawer only; synthesizer is sole authority |
 | **PACKET_GAP** | Fast-polish note that a finding needs more manuscript context — not a must-fix |
-| **Definition halt** | Producer stops before drafting when a named physical object has no operational criterion that can be stated honestly; discuss with the user first |
+| **Definition halt** | Producer pauses the affected definition only when faithful drafting requires an essential scientific choice that supplied context cannot resolve |
 
 **Sentence-count thresholds:** [gate.md](gate.md). **Scope:** ≤12 micro; >12 route to parent.
 
@@ -135,7 +135,7 @@ That is the **only** parent-skill awareness required on a standalone micro job. 
 
 **Hard rules:**
 
-- Write the marked draft to `.tex` **before** checks finish. Do not wait for `OVERALL`. **Exception:** definition halt — do not write a construction-only definition ([coworker-loop.md](coworker-loop.md)).
+- Write the marked draft to `.tex` **before** checks finish. Do not wait for `OVERALL`. **Exception:** definition halt — do not invent the resolution of an essential scientific ambiguity ([coworker-loop.md](coworker-loop.md)).
 - Producer must not grade its own draft or set `OVERALL`.
 - Launch checkers `run_in_background: true`. End the turn after launch.
 - On wake, harvest `findings.jsonl` before merging. Do not drop stale findings.
@@ -145,7 +145,7 @@ That is the **only** parent-skill awareness required on a standalone micro job. 
 ```
 [ ] 1. Context — file, neighbors, [bracket comments] as editing instructions
 [ ] 2. Read — user-communication.md, coworker-loop.md, principles + severity (table below)
-[ ] 3. Intake — polish/rewrite if unclear; inherit pace + models ([gate.md](gate.md)); definition halt if physical lead is missing and cannot be written
+[ ] 3. Intake — polish/rewrite if unclear; inherit pace + models ([gate.md](gate.md)); consider physical meaning and definition choice; definition halt only for essential scientific ambiguity
 [ ] 4. Draft — physics-paper-principles; no blocking source-audit phase
 [ ] 5. Mark + snapshot — [job-state.md](job-state.md)
 [ ] 6. Background verify — [phase2-verify-subagents.md](phase2-verify-subagents.md)
@@ -200,7 +200,7 @@ Follow [user-communication.md](user-communication.md) exactly — named state, r
 | [merge-policy.md](merge-policy.md) | Three-way merge rubric |
 | [user-communication.md](user-communication.md) | Workbench UX — every user-facing turn |
 | [gate.md](gate.md) | Job × pace; inherit models; sentence-count thresholds |
-| [severity.md](severity.md) | Closed BLOCKER lists; SUGGEST; construction-as-definition never auto-applies |
+| [severity.md](severity.md) | Closed BLOCKER lists; SUGGEST; unresolved physical meaning never auto-applies |
 | [phase2-verify-subagents.md](phase2-verify-subagents.md) | Background checkers, artifact-first prompts, per-round synthesizer |
 | [sentence-check-subagents.md](sentence-check-subagents.md) | Sentence split, artifact-first sentence Tasks, jsonl flush |
 | [compliance-monitoring.md](compliance-monitoring.md) | Task plan, Step 0, Diagnostics homework, synthesizer procedural checks |

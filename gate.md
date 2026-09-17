@@ -55,7 +55,7 @@ line containing three typographic sentences counts as three.
 | Recompose / redraft / start over | Grammar, clarity, notation, citations, tone |
 | New structure or argument order | Light reordering within same claims |
 | Change voice or level so sentences are not tightened originals | Word choice within same sentence roles |
-| Recast a named physical object from a construction/recipe into an operational criterion (definition layering) | Grammar-only pass on a definition **after** the criterion is already agreed |
+| Substantially reframe a definition or its physical argument | Clarify a supported physical role or tighten an equivalent definition in place |
 
 ```
 Q2: Job?
@@ -64,7 +64,7 @@ Q2: Job?
     └─ polish ──► tighten in place; checkers run on changed labels only
 ```
 
-If the quote introduces or rewrites a named physical object and fails physical lead ([physical-lead.md](../physics-paper-principles/physical-lead.md)), do not polish the recipe in place. Halt ([coworker-loop.md](coworker-loop.md) § Definition halt) or treat the job as **rewrite** after the user supplies the criterion.
+For a named physical object, run [physical-lead.md](../physics-paper-principles/physical-lead.md) and consider the definition form. Construction does not force rewrite or a halt. Ask only if an essential scientific choice cannot be resolved from supplied context ([coworker-loop.md](coworker-loop.md) § Definition halt).
 
 ### Q3: Pace — background scope (do not ask every job)
 
