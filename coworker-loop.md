@@ -36,7 +36,7 @@ Never skip background checks because the producer “already followed the princi
 
 When the passage **introduces or rewrites** a named object in the physical or protocol story (`definition` environment, "we define", first-use coinage):
 
-1. Run **Physical lead** and record **Physical meaning and definition choice** ([physical-lead.md](../physics-paper-principles/physical-lead.md)). Consider an operational definition; prefer it when precise and useful. Other definition forms remain valid.
+1. Run **Physical lead** and record **Physical meaning and definition choice** ([physical-lead.md](../physics-paper-principles/physical-lead.md)): role, category, operational option, and chosen name/form. Consider an operational definition; prefer it when precise and useful. Other definition forms remain valid.
 2. If the object is well-defined, draft with its supported physical role and continue. Thin motivation is a presentation issue, not a halt; retain a valid construction when no better operational characterization is established.
 3. Halt only if completing or changing the definition requires an essential choice between materially different physical meanings that the supplied context cannot resolve. Do not guess. State **Need your call** ([user-communication.md](user-communication.md)), quote the ambiguity, and ask the specific scientific question. Continue independent edits.
 

@@ -6,7 +6,7 @@ Background checkers grade **changed sentences only** ([phase2-verify-subagents.m
 
 Sentence-count thresholds: [gate.md](gate.md).
 
-**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before specialist work — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) when N ≤ 10 → `COMPLIANCE: FAIL`. Specialist work is **artifact-first** ([sentence.md](../physics-paper-principles/sentence.md) Detect names); do not walk 1–14 as the primary loop.
+**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before specialist work — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) when N ≤ 10 → `COMPLIANCE: FAIL`. Specialist work is **artifact-first** ([sentence.md](../physics-paper-principles/sentence.md) Detect names); do not walk 1–15 as the primary loop.
 
 ---
 
@@ -40,7 +40,7 @@ After labeling, identify changed labels per [phase2-verify-subagents.md](phase2-
 
 ## 3. Task assignment
 
-**Default:** one Task per changed sentence — each subagent runs the artifact-first workflow, then reports unresolved items against all 14 sentence principles.
+**Default:** one Task per changed sentence — each subagent runs the artifact-first workflow, then reports unresolved items against all 15 sentence principles.
 
 1. Launch **one Task per assigned sentence** (or per §3.1 batch).
 2. Launch Tasks **in parallel** with `run_in_background: true`. Do not wait before ending the turn.
@@ -164,7 +164,7 @@ the .tex. On interrupt: flush then stop.
 ## Role boundary and sentence-level rules
 Read ../physics-paper-principles/sentence.md (Detect column) and
 physics-paper-editing/severity.md § Sentence workers (Read tool if needed).
-Do **not** walk principles 1–14 as the primary loop. Run the workflow below.
+Do **not** walk principles 1–15 as the primary loop. Run the workflow below.
 
 Use neighboring sentences only to judge flow and references. Do not edit them.
 Do not introduce a discourse connective (`however`, `conversely`, `therefore`,
@@ -179,11 +179,11 @@ scientific content.
 2. Under each artifact, check only the listed principles.
 3. Silent-fix only what those checks force. Cite the artifact that forced each
    silent fix. Principle 8 last.
-4. Then fill **Checks — unresolved only** (existing 1–14 list).
+4. Then fill **Checks — unresolved only** (existing 1–15 list).
 
 ### Artifacts → principles
-**Kernel** (drop modifiers; one SVO per clause; head must survive)
-  Then: 4 SVO, 6 wording, 9 voice, 10 "For A, it", 3 coined heads
+**Kernel** (drop modifiers; one SVO per clause; head must survive; Coinage test; Standard-meaning substitution)
+  Then: 4 SVO, 6 wording, 9 voice, 10 "For A, it", 3 coined heads, 15 standard meaning
 **Antecedent map** (substitution; distant labels get a content reminder + number)
   Then: 1 local refs, 2 cross-boundary
 **Topic / stress** (old at start, new at end; first-read pause)
@@ -192,8 +192,8 @@ scientific content.
   Then: 12 math-for-math, 14 clause-must-claim
 **Speech-act** (setup | hypothesis | proof-strategy | N/A)
   Then: 7 declare setup
-**Physical meaning and definition choice** (or N/A; scientific uncertainty → ESCALATE_TO math)
-  Then: 11 physics story / physical lead
+**Physical meaning and definition choice** (role, category, operational option, chosen name/form; or N/A; scientific uncertainty → ESCALATE_TO math)
+  Then: 11 physical meaning, category, and definition choice
 **Principle 8** after the rest: change only what the artifacts forced
 
 Empty Diagnostics field → stop specialist work; incomplete homework (synthesizer
@@ -203,11 +203,12 @@ marks this label open / OVERALL PARTIAL). Fast polish does not skip Diagnostics.
 
 **Fix silently (obvious):** Unambiguous pronoun, SVO mismatch, "For A, it does
 B" → "A does B", and obvious non-standard wording → standard wording, provided
-the edit does not add a scientific claim.
+the edit does not add a scientific claim or shift a field-standard term
+(principle 15).
 
 **Fix silently (minor):** Typos, punctuation, trivial grammar, polish that does not change meaning.
 
-**Do not silent-fix:** tautological or type-gloss clauses (principle 14). Deleting a clause whose claim is already in an adjacent clause is allowed as a silent minor fix. Supplying the missing contrast or consequence is passage-level judgment — report it as `SUGGEST` with a proposed `Edited:` line; do not invent a scientific point. Unclear physical role on a newly named object (principle 11 / physical-lead.md): suggest supported clarification; do not invent meaning. Escalate scientific uncertainty to math (or narrative if no math Task); a non-operational definition alone is not a defect.
+**Do not silent-fix:** tautological or type-gloss clauses (principle 14). Deleting a clause whose claim is already in an adjacent clause is allowed as a silent minor fix. Supplying the missing contrast or consequence is passage-level judgment — report it as `SUGGEST` with a proposed `Edited:` line; do not invent a scientific point. Unclear physical role on a newly named object (principle 11 / physical-lead.md): suggest supported clarification; do not invent meaning. Shifted field-standard meaning (principle 15): do not silent-rename or silently broaden the term; report it. Escalate scientific uncertainty to math (or narrative if no math Task); a non-operational definition alone is not a defect.
 
 Respect principle 8 (minimal changes).
 
@@ -236,12 +237,12 @@ Reason: <one line>
 **Silent fixes cited:** <artifact → what changed; or "none">
 
 **Diagnostics** (required; empty field → incomplete homework):
-- Kernel: <one SVO per clause; no modifiers>
+- Kernel: <one SVO per clause; no modifiers; coined or shifted terms or none>
 - Antecedent map: <pronoun → noun, or none>
 - Topic / stress: <old → new; pause + tier or none>
 - Clause-claim list: <one claim per clause, or DELETE>
 - Speech-act: setup | hypothesis | proof-strategy | N/A
-- Physical meaning and definition choice: <role; operational option; chosen form and reason> | N/A | ESCALATE
+- Physical meaning and definition choice: <role; category; operational option; chosen name/form and reason> | N/A | ESCALATE
 
 **Checks — unresolved only** (if all fixed: "All checks addressed in **Edited** (none to report)."):
 1. Clarify local references:
@@ -258,6 +259,7 @@ Reason: <one line>
 12. Use math for math:
 13. Confusion-on-first-read ordering:
 14. Every clause must carry a claim:
+15. Preserve standard meaning:
 
 **Needs user / main-agent judgment:** <items or "none">
 **Severity:** BLOCKER | SUGGEST | none

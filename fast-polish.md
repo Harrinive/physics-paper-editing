@@ -64,7 +64,7 @@ At `pace: fast`, the default deep/synth slugs are a capable **medium-effort** fl
 
 ## What does not change
 
-- Sentence Tasks: still one Task per **changed** label, same fast-tier model, **artifact-first** Diagnostics then unresolved 1–14. This file does not skip Diagnostics.
+- Sentence Tasks: still one Task per **changed** label, same fast-tier model, **artifact-first** Diagnostics then unresolved 1–15. This file does not skip Diagnostics.
 - Synthesizer: still the sole job-round `OVERALL` authority (`PASS` | `CONFLICTS` | `PARTIAL`); still fresh Tasks every wave. Empty Diagnostics → `PARTIAL`, not a BLOCKER.
 - Narrative Task: still artifact-first then all four groups, full passage — this file only narrows classes 1–5 relative to the **edit**, and adds § 2's word-delta class; class 6 (unresolved physical meaning) is **not** waived as pre-existing when this quote introduces the object.
 - `caller: section-orchestrator` (macro chunks): none of this applies. Chunks always get the math Task when applicable and the full whole-passage audit, at either pace.

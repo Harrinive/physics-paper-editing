@@ -101,7 +101,7 @@ That is the **only** parent-skill awareness required on a standalone micro job. 
 | Term | Meaning |
 |------|---------|
 | **Producer** | Main agent — drafts, marks, applies merge; never sets `OVERALL` |
-| **Sentence verifier** | Background Task — one sentence; artifact-first then unresolved 1–14; appends `findings.jsonl` |
+| **Sentence verifier** | Background Task — one sentence; artifact-first then unresolved 1–15; appends `findings.jsonl` |
 | **Narrative verifier** | Background Task — full snapshot; four narrative groups |
 | **Math verifier** | Background Task — full snapshot when math or logical argument present |
 | **Verifier synthesizer** | Per **round** — sole `OVERALL` authority (`PASS` \| `CONFLICTS` \| `PARTIAL`) |

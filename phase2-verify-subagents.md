@@ -12,7 +12,7 @@ Also read: [severity.md](severity.md) · [sentence-check-subagents.md](sentence-
 
 | Always run (full snapshot) | Run only on changed sentences |
 |---------------------------|-------------------------------|
-| Narrative verifier (artifact-first, then groups 1–4) | Sentence verifiers (artifact-first, then unresolved 1–14) |
+| Narrative verifier (artifact-first, then groups 1–4) | Sentence verifiers (artifact-first, then unresolved 1–15) |
 | Math verifier (when math or logical argument — see footnote) | |
 | Synthesizer (**after the round** — wave complete or interrupt harvest) | |
 
@@ -226,7 +226,7 @@ Do not edit the draft.
   Then: G4 audience
 **Promise / payoff**
   Then: G3 consistency
-**Physical meaning and definition choice**
+**Physical meaning and definition choice** (role, category, operational option, chosen name/form)
   Then: G2 physical lead
 **Speech-act**
   Then: G2 model setup
@@ -250,7 +250,7 @@ Reason: <one line>
 - CRE + strength words: <claim / reason / evidence; strength list or none>
 - Entry-point list: <or none>
 - Promise / payoff: <or none>
-- Physical meaning and definition choice: <role; operational option; chosen form and reason, or N/A>
+- Physical meaning and definition choice: <role; category; operational option; chosen name/form and reason, or N/A>
 - Speech-act: setup | hypothesis | proof-strategy | N/A
 
 **Group 1 — Core message and framing:** <findings or PASS>
@@ -337,8 +337,10 @@ the report, and a done line.
   Then: Type 2 round-trip, back-translation, formula–prose mismatch
 **Excluded pathology** (or intended use / N/A when no exclusion is claimed)
   Then: Type 2 negative-space, first-use
-**Physical meaning and definition choice**
+**Physical meaning and definition choice** (role, category, operational option, chosen name/form)
   Then: physical lead, Type 2 physical-lead / layering
+**Approximation ledger** (retained and discarded content; mechanism and regime; probability/bound scope; claim strength)
+  Then: approximation claims
 **Import: quoted hypotheses vs used; status; theorem/page**
   Then: Type 3
 **WLOG-reason** (symmetry named | unjustified)
@@ -360,7 +362,8 @@ Reason: <one line>
 - Implication arrow + leap words + where hypotheses are used: P⇒Q | Q⇒P | iff | N/A; <leap/hyp-use or N/A>
 - Independent formalization: <exact prose characterization, or N/A with reason>
 - Excluded pathology: <or intended use / N/A with reason>
-- Physical meaning and definition choice: <role; operational option; chosen form and reason; any unresolved scientific choice | N/A>
+- Physical meaning and definition choice: <role; category; operational option; chosen name/form and reason; any unresolved scientific choice | N/A>
+- Approximation ledger: <or N/A with reason>
 - Import: quoted hypotheses vs used; status; theorem/page | N/A
 - WLOG-reason: <symmetry named | unjustified | N/A>
 **Per-statement / per-type findings:** <file order>

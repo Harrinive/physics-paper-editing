@@ -54,13 +54,14 @@ Unverified-but-plausible imports, optional derivation detail, motivation, presen
 
 ## Sentence workers
 
-Sentence Tasks run the artifact-first workflow against [sentence.md](../physics-paper-principles/sentence.md) (all 14, via shared artifacts). They are **not** the physics/math adjudicator.
+Sentence Tasks run the artifact-first workflow against [sentence.md](../physics-paper-principles/sentence.md) (all 15, via shared artifacts). They are **not** the physics/math adjudicator.
 
 | Finding | Severity |
 |---------|----------|
 | Grammar or reference failure that makes the target unreadable or reverses/materially changes the supplied meaning | `BLOCKER` |
 | Tautological / type-gloss clauses (principle 14) that need a contrast or consequence | `SUGGEST` + proposed `Edited:` — do not invent a scientific point |
 | Unclear physical role or definition choice (principle 11) | `SUGGEST`; for possible scientific ambiguity, `ESCALATE_TO: math` (or narrative if no math Task) for class 6 assessment. Do not invent meaning. |
+| Shifted field-standard meaning (principle 15) | `SUGGEST` + `ESCALATE_TO: math` (or narrative if no math Task); do not silent-rename or silently broaden the term |
 | Any physics, mathematics, scope, theorem, evidence, or scientific-correctness concern | `SUGGEST` + `ESCALATE_TO: narrative` or `math`; never a confident physics conclusion |
 
 Silent fixes (unambiguous pronoun, SVO, “For A, it does B”, typos, punctuation) are allowed when they do not add a scientific claim — [sentence-check-subagents.md](sentence-check-subagents.md).
