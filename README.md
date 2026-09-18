@@ -15,9 +15,9 @@ This skill **decouples editing from verification**: the main agent writes a mark
 Requires [physics-paper-principles](https://github.com/Harrinive/physics-paper-principles) as a **sibling folder**. Install all three skills together (see the [Cursor Skills docs](https://cursor.com/docs/context/skills)):
 
 ```bash
-git clone https://github.com/Harrinive/physics-paper-principles.git ~/.cursor/skills/physics-paper-principles
-git clone https://github.com/Harrinive/physics-paper-editing.git ~/.cursor/skills/physics-paper-editing
-git clone https://github.com/Harrinive/physics-paper-editing-section.git ~/.cursor/skills/physics-paper-editing-section
+git clone https://github.com/Harrinive/physics-paper-principles.git ~/.agents/skills/physics-paper-principles
+git clone https://github.com/Harrinive/physics-paper-editing.git ~/.agents/skills/physics-paper-editing
+git clone https://github.com/Harrinive/physics-paper-editing-section.git ~/.agents/skills/physics-paper-editing-section
 ```
 
 For a short-passage job only, the first two folders are enough. Whole-section edits also need the parent skill.
@@ -38,7 +38,7 @@ Use your platform's skill-creation workflow first, then port the workflow logic 
 
 | Platform | Install path (typical) | Use this to adapt |
 |----------|------------------------|-------------------|
-| **Cursor** | `~/.cursor/skills/<name>/` | [Cursor Skills docs](https://cursor.com/docs/context/skills) — or run `/create-skill` in Agent chat |
+| **Cursor** | `~/.cursor/skills/<name>/` or `~/.agents/skills/<name>/` | [Cursor Skills docs](https://cursor.com/docs/context/skills) — or run `/create-skill` in Agent chat |
 | **Claude Code** | `~/.claude/skills/<name>/` or `.claude/skills/<name>/` | [Claude Code skills docs](https://code.claude.com/docs/en/skills) |
 | **OpenAI Codex** | `~/.agents/skills/<name>/` or `.agents/skills/<name>/` (`~/.codex/skills/` legacy) | [Codex Agent Skills](https://developers.openai.com/codex/skills) — run **`$skill-creator`** in Codex to scaffold the port |
 | **GitHub Copilot** | `~/.copilot/skills/<name>/` or `~/.agents/skills/<name>/`; project: `.github/skills/<name>/` or `.agents/skills/<name>/` | [Copilot: add skills](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills) |
