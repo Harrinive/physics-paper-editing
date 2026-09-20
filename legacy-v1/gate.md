@@ -1,6 +1,6 @@
 # Gate routing: job × pace
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** at intake.
+**For agents:** Start with [LEGACY.md](LEGACY.md) § Agent read order. **Read with the Read tool** at intake.
 
 There is **no blocking source-audit phase**. This file routes how the draft is produced and how thorough verification is. The user never waits on pace.
 
@@ -15,7 +15,7 @@ There is **no blocking source-audit phase**. This file routes how the draft is p
 | **1** (or fragment) | Micro-eligible |
 | **2–10** | Micro-eligible; one verifier assignment per changed sentence |
 | **11–12** | Micro-eligible; may batch two sentences per assignment ([sentence-check-subagents.md](sentence-check-subagents.md) §3.1) |
-| **>12** | **Not feasible** — route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or **ASK USER** to narrow |
+| **>12** | **Not feasible** — route to [physics-paper-editing-section](../../physics-paper-editing-section/legacy-v1/LEGACY.md) or **ASK USER** to narrow |
 
 ---
 
@@ -64,7 +64,7 @@ Q2: Job?
     └─ polish ──► tighten in place; checkers run on changed labels only
 ```
 
-For a named physical object, run [physical-lead.md](../physics-paper-principles/physical-lead.md) and consider the definition form. Construction does not force rewrite or a halt. Ask only if an essential scientific choice cannot be resolved from supplied context ([coworker-loop.md](coworker-loop.md) § Definition halt).
+For a named physical object, run [physical-lead.md](../../physics-paper-principles/legacy-v1/physical-lead.md) and consider the definition form. Construction does not force rewrite or a halt. Ask only if an essential scientific choice cannot be resolved from supplied context ([coworker-loop.md](coworker-loop.md) § Definition halt).
 
 ### Q3: Pace — verification scope (do not ask every job)
 
@@ -85,7 +85,7 @@ Q3: Pace?  (inherit or default fast)
 - Mostly checkable prose (not mostly display equations, tables, or bare lists).
 - Splittable without breaking inside math, `\cite{}`, `\ref{}`, or essential cross-references.
 
-**>12 sentences or whole-section edit:** route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md). Do not run the micro loop on the full section in one turn.
+**>12 sentences or whole-section edit:** route to [physics-paper-editing-section](../../physics-paper-editing-section/legacy-v1/LEGACY.md). Do not run the micro loop on the full section in one turn.
 
 If a ≤12 split is not feasible: collect one user decision — section skill / proceed with partial coverage / narrow the quote.
 
@@ -112,7 +112,7 @@ There is no pre-draft sentence-verifier wave.
 
 | Option | Then |
 |--------|------|
-| Use section skill (Recommended) | Route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) |
+| Use section skill (Recommended) | Route to [physics-paper-editing-section](../../physics-paper-editing-section/legacy-v1/LEGACY.md) |
 | Proceed with partial coverage | One verifier assignment per splittable sentence; note gaps |
 | Narrow the scope | User gives shorter quote; re-count |
 

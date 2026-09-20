@@ -1,10 +1,10 @@
 # Fast polish scope (standalone micro only)
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before launching background checkers when `edit_gate: polish`, `pace: fast`, `caller: micro`.
+**For agents:** Start with [LEGACY.md](LEGACY.md) § Agent read order. **Read with the Read tool** before launching background checkers when `edit_gate: polish`, `pace: fast`, `caller: micro`.
 
 **Applies only when all three hold:** `edit_gate: polish` **and** `pace: fast` **and** `caller: micro` (standalone quote — not a macro chunk). If any is false, this file does not apply — run [phase2-verify-subagents.md](phase2-verify-subagents.md) against **`physics-paper-principles`** with [severity.md](severity.md), full whole-passage-vs-manuscript audit, no exceptions.
 
-Macro chunks always pass `caller: section-orchestrator` ([chunk-contract.md](../physics-paper-editing-section/chunk-contract.md)) — this file's exceptions **never** apply to chunks, regardless of pace.
+Macro chunks always pass `caller: section-orchestrator` ([chunk-contract.md](../../physics-paper-editing-section/legacy-v1/chunk-contract.md)) — this file's exceptions **never** apply to chunks, regardless of pace.
 
 This file changes the narrative/math verification scope and whether math verification launches. It does **not** change **`physics-paper-principles`**. It does not change who may set `OVERALL` (synthesizer only), does not skip the synthesizer, and does not skip sentence verifiers for changed sentences.
 

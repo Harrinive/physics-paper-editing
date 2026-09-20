@@ -1,6 +1,6 @@
 # Coworker loop
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. This file is canonical for draft-first verification. Runtime selection and fallbacks: [runtime-contract.md](runtime-contract.md). Marks and disk: [job-state.md](job-state.md). Merge: [merge-policy.md](merge-policy.md). User-facing copy: [user-communication.md](user-communication.md). Canon: **`physics-paper-principles`**.
+**For agents:** Start with [LEGACY.md](LEGACY.md) § Agent read order. This file is canonical for draft-first verification. Runtime selection and fallbacks: [runtime-contract.md](runtime-contract.md). Marks and disk: [job-state.md](job-state.md). Merge: [merge-policy.md](merge-policy.md). User-facing copy: [user-communication.md](user-communication.md). Canon: **`physics-paper-principles`**.
 
 The producer writes working text immediately, marks a construction area, and delegates independent checkers on a **frozen snapshot**. The user keeps editing whenever the runtime supports asynchronous delegation. A check **round** ends when the wave finishes or a stale-result harvest runs. Then one merge updates the marked interior. **Exception:** do not resolve an essential scientific ambiguity by inventing a definition — see § Definition halt.
 
@@ -36,7 +36,7 @@ Never skip verification because the producer “already followed the principles.
 
 When the passage **introduces or rewrites** a named object in the physical or protocol story (`definition` environment, "we define", first-use coinage):
 
-1. Run **Physical lead** and record **Physical meaning and definition choice** ([physical-lead.md](../physics-paper-principles/physical-lead.md)): role, category, operational option, and chosen name/form. Consider an operational definition; prefer it when precise and useful. Other definition forms remain valid.
+1. Run **Physical lead** and record **Physical meaning and definition choice** ([physical-lead.md](../../physics-paper-principles/legacy-v1/physical-lead.md)): role, category, operational option, and chosen name/form. Consider an operational definition; prefer it when precise and useful. Other definition forms remain valid.
 2. If the object is well-defined, draft with its supported physical role and continue. Thin motivation is a presentation issue, not a halt; retain a valid construction when no better operational characterization is established.
 3. Halt only if completing or changing the definition requires an essential choice between materially different physical meanings that the supplied context cannot resolve. Do not guess. State **Need your call** ([user-communication.md](user-communication.md)), quote the ambiguity, and ask the specific scientific question. Continue independent edits.
 

@@ -1,12 +1,12 @@
 # Severity (harness)
 
-**For agents:** Start with [SKILL.md](SKILL.md). Read with the Read tool before launching checkers, synthesizing a round, or merging.
+**For agents:** Start with [LEGACY.md](LEGACY.md). Read with the Read tool before launching checkers, synthesizing a round, or merging.
 
 Canon for *what is wrong* is **`physics-paper-principles`**. This file maps those violations to **BLOCKER** vs **SUGGEST** for the coworker loop. Do not restate the principles here.
 
 Workers and the synthesizer use only these closed BLOCKER classes. Everything else is SUGGEST. Downgrade out-of-list BLOCKERs.
 
-**Never auto-apply a guessed operational criterion** ([physical-lead.md](../physics-paper-principles/physical-lead.md), [merge-policy.md](merge-policy.md)).
+**Never auto-apply a guessed operational criterion** ([physical-lead.md](../../physics-paper-principles/legacy-v1/physical-lead.md), [merge-policy.md](merge-policy.md)).
 
 ---
 
@@ -24,7 +24,7 @@ When unsure, use SUGGEST and state what evidence would promote it.
 
 ## Narrative BLOCKER classes (6)
 
-Only these closed classes, against [narrative.md](../physics-paper-principles/narrative.md):
+Only these closed classes, against [narrative.md](../../physics-paper-principles/legacy-v1/narrative.md):
 
 1. **Contradiction or false relation** — the draft contradicts supplied context, or a transition/causal/contrast connective asserts a relation the source does not support.
 2. **Unbound essential object** — an operator, symbol, referent, or declared set needed to interpret the claim is absent from the supplied manuscript context.
@@ -39,7 +39,7 @@ Everything else—including alternative framing, roadmap strategy, optional moti
 
 ## Math BLOCKER classes (6)
 
-Only these closed classes, against [math.md](../physics-paper-principles/math.md) and [physical-lead.md](../physics-paper-principles/physical-lead.md):
+Only these closed classes, against [math.md](../../physics-paper-principles/legacy-v1/math.md) and [physical-lead.md](../../physics-paper-principles/legacy-v1/physical-lead.md):
 
 1. **Invalid or inconsistent mathematics** — an equation, derivation, quantifier, domain, implication, or convention is false or internally inconsistent under the supplied assumptions.
 2. **Undefined essential object** — a symbol, operator, domain, map, or assumption required to interpret or evaluate the statement is unavailable in the supplied manuscript context.
@@ -54,7 +54,7 @@ Unverified-but-plausible imports, optional derivation detail, motivation, presen
 
 ## Sentence workers
 
-Sentence verifiers run the artifact-first workflow against [sentence.md](../physics-paper-principles/sentence.md) (all 15, via shared artifacts). They are **not** the physics/math adjudicator.
+Sentence verifiers run the artifact-first workflow against [sentence.md](../../physics-paper-principles/legacy-v1/sentence.md) (all 15, via shared artifacts). They are **not** the physics/math adjudicator.
 
 | Finding | Severity |
 |---------|----------|

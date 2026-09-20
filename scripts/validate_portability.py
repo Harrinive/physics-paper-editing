@@ -1,32 +1,59 @@
 #!/usr/bin/env python3
-"""Validate the portable physics-editing skill suite without host tooling."""
+"""Validate the portable version-2 physics-editing skill suite."""
 
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUITE = (ROOT, ROOT.parent / "physics-paper-editing-section", ROOT.parent / "physics-paper-principles")
-ADAPTERS = {"runtime-cursor.md", "runtime-codex.md", "runtime-claude.md"}
-FORBIDDEN = re.compile(
-    r"AskQuestion|\bTasks?\b|run_in_background|readonly:|findings\.jsonl|findings_path|~/.cursor|~/.codex"
+SUITE = (
+    ROOT,
+    ROOT.parent / "physics-paper-editing-section",
+    ROOT.parent / "physics-paper-principles",
 )
-REQUIRED = {
-    ROOT: {"runtime-contract.md", "portability-test-matrix.md", *ADAPTERS},
-    ROOT.parent / "physics-paper-editing-section": {"SKILL.md", "README.md"},
-    ROOT.parent / "physics-paper-principles": {"SKILL.md", "README.md"},
-}
+ADAPTERS = {"runtime-cursor.md", "runtime-codex.md", "runtime-claude.md"}
+CORE_FORBIDDEN = re.compile(
+    r"\b(?:gpt-[\w.-]+|claude-[\w.-]+)\b|one verifier assignment per sentence",
+    re.I,
+)
 
 
 def fail(message: str) -> None:
-    print(f"FAIL: {message}")
-    raise SystemExit(1)
+    raise SystemExit(f"FAIL: {message}")
 
 
-for directory, names in REQUIRED.items():
+required = {
+    ROOT: {
+        "SKILL.md",
+        "adaptive-routing.md",
+        "quality-contract.md",
+        "scaffolded-mode.md",
+        "review-prompts.md",
+        "runtime-contract.md",
+        "portability-test-matrix.md",
+        "legacy-v1/LEGACY.md",
+        *ADAPTERS,
+    },
+    ROOT.parent / "physics-paper-editing-section": {
+        "SKILL.md",
+        "stages.md",
+        "cross-skill.md",
+        "chunk-contract.md",
+        "legacy-v1/LEGACY.md",
+    },
+    ROOT.parent / "physics-paper-principles": {
+        "SKILL.md",
+        "physical-lead.md",
+        "sentence.md",
+        "narrative.md",
+        "math.md",
+        "legacy-v1/LEGACY.md",
+    },
+}
+
+for directory, names in required.items():
     for name in names:
         if not (directory / name).is_file():
             fail(f"missing {directory.name}/{name}")
@@ -36,25 +63,33 @@ for directory in SUITE:
     text = skill.read_text()
     if not re.search(r"^name:\s*[-a-z0-9]+$", text, re.M):
         fail(f"invalid name frontmatter: {skill}")
-    if "compatibility:" not in text:
-        fail(f"missing compatibility frontmatter: {skill}")
 
-for directory in SUITE:
-    for path in directory.rglob("*.md"):
-        if path.name in ADAPTERS or path.name == "README.md":
-            continue
-        match = FORBIDDEN.search(path.read_text())
-        if match:
-            fail(f"platform token {match.group(0)!r} in core file {path}")
+for path in ROOT.glob("*.md"):
+    if path.name in ADAPTERS or path.name == "README.md":
+        continue
+    match = CORE_FORBIDDEN.search(path.read_text())
+    if match:
+        fail(f"nonportable or v1 token {match.group(0)!r} in active core {path.name}")
 
-contract = (ROOT / "runtime-contract.md").read_text()
-for required in ("recommended", "parent", "custom", "user_confirmed", "snapshot_id", "result_path", "agents.json"):
-    if required not in contract:
-        fail(f"runtime contract lacks {required!r}")
+routing = (ROOT / "adaptive-routing.md").read_text()
+for value in (
+    "harness_version: 2",
+    "direct | guided | independent | legacy_full",
+    "strong",
+    "economy",
+    "unknown",
+):
+    if value not in routing:
+        fail(f"adaptive routing lacks {value!r}")
 
-state = (ROOT / "job-state.md").read_text()
-for required in ("schema_version", '"event":"completion"', "agent_id", "started_at", "completed_at", "resolution_source"):
-    if required not in state:
-        fail(f"job-state schema lacks {required!r}")
+quality = (ROOT / "quality-contract.md").read_text()
+for axis in ("scientific_fidelity", "physics_lead", "formal_validity", "prose"):
+    if axis not in quality:
+        fail(f"quality contract lacks {axis!r}")
 
-print("PASS: portable skill suite structure and neutral-core boundary")
+physical = (ROOT.parent / "physics-paper-principles" / "physical-lead.md").read_text()
+for diagnostic in ("Factor round-trip", "Inline-substitution test", "Payoff test"):
+    if diagnostic not in physical:
+        fail(f"physical lead lacks {diagnostic!r}")
+
+print("PASS: portable physics-editing v2 structure and contracts")

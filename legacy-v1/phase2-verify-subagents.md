@@ -1,6 +1,6 @@
 # Frozen-snapshot verification
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before launching checkers or closing a round ([coworker-loop.md](coworker-loop.md)).
+**For agents:** Start with [LEGACY.md](LEGACY.md) § Agent read order. **Read with the Read tool** before launching checkers or closing a round ([coworker-loop.md](coworker-loop.md)).
 
 Required for **every** micro edit — standalone or macro chunk. Verifiers grade a **frozen snapshot** against **`physics-paper-principles`**. The live `.tex` is already written. Read [runtime-contract.md](runtime-contract.md) before delegation.
 
@@ -171,7 +171,7 @@ as JSON lines the moment you have them. Do not edit the .tex.
 
 ## Instructions
 
-Read ../physics-paper-principles/narrative.md (Detect lines) and
+Read ../../physics-paper-principles/legacy-v1/narrative.md (Detect lines) and
 physics-paper-editing/severity.md. Do **not** walk groups 1–4 as the
 primary loop. Run the workflow below. Fast polish does not skip Diagnostics.
 
@@ -284,7 +284,7 @@ Do not edit the .tex.
 
 ## Instructions
 
-Read ../physics-paper-principles/math.md (Required products) and
+Read ../../physics-paper-principles/legacy-v1/math.md (Required products) and
 physical-lead.md. Do **not** walk type-check lists as the primary loop.
 Run the workflow below. Fast polish does not skip Diagnostics.
 

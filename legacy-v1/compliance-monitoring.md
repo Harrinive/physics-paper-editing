@@ -1,8 +1,8 @@
 # Compliance monitoring (orchestrator ↔ workers ↔ synthesizer)
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before delegating verification or closing a job round.
+**For agents:** Start with [LEGACY.md](LEGACY.md) § Agent read order. **Read with the Read tool** before delegating verification or closing a job round.
 
-Applies to **standalone micro** and **macro Stage D** chunk agents. **Writer ≠ grader:** producer never sets `OVERALL`; synthesizer only. **Orchestrator ≠ self-auditor:** section orchestrator does not launch micro verifiers ([cross-skill.md](../physics-paper-editing-section/cross-skill.md)).
+Applies to **standalone micro** and **macro Stage D** chunk agents. **Writer ≠ grader:** producer never sets `OVERALL`; synthesizer only. **Orchestrator ≠ self-auditor:** section orchestrator does not launch micro verifiers ([cross-skill.md](../../physics-paper-editing-section/legacy-v1/cross-skill.md)).
 
 Workers grade **orchestrator delegation** before specialist work. The **synthesizer** grades worker homework **and** merges procedural compliance. The producer **never** self-certifies assignment counts.
 

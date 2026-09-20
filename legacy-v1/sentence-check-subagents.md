@@ -1,12 +1,12 @@
 # Sentence checks via verifier subagents
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before splitting the snapshot or scheduling sentence verifiers.
+**For agents:** Start with [LEGACY.md](LEGACY.md) § Agent read order. **Read with the Read tool** before splitting the snapshot or scheduling sentence verifiers.
 
 Verifiers grade **changed sentences only** ([phase2-verify-subagents.md](phase2-verify-subagents.md)). There is no Phase 1 source-audit wave. Narrative + math are separate verifier assignments on the full snapshot. The synthesizer sets job-round `OVERALL` after the round.
 
 Sentence-count thresholds: [gate.md](gate.md).
 
-**Compliance:** Every sentence verifier runs **Step 0 assignment compliance** before specialist work — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one assignment) when N ≤ 10 → `COMPLIANCE: FAIL`. Specialist work is **artifact-first** ([sentence.md](../physics-paper-principles/sentence.md) Detect names); do not walk 1–15 as the primary loop.
+**Compliance:** Every sentence verifier runs **Step 0 assignment compliance** before specialist work — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one assignment) when N ≤ 10 → `COMPLIANCE: FAIL`. Specialist work is **artifact-first** ([sentence.md](../../physics-paper-principles/legacy-v1/sentence.md) Detect names); do not walk 1–15 as the primary loop.
 
 ---
 
@@ -14,7 +14,7 @@ Sentence-count thresholds: [gate.md](gate.md).
 
 | Context | Use this file? |
 |---------|----------------|
-| Producer drafting | No — producer uses [sentence.md](../physics-paper-principles/sentence.md) as **principles** |
+| Producer drafting | No — producer uses [sentence.md](../../physics-paper-principles/legacy-v1/sentence.md) as **principles** |
 | Background verify | Yes — **changed labels only** |
 | ASK USER → proceed anyway | Yes — splittable sentences; note partial coverage |
 
@@ -146,7 +146,7 @@ worker plan as JSON lines the moment you have them (job-state.md). Do not edit
 the .tex. On a supported stop request: flush then stop.
 
 ## Role boundary and sentence-level rules
-Read ../physics-paper-principles/sentence.md (Detect column) and
+Read ../../physics-paper-principles/legacy-v1/sentence.md (Detect column) and
 physics-paper-editing/severity.md § Sentence workers (Read tool if needed).
 Do **not** walk principles 1–15 as the primary loop. Run the workflow below.
 

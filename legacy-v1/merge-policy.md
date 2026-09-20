@@ -1,6 +1,6 @@
 # Merge policy
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. Run once per check **round** after harvest ([coworker-loop.md](coworker-loop.md), [job-state.md](job-state.md)).
+**For agents:** Start with [LEGACY.md](LEGACY.md) § Agent read order. Run once per check **round** after harvest ([coworker-loop.md](coworker-loop.md), [job-state.md](job-state.md)).
 
 The producer applies this rubric to the file. The synthesizer classifies severity ([severity.md](severity.md)) and sets job-round `OVERALL`. The producer does **not** set `OVERALL`.
 

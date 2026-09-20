@@ -1,113 +1,82 @@
 # Runtime contract
 
-This is the portable execution contract for the editing harness. It defines
-*what* the parent agent must arrange; a host adapter defines concrete commands.
-Keep checker prompts in their existing verifier documents.
-
-## Load order
-
-1. Read this contract for every top-level session.
-2. Select the adapter for the active host from the runtime reference files.
-3. Use the adapter only for host operations. Canon, scope, severity, snapshot,
-   and merge rules remain in the editing documents.
+Read this file only when version-2 work needs model selection, delegation,
+persistence, or a runtime fallback. The portable core specifies capability
+requirements; adapters resolve concrete host operations and model identifiers.
 
 ## Session profile
 
-At top-level intake, collect one choice and persist it. Do not ask again for
-chunks, rounds, or resumes unless the user asks to change it.
-
-| Choice | Meaning |
-|---|---|
-| `recommended` | `sentence: fast`; `deep: capable`; `synth: capable` |
-| `parent` | Every role inherits the parent model and reasoning level |
-| `custom` | The user supplies a role-to-model mapping; unspecified roles inherit |
-
-`fast` and `capable` are requirements, not vendor names. Resolve them through
-the active adapter. If no suitable model is known, inherit and record the
-fallback rather than inventing an identifier.
-
-Persist this shape in `session.md` or its machine-readable companion:
-
 ```yaml
-runtime: host identifier
-model_profile:
-  profile_choice: recommended | parent | custom
-  profile_source: accepted_default | custom | inherit | fallback
-  user_confirmed: true | false
-  roles:
-    sentence: {requested_tier: fast, resolved_model: unknown, reasoning: unknown, resolution_source: accepted_default}
-    deep: {requested_tier: capable, resolved_model: unknown, reasoning: unknown, resolution_source: accepted_default}
-    synth: {requested_tier: capable, resolved_model: unknown, reasoning: unknown, resolution_source: accepted_default}
+harness_version: 2
+edit_intent: copyedit | substantive
+model_tier: strong | economy | unknown
+tier_source: adapter | user | inherited | fallback
+scientific_risk: low | medium | high
+execution_path: direct | guided | independent | legacy_full
+verification_independence: independent | self_only | unavailable
+roles:
+  editor: {requested_tier: strong | economy | inherit, resolved_model: unknown}
+  holistic_reviewer: {requested_tier: capable | inherit, resolved_model: unknown}
+  math_reviewer: {requested_tier: capable | inherit, resolved_model: unknown}
+  local_polisher: {requested_tier: economy | inherit, resolved_model: unknown}
+  adjudicator: {requested_tier: capable | inherit, resolved_model: unknown}
 ```
 
-Valid `profile_source` and `resolution_source` values are `accepted_default`,
-`custom`, `inherit`, and `fallback`. Set `user_confirmed: true` only after the user accepts or supplies
-a profile; showing a default is not confirmation.
+Record a resolved model only when the host reports it. The core skill contains
+no vendor model names. Unknown editor capability routes as economy.
 
-## Worker lifecycle
+Do not ask the user to choose a profile when the runtime already supplies a
+known capability tier and no preference is material. State the selected path
+only when it changes cost, verification independence, or expected latency.
 
-Give every worker a frozen snapshot identifier, scope, role, result location,
-and a read-only instruction. The parent must:
+## Worker rules
 
-1. write the draft and snapshot before launch;
-2. schedule independent workers up to the runtime concurrency limit, then use
-   waves;
-3. let the user continue while checks run when asynchronous execution exists;
-4. harvest completed results before one synthesizer decides round status;
-5. preserve completed artifacts when stopping work; and
-6. reject a result whose `snapshot_id` differs from the current snapshot.
+- `direct` launches no workers.
+- `guided` launches at most one holistic reviewer and one conditionally
+  triggered math reviewer.
+- `independent` launches the same reviewers independently; an adjudicator is
+  conditional on an actual scientific conflict.
+- A local polisher receives only a diagnosed span and decided repair.
+- No version-2 role is assigned one worker per sentence.
+- If delegation is unavailable or forbidden, run the checks in the strongest
+  available parent and record `verification_independence: self_only` or
+  `unavailable`.
 
-Use enforced read-only execution when the host supports it. Otherwise state the
-restriction in the assignment and verify that the worker wrote only its result.
+## Persistence
 
-## Results and deterministic harvest
-
-Workers never append concurrently to one shared log. Allocate one append-only
-shard per worker, immutable after its terminal record:
+Do not create state for ordinary synchronous short edits. For resumable,
+asynchronous, concurrent, or file-based work, persist:
 
 ```text
-.physics-edit/<scope>/<job_id>/findings/<worker_id>.jsonl
+.physics-edit/<scope>/<job_id>/
+├── session.md
+├── snapshot.tex
+├── object-ledger.md
+├── reviews/
+└── result.yaml
 ```
 
-Each line in a shard repeats its worker envelope and has `event: finding` or
-`event: completion`. The terminal completion record has this shape:
-
-```json
-{
-  "schema_version": 1,
-  "worker_id": "sentence-s3",
-  "role": "sentence",
-  "scope": ["s3"],
-  "snapshot_id": "sha256:...",
-  "runtime": "other",
-  "agent_id": "unknown",
-  "model": {"requested_tier": "fast", "resolved_model": "unknown", "reasoning": "unknown", "resolution_source": "fallback"},
-  "status": "complete",
-  "event": "completion",
-  "findings": []
-}
-```
-
-The parent maintains `agents.json` with the same identity and model fields,
-plus `result_path`, `started_at`, `completed_at`, and lifecycle `status`:
-`queued`, `running`, `complete`, `interrupted`, `failed`, or `stale`.
-
-Harvest in lexical `worker_id` order. Validate schema and snapshot first; mark
-invalid, missing, failed, or mismatched shards in `agents.json`, and pass only
-valid findings to the synthesizer. A resume reuses valid completed shards, then
-relaunches only missing, interrupted, failed, or stale scopes.
+Each review records the snapshot identifier, role, scope, model metadata when
+known, and axis results from [quality-contract.md](quality-contract.md). Reject
+review output from an obsolete snapshot. Separate review files avoid concurrent
+writes to one log.
 
 ## Capability fallbacks
 
-| Capability absent | Required behavior |
+| Missing capability | Behavior |
 |---|---|
-| Interactive choice | State the recommended profile, inherit, record `user_confirmed: false` |
-| Per-worker model selection | Inherit the parent; record `resolved: unknown` if hidden |
-| Enforced read-only mode | Use a read-only assignment and verify result-only writes |
-| Background work | Run foreground waves; do not claim concurrent user editing |
-| Completion event | Poll or harvest at the next parent wake |
-| Interruption | Allow completion, then label an obsolete shard `stale` |
-| Resume handle | Resume from shards and manifest; relaunch unfinished work |
+| Model-tier resolution | Use `unknown` → economy routing |
+| Per-role model selection | Inherit; record the limitation |
+| Delegation | Parent performs the checks; mark `self_only` |
+| Background work | Run reviewers in foreground; do not claim concurrency |
+| Interruption | Let obsolete review finish, preserve it as stale, and recheck changed content |
+| Resume handle | Resume from persisted snapshot and review files |
 
-Do not turn a fallback into a prose-verification rule. The invariant is frozen
-artifact coverage, not a particular host mechanism.
+Content quality and verification independence are separate. A fallback changes
+the latter; it does not fabricate a content `PASS` or `FIX`.
+
+## Version compatibility
+
+Any live job without `harness_version: 2` resumes under
+[legacy-v1/LEGACY.md](legacy-v1/LEGACY.md). Do not translate its state or mix v2
+roles and quality axes into an active v1 round.
