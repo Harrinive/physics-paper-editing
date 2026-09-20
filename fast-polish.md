@@ -6,15 +6,15 @@
 
 Macro chunks always pass `caller: section-orchestrator` ([chunk-contract.md](../physics-paper-editing-section/chunk-contract.md)) — this file's exceptions **never** apply to chunks, regardless of pace.
 
-This file changes **what background narrative/math ask and whether the math Task launches**. It does **not** change **`physics-paper-principles`**. It does not change who may set `OVERALL` (synthesizer only), does not skip the synthesizer, and does not skip sentence Tasks for changed sentences.
+This file changes the narrative/math verification scope and whether math verification launches. It does **not** change **`physics-paper-principles`**. It does not change who may set `OVERALL` (synthesizer only), does not skip the synthesizer, and does not skip sentence verifiers for changed sentences.
 
 ---
 
 ## 1. Equation-detection test (run once; mechanical)
 
-Run against the **quoted source** before the Task plan, and again against the **marked draft** — if the draft adds math the quote lacked, re-run and re-emit the Task plan.
+Run against the **quoted source** before the worker plan, and again against the **marked draft** — if the draft adds math the quote lacked, re-run and re-emit the worker plan.
 
-**Launch the math Task** (skip nothing) if the quote **or** the draft contains any of:
+**Launch math verification** (skip nothing) if the quote **or** the draft contains any of:
 
 - `$`, `$$`, `\(...\)`, `\[...\]`
 - an `equation`, `align`, `gather`, `eqnarray`, `multline`, `split`, or `cases` environment, or `\ensuremath`
@@ -23,11 +23,11 @@ Run against the **quoted source** before the Task plan, and again against the **
 - a cross-reference to math elsewhere (`\eqref`, `Eq.~\ref{...}`, `Lemma~\ref{...}` or equivalent prose pointer)
 - a Unicode math operator (∀ ∃ ≤ ≥ ⟨ ⟩ ħ φ and similar)
 
-**Skip the math Task** only when none of the above appear anywhere in the quote or the draft. Record the outcome in the Task plan field `phase2_math_task: launched | skipped (no equations)` ([compliance-monitoring.md](compliance-monitoring.md) § Task plan block).
+**Skip math verification** only when none of the above appear anywhere in the quote or the draft. Record the outcome in the worker-plan field `phase2_math_task: launched | skipped (no equations)` ([compliance-monitoring.md](compliance-monitoring.md) § Worker plan block).
 
-A sentence that only *uses* an already-defined term, with no math notation, does not launch math on this test. Unresolved physical meaning (class 6) on an object **this quote introduces** is still in scope for the narrative Task if math was skipped ([severity.md](severity.md) narrative class 6).
+A sentence that only *uses* an already-defined term, with no math notation, does not launch math on this test. Unresolved physical meaning (class 6) on an object **this quote introduces** is still in scope for the narrative verifier if math was skipped ([severity.md](severity.md) narrative class 6).
 
-## 2. Delta scope (narrative Task always; math Task too, when it runs)
+## 2. Delta scope (narrative verifier always; math verifier too, when it runs)
 
 The question narrows from "is this passage correct against the whole paper" to: **did the producer's edit change what the sentence claims, relative to the user's own quoted source?**
 
@@ -52,9 +52,9 @@ PACKET_GAP: <one line — what context would be needed and why>
 
 On `pace: fast` + `polish` + `caller: micro`:
 
-- `phase2_math_task: skipped (no equations)` is a **valid, compliant** plan when § 1's test finds nothing to launch in quote or draft. The math worker Step 0 in [compliance-monitoring.md](compliance-monitoring.md) does not apply — there is no math Task to grade.
-- `COMPLIANCE: FAIL` only if the plan **disagrees** with the mechanical test: math launched with no § 1 trigger (unnecessary Task, not a content defect), or math skipped while a § 1 trigger is present in quote or draft (relaunch math; do not hide the gap).
-- The synthesizer accepts `### Math report: skipped — no equations per Task plan` in place of a math verifier report; CHECKS records `math_step0: N/A (skipped)`. This is **not** a procedural FAIL.
+- `phase2_math_task: skipped (no equations)` is a **valid, compliant** plan when § 1's test finds nothing to launch in quote or draft. The math worker Step 0 in [compliance-monitoring.md](compliance-monitoring.md) does not apply — there is no math verifier to grade.
+- `COMPLIANCE: FAIL` only if the plan **disagrees** with the mechanical test: math launched with no § 1 trigger (unnecessary verifier, not a content defect), or math skipped while a § 1 trigger is present in quote or draft (relaunch math; do not hide the gap).
+- The synthesizer accepts `### Math report: skipped — no equations per worker plan` in place of a math verifier report; CHECKS records `math_step0: N/A (skipped)`. This is **not** a procedural FAIL.
 
 ## 5. Model recommendation (fast pace only)
 
@@ -64,7 +64,7 @@ At `pace: fast`, the default deep/synth slugs are a capable **medium-effort** fl
 
 ## What does not change
 
-- Sentence Tasks: still one Task per **changed** label, same fast-tier model, **artifact-first** Diagnostics then unresolved 1–15. This file does not skip Diagnostics.
-- Synthesizer: still the sole job-round `OVERALL` authority (`PASS` | `CONFLICTS` | `PARTIAL`); still fresh Tasks every wave. Empty Diagnostics → `PARTIAL`, not a BLOCKER.
-- Narrative Task: still artifact-first then all four groups, full passage — this file only narrows classes 1–5 relative to the **edit**, and adds § 2's word-delta class; class 6 (unresolved physical meaning) is **not** waived as pre-existing when this quote introduces the object.
-- `caller: section-orchestrator` (macro chunks): none of this applies. Chunks always get the math Task when applicable and the full whole-passage audit, at either pace.
+- Sentence verifiers: still one assignment per **changed** label, same fast-tier role, **artifact-first** Diagnostics then unresolved 1–15. This file does not skip Diagnostics.
+- Synthesizer: still the sole job-round `OVERALL` authority (`PASS` | `CONFLICTS` | `PARTIAL`); still fresh verifier jobs every wave. Empty Diagnostics → `PARTIAL`, not a BLOCKER.
+- Narrative verifier: still artifact-first then all four groups, full passage — this file only narrows classes 1–5 relative to the **edit**, and adds § 2's word-delta class; class 6 (unresolved physical meaning) is **not** waived as pre-existing when this quote introduces the object.
+- `caller: section-orchestrator` (macro chunks): none of this applies. Chunks always get math verification when applicable and the full whole-passage audit, at either pace.

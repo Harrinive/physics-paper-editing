@@ -14,7 +14,7 @@ A round ends when the full wave completes **or** an interrupt harvest runs. Then
 |------|--------|
 | **Base** | `snapshot.tex` for this round |
 | **Yours** | current marked interior (all user edits since that snapshot) |
-| **Agent** | base + still-`valid` must-fix findings from `findings.jsonl` |
+| **Agent** | base + still-`valid` must-fix findings from the deterministic result-shard harvest |
 
 Split all three the same way ([sentence-check-subagents.md](sentence-check-subagents.md) §2). Align by label. If the user split or joined sentences, treat the overlapping span as one unit.
 
@@ -71,7 +71,7 @@ When unsure whether a clash is serious, **leave yours** and report. Do not guess
    - labels tagged `open` (never finished)
    - labels whose live hash is new (user or merge changed them)
 4. Do **not** relaunch a label that is `valid`, finished, and unchanged by the merge.
-5. If no Tasks remain and no open serious conflicts: **unmark**.
+5. If no verifier jobs remain and no open serious conflicts: **unmark**.
 6. User-facing receipt: [user-communication.md](user-communication.md). Quote at most **one** serious conflict. Put CHECKS in the audit drawer.
 
 ---
@@ -84,4 +84,4 @@ When unsure whether a clash is serious, **leave yours** and report. Do not guess
 | `CONFLICTS` | At least one serious item reported to the user (including unresolved physical meaning under class 6, not mere presentation suggestions) |
 | `PARTIAL` | Harvest after interrupt, or labels still `open`, and no `CONFLICTS` |
 
-`FAIL` in old CHECKS maps to: procedural plan defect → relaunch that wave (fresh Tasks, do not block the user); content must-fix on **untouched** sentences → auto-apply then continue; content vs user → `CONFLICTS`.
+`FAIL` in old CHECKS maps to: procedural plan defect → relaunch that wave (fresh verifier jobs, do not block the user); content must-fix on **untouched** sentences → auto-apply then continue; content vs user → `CONFLICTS`.

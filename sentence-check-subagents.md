@@ -1,12 +1,12 @@
-# Sentence checks via Task subagents
+# Sentence checks via verifier subagents
 
-**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before splitting the snapshot or launching sentence Tasks.
+**For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before splitting the snapshot or scheduling sentence verifiers.
 
-Background checkers grade **changed sentences only** ([phase2-verify-subagents.md](phase2-verify-subagents.md)). There is no Phase 1 source-audit wave. Narrative + math are separate Tasks on the full snapshot. The synthesizer sets job-round `OVERALL` after the round.
+Verifiers grade **changed sentences only** ([phase2-verify-subagents.md](phase2-verify-subagents.md)). There is no Phase 1 source-audit wave. Narrative + math are separate verifier assignments on the full snapshot. The synthesizer sets job-round `OVERALL` after the round.
 
 Sentence-count thresholds: [gate.md](gate.md).
 
-**Compliance:** Every sentence Task runs **Step 0 assignment compliance** before specialist work — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one Task) when N ≤ 10 → `COMPLIANCE: FAIL`. Specialist work is **artifact-first** ([sentence.md](../physics-paper-principles/sentence.md) Detect names); do not walk 1–15 as the primary loop.
+**Compliance:** Every sentence verifier runs **Step 0 assignment compliance** before specialist work — see [compliance-monitoring.md](compliance-monitoring.md). Batched prompts (S1–S3 in one assignment) when N ≤ 10 → `COMPLIANCE: FAIL`. Specialist work is **artifact-first** ([sentence.md](../physics-paper-principles/sentence.md) Detect names); do not walk 1–15 as the primary loop.
 
 ---
 
@@ -18,7 +18,7 @@ Sentence-count thresholds: [gate.md](gate.md).
 | Background verify | Yes — **changed labels only** |
 | ASK USER → proceed anyway | Yes — splittable sentences; note partial coverage |
 
-Model choice: inherit or defaults ([gate.md](gate.md) · [phase2-verify-subagents.md](phase2-verify-subagents.md)). `section-brief.md` / `manifest.json` alone are not enough without `session.md` `user_confirmed: true`.
+Model choice: use the recorded profile ([gate.md](gate.md) · [phase2-verify-subagents.md](phase2-verify-subagents.md)). `section-brief.md` / `manifest.json` alone are not enough without the matching `session.md` profile; a no-interaction fallback remains valid with `user_confirmed: false`.
 
 ---
 
@@ -32,70 +32,54 @@ Model choice: inherit or defaults ([gate.md](gate.md) · [phase2-verify-subagent
 3. Label **S1, S2, …** for assignment.
 
 If a boundary is genuinely ambiguous, keep the span together, record the
-decision once in the Task plan, and use the same labels every wave.
+decision once in the worker plan, and use the same labels every wave.
 
-After labeling, identify changed labels per [phase2-verify-subagents.md](phase2-verify-subagents.md) § Changed sentences. Only changed labels get Tasks.
+After labeling, identify changed labels per [phase2-verify-subagents.md](phase2-verify-subagents.md) § Changed sentences. Only changed labels get verifier assignments.
 
 ---
 
-## 3. Task assignment
+## 3. Verifier assignment
 
-**Default:** one Task per changed sentence — each subagent runs the artifact-first workflow, then reports unresolved items against all 15 sentence principles.
+**Default:** one verifier assignment per changed sentence — each subagent runs the artifact-first workflow, then reports unresolved items against all 15 sentence principles.
 
-1. Launch **one Task per assigned sentence** (or per §3.1 batch).
-2. Launch Tasks **in parallel** with `run_in_background: true`. Do not wait before ending the turn.
-3. **M** in the Mode line = number of sentence Tasks launched (must equal C).
+1. Schedule **one verifier assignment per sentence** (or per §3.1 batch).
+2. Use the runtime scheduler for parallel waves. Continue asynchronously when available; otherwise harvest foreground waves without withholding the draft.
+3. **M** in the Mode line = number of sentence assignments launched (must equal C).
 
-**Anti-patterns:** See [compliance-monitoring.md](compliance-monitoring.md). Launching one Task for multiple labels when N ≤ 10 is a **compliance violation**.
+**Anti-patterns:** See [compliance-monitoring.md](compliance-monitoring.md). Assigning one verifier to multiple labels when N ≤ 10 is a **compliance violation**.
 
 ### 3.1 Batching (11–12 sentences, or user chose proceed on longer quote)
 
-When the assigned set has **>10** sentences (typically 11–12 under the ≤12 gate limit), you may assign **2+ sentences per Task**. If user chose **Proceed with subagents anyway** on a longer quote, scale batch size accordingly. Note batching in the Mode line (e.g. `· 6 Tasks (2 sentences each)`). **Never** batch when ≤10 sentences unless user explicitly requests it.
+When the assigned set has **>10** sentences (typically 11–12 under the ≤12 gate limit), you may assign **2+ sentences per verifier**. If the user chose **Proceed with partial coverage** on a longer quote, scale batch size accordingly. Note batching in the Mode line. **Never** batch when ≤10 sentences unless the user explicitly requests it.
 
 ---
 
 ## 4. Model choice
 
-Inherit the sentence-checker slug or use the recommended fast-tier default
-([phase2-verify-subagents.md](phase2-verify-subagents.md)). Do not ask a
-separate model question.
-
-Use a fast-tier model for this high-volume, wording-only role.
-
-Build options from the **current session Task allowed model list**. Prefer a **fast Composer** model when available; otherwise offer one flagship per provider with the **exact slug in each label**:
-
-| Provider | Pick |
-|----------|------|
-| Cursor | Fast Composer model if in the allowed list; else highest-tier Composer |
-| OpenAI | Highest-tier GPT model in the allowed list |
-| Anthropic | Highest-tier Claude model in the allowed list |
-
-Use the chosen slug on **every** sentence Task. If unavailable, pick the closest fast-tier slug in the session list and mention once.
+Use the confirmed `sentence` role from [runtime-contract.md](runtime-contract.md); do not ask a second question. The adapter resolves this fast-tier role to an available model and records an explicit fallback or `unknown` identifier when necessary.
 
 ---
 
 ## 5. Passage summary
 
-**Before any Task**, write one **passage summary** for the full S1…Sn scope (keep it for prompts; do not put the itinerary in the user narrative):
+**Before any verifier assignment**, write one **passage summary** for the full S1…Sn scope (keep it for prompts; do not put the itinerary in the user narrative):
 
 - Passage role and logical flow.
 - Placement (section, `.tex` path, neighbors).
 - Physics and math at graduate level.
 
-Paste the **identical** block into every subagent prompt under `## Passage summary (shared)`.
+Paste the **identical** block into every verifier prompt under `## Passage summary (shared)`.
 
 ```text
-Task(
-  subagent_type: "generalPurpose",
-  readonly: true,
-  model: <sentence-checker slug — fast tier from §4>,
-  run_in_background: true,
-  description: "background sentence: S<k>",
-  prompt: <template §6>
-)
+role: sentence
+labels: [S<k>]
+model_role: sentence
+write_policy: result-shard-only
+completion: asynchronous-when-supported
+prompt: template §6
 ```
 
-**Task description must include the label** (`background sentence: S2`) — not `sentence verify c11` or `all sentences`.
+The assignment label must be explicit (`S2`), never an opaque identifier or `all sentences`.
 
 ---
 
@@ -105,11 +89,11 @@ Task(
 You are a sentence-level wording editor for a physics paper. You are not the
 physics, mathematics, scope, theorem, or evidence adjudicator.
 
-## Orchestrator task plan (verify in Step 0 — read-only)
-<paste identical block from producer — compliance-monitoring.md § Task plan block>
+## Worker plan (verify in Step 0 — read-only)
+<paste identical block from producer — compliance-monitoring.md § Worker plan block>
 
 ## Passage summary (shared)
-<identical block in every Task — from §5>
+<identical block in every verifier prompt — from §5>
 
 ## Local context (read-only; never edit)
 - Paper topic: <if not clear from summary>
@@ -133,16 +117,16 @@ rule above, never because the orchestrator expects a particular answer.
 You monitor the orchestrator, not just the prose. Read `pace` from the plan.
 
 Expected: exactly ONE target label S<k>, listed in `phase2_changed_labels`.
-`phase1_sentence_tasks` must be `0`. Also append findings to `findings_path`
+`phase1_sentence_tasks` must be `0`. Also append findings to `result_path`
 as you go (job-state.md).
 
-If the prompt lists multiple sentences, a range (S1–S3), or "all sentences", or your label is missing from the task plan:
+If the prompt lists multiple sentences, a range (S1–S3), or "all sentences", or your label is missing from the worker plan:
 
 ### Assignment compliance
 COMPLIANCE: FAIL
 Role: sentence
 Label: S<k>
-Reason: <one line — e.g. batched assignment; expected one label per Task>
+Reason: <one line — e.g. batched assignment; expected one label per verifier>
 
 (Do not run specialist checks below.)
 
@@ -157,9 +141,9 @@ Check ONLY **one** sentence — label S<k>:
 User inline comments: <[bracket comments] or "none">
 
 ## Incremental ledger
-Append each finding (and a `done` line for S<k>) to `findings_path` from the
-Task plan as JSON lines the moment you have them (job-state.md). Do not edit
-the .tex. On interrupt: flush then stop.
+Append each finding and a terminal completion record for S<k> to `result_path` from the
+worker plan as JSON lines the moment you have them (job-state.md). Do not edit
+the .tex. On a supported stop request: flush then stop.
 
 ## Role boundary and sentence-level rules
 Read ../physics-paper-principles/sentence.md (Detect column) and
@@ -208,7 +192,7 @@ the edit does not add a scientific claim or shift a field-standard term
 
 **Fix silently (minor):** Typos, punctuation, trivial grammar, polish that does not change meaning.
 
-**Do not silent-fix:** tautological or type-gloss clauses (principle 14). Deleting a clause whose claim is already in an adjacent clause is allowed as a silent minor fix. Supplying the missing contrast or consequence is passage-level judgment — report it as `SUGGEST` with a proposed `Edited:` line; do not invent a scientific point. Unclear physical role on a newly named object (principle 11 / physical-lead.md): suggest supported clarification; do not invent meaning. Shifted field-standard meaning (principle 15): do not silent-rename or silently broaden the term; report it. Escalate scientific uncertainty to math (or narrative if no math Task); a non-operational definition alone is not a defect.
+**Do not silent-fix:** tautological or type-gloss clauses (principle 14). Deleting a clause whose claim is already in an adjacent clause is allowed as a silent minor fix. Supplying the missing contrast or consequence is passage-level judgment — report it as `SUGGEST` with a proposed `Edited:` line; do not invent a scientific point. Unclear physical role on a newly named object (principle 11 / physical-lead.md): suggest supported clarification; do not invent meaning. Shifted field-standard meaning (principle 15): do not silent-rename or silently broaden the term; report it. Escalate scientific uncertainty to math (or narrative if no math verifier); a non-operational definition alone is not a defect.
 
 Respect principle 8 (minimal changes).
 
@@ -269,9 +253,9 @@ Reason: <one line>
 
 ---
 
-## 7. After sentence Tasks complete (or on interrupt)
+## 7. After sentence verifiers complete (or after a stop request)
 
-1. Harvest `findings.jsonl` ([job-state.md](job-state.md)). Keep stale lines.
+1. Harvest deterministic result shards ([job-state.md](job-state.md)). Keep stale lines.
 2. Pass harvest + any final reports to the **round synthesizer** with changed/skipped label lists.
 3. Producer does **not** run narrative/math inline or grade OVERALL. Apply [merge-policy.md](merge-policy.md).
 

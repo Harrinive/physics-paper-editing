@@ -74,7 +74,7 @@ Do not repeat this orientation unless the marks were just created for a new job.
 
 ## Forbidden in the narrative
 
-Phase, Stage, Task, synthesizer, COMPLIANCE, BLOCKER, snapshot, hash, jsonl, interrupt, `rev`, `job=`, worker counts, Producer, END TURN, micro/macro, chunk agent.
+Phase, Stage, verifier, synthesizer, COMPLIANCE, BLOCKER, snapshot, hash, jsonl, stop request, `rev`, `job=`, worker counts, Producer, internal workflow names, chunk agent.
 
 | Internal | Say only if needed |
 |----------|-------------------|
@@ -131,7 +131,7 @@ Mode: section-edit · chunk:<id> · verify:running · …
 2. Ask **polish vs rewrite** only when that is actually unclear.
 3. **Do not** ask pace or three models every job. Inherit the last confirmed profile in this chat or `session.md`. If none, use the recommended slugs in [phase2-verify-subagents.md](phase2-verify-subagents.md) and mention once: “I’ll use the usual checkers; say if you want different models.”
 4. If the quote **introduces or rewrites** a named physical/protocol object, run [physical-lead.md](../physics-paper-principles/physical-lead.md). Consider physical meaning and choose a suitable definition form. Use **Need your call** only for the essential scientific ambiguity described in [coworker-loop.md](coworker-loop.md) § Definition halt; otherwise draft with supported interpretation.
-5. Otherwise draft, mark, launch, end the turn. Follow this file’s first-turn orientation.
+5. Otherwise draft, mark, schedule verification, and follow this file’s first-turn orientation.
 
 ---
 
@@ -167,6 +167,6 @@ Do not say “micro scope”, “macro skill”, or the skill file names unless 
 | “What to expect: pre-edit → check → ship” | First-turn three lines, then receipts |
 | “Reply **continue** for piece 4” | “You can keep editing or say **next piece**.” |
 | “4 of 11 sentence checks” | “I am still reading it.” |
-| “Phase 2 verifier Tasks launched” | “I put the draft in `{file}` and I am still reading it.” |
+| “Phase 2 verifier jobs launched” | “I put the draft in `{file}` and I am still reading it.” |
 | Merge-algorithm / hash lecture | “I kept your definition sentence.” |
 | A standing “don’t worry” paragraph | Orientation once; then silence |

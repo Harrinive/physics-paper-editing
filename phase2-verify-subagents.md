@@ -1,8 +1,8 @@
-# Background output verify
+# Frozen-snapshot verification
 
 **For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** before launching checkers or closing a round ([coworker-loop.md](coworker-loop.md)).
 
-Required for **every** micro edit — standalone or macro chunk. Checkers grade a **frozen snapshot** against **`physics-paper-principles`**. The live `.tex` is already written.
+Required for **every** micro edit — standalone or macro chunk. Verifiers grade a **frozen snapshot** against **`physics-paper-principles`**. The live `.tex` is already written. Read [runtime-contract.md](runtime-contract.md) before delegation.
 
 Also read: [severity.md](severity.md) · [sentence-check-subagents.md](sentence-check-subagents.md) · [compliance-monitoring.md](compliance-monitoring.md) · [job-state.md](job-state.md). When `edit_gate: polish` + `pace: fast` + `caller: micro`: also [fast-polish.md](fast-polish.md).
 
@@ -16,9 +16,9 @@ Also read: [severity.md](severity.md) · [sentence-check-subagents.md](sentence-
 | Math verifier (when math or logical argument — see footnote) | |
 | Synthesizer (**after the round** — wave complete or interrupt harvest) | |
 
-Footnote — **fast polish, standalone micro only:** skip the math Task only when [fast-polish.md](fast-polish.md) § 1's mechanical test finds nothing to launch.
+Footnote — **fast polish, standalone micro only:** skip math verification only when [fast-polish.md](fast-polish.md) § 1's mechanical test finds nothing to launch.
 
-- Fresh Tasks every wave — never resume old Tasks except `interrupt: true` to flush.
+- Fresh verifier jobs every wave — never reuse an old review job; only request a flush from a still-running worker when the runtime supports it.
 - **Producer** must not inline-check the draft or set `OVERALL`.
 - **Synthesizer** is the sole authority for CHECKS and job-round `OVERALL` (`PASS` | `CONFLICTS` | `PARTIAL`).
 
@@ -29,12 +29,12 @@ Footnote — **fast polish, standalone micro only:** skip the math Task only whe
 | Role | Who | May edit `.tex`? | May emit CHECKS / OVERALL? |
 |------|-----|------------------|----------------------------|
 | Producer | Main agent | Yes (draft, mark, merge) | **No** |
-| Sentence verifiers | Background Tasks | No — append `findings.jsonl`; may suggest `Edited:` | No |
-| Narrative verifier | Background Task | No — append jsonl | No |
-| Math verifier | Background Task | No — append jsonl | No |
-| Verifier synthesizer | Task after the round | No | **Yes** |
+| Sentence verifiers | Independent subagents | No — write assigned result shards; may suggest `Edited:` | No |
+| Narrative verifier | Independent subagent | No — write assigned result shard | No |
+| Math verifier | Independent subagent | No — write assigned result shard | No |
+| Verifier synthesizer | Subagent after the round | No | **Yes** |
 
-Use **`readonly: true`** and **`run_in_background: true`** on every verifier Task. Synthesizer may run in the foreground at round end.
+Request enforced read-only access for every verifier. If the runtime cannot enforce it, state the restriction in the assignment and accept only the assigned result shard. Schedule verification asynchronously when supported; the synthesizer may run after a foreground wave.
 
 ---
 
@@ -48,60 +48,46 @@ Label **S1, S2, …** on the snapshot ([sentence-check-subagents.md](sentence-ch
 | Rewrite | — | **Every** sentence is changed |
 | Later wave | Previous snapshot | New snapshot after merge |
 
-**Changed:** label exists in both, but text differs. **Unchanged:** no sentence Task. Narrative and math still get the full snapshot.
+**Changed:** label exists in both, but text differs. **Unchanged:** no sentence verifier. Narrative and math still get the full snapshot.
 
-**Zero changed sentences:** skip sentence Tasks; still run narrative (+ math if applicable) and synthesizer.
+**Zero changed sentences:** skip sentence verifiers; still run narrative (+ math if applicable) and synthesizer.
 
 ---
 
 ## Model profile
 
-**Do not launch verifier Tasks until slugs are resolved** — by inheritance or defaults, not by blocking AskQuestion every job ([gate.md](gate.md), [user-communication.md](user-communication.md)).
+Resolve the profile once per top-level session through [runtime-contract.md](runtime-contract.md). Do not delegate until the profile is confirmed, inherited from a confirmed section session, or recorded through the no-interaction fallback.
 
-| Valid source | Action |
-|--------------|--------|
-| User already chose a profile for **this draft scope in this chat** | Reuse |
-| Section `session.md` has `user_confirmed: true` | Inherit `{ sentence, deep, synth }` |
-| Neither | Use recommended slugs below; mention once that they can change checkers |
+| Role | Requested tier | Purpose |
+|------|----------------|---------|
+| Sentence verifier | `fast` | High-volume wording checks |
+| Narrative / math | `capable` | Physics, logic, and structure |
+| Synthesizer | `capable` | Independent adjudication |
 
-**Recommended slugs** (defaults when nothing is inherited):
-
-1. **Sentence** (fast tier) — Cursor Composer (fast) when available.
-2. **Narrative & logic** (deep) — at `pace: full` or `rewrite`, a flagship high-reasoning model; at `pace: fast` + `polish`, a medium-effort flagship ([fast-polish.md](fast-polish.md) § 5).
-3. **Synthesizer** (never fast tier) — same recommendation as (2).
-
-If a recommended slug is not in the session list, pick the closest available flagship in that tier and say so once.
-
-### Per-Task model assignment
-
-| Task | Tier | Slug |
-|------|------|------|
-| Sentence verifiers | Fast | sentence |
-| Narrative / math | Deep | deep |
-| Synthesizer | Deep | synth |
+The adapter records the resolved identifier, reasoning level when exposed, and a fallback or unknown value when it cannot resolve the requested tier. Never invent a model identifier.
 
 ---
 
 ## Workflow
 
 ```
-1. Models resolved (inherit or defaults)
+1. Confirmed or inherited model profile resolved
 2. Passage summary → every verifier prompt
 3. Label S1…SN; mark changed labels
-4. Emit Task plan (findings_path + phase2_sentence_tasks = changed labels)
-5. Launch in parallel, run_in_background: true:
+4. Emit worker plan (result paths + changed-label assignments)
+5. Schedule in runtime-aware waves:
      • narrative — full snapshot
      • math — when applicable
-     • sentence — one Task per changed label
+     • sentence — one assignment per changed label when scope is ten or fewer
    Write agents.json
-6. End the turn (verify:running)
-7. At round end (all done or interrupt harvest):
-     • harvest findings.jsonl
-     • launch synthesizer with reports + harvest tags
+6. Return control when the runtime supports asynchronous workers; otherwise continue through foreground waves
+7. At round end (all done or stale-result harvest):
+     • harvest result shards
+     • delegate synthesizer with reports + harvest tags
      • producer applies merge-policy.md
 ```
 
-**Task count:** narrative + math (0 if skipped) + **C** sentence Tasks. Synthesizer is extra, at round end. Mode line **M** = C.
+**Worker count:** narrative + math (0 if skipped) + **C** sentence assignments. Synthesizer is extra, at round end. Mode line **M** = C.
 
 ---
 
@@ -113,60 +99,56 @@ If a recommended slug is not in the session list, pick the closest available fla
 
 - Waiting to write `.tex` until `OVERALL: PASS`
 - Inventing physical meaning or choosing between unresolved scientific alternatives (definition halt only when essential to faithful drafting)
-- Launching with `run_in_background: false` and blocking the user
-- Auto-selecting a **new** profile when one can be inherited (defaults are OK if mentioned)
+- Withholding the written draft while a runtime runs foreground verification
+- Replacing a confirmed or inherited profile without the user's choice
 - Running principles inline on the draft or setting `OVERALL`
-- Sentence Tasks for unchanged labels
-- Batching ≤10 sentences in one Task
-- Dropping `findings.jsonl` on interrupt
+- Sentence verifiers for unchanged labels
+- Batching ≤10 sentences in one assignment
+- Dropping result shards after a stop request
 
 ---
 
-## Incremental flush (every worker)
+## Incremental result write (every worker)
 
-As soon as a finding exists, **append one JSON line** to `findings_path` from the Task plan ([job-state.md](job-state.md)). Then a `done` line when that label (or narrative/math) is finished. Do not wait for the final chat report. Do not edit the `.tex`.
+As soon as a finding exists, **append one enveloped JSON record** to the worker's `result_path` from the worker plan ([job-state.md](job-state.md)). Finish with the terminal completion record. Do not wait for the final report. Do not edit the `.tex`.
 
-On `interrupt: true`: flush remaining lines, then stop.
+On a supported stop request: flush remaining lines, then stop.
 
 ---
 
 ## Verifier prompts
 
-Keep `readonly: true` and `run_in_background: true`. Description must include the label (`background sentence: S2`).
+Use the selected adapter to launch these assignments. Every assignment must name its role and labels, request read-only behavior, include the worker plan, and write only to its own `result_path`.
 
 ### Sentence verifier
 
 Same template as [sentence-check-subagents.md](sentence-check-subagents.md) §6. Target is the **snapshot sentence**, not the live file.
 
 ```text
-Task(
-  subagent_type: "generalPurpose",
-  readonly: true,
-  run_in_background: true,
-  model: <sentence slug>,
-  description: "background sentence: S<k>",
-  prompt: <sentence-check-subagents.md §6>
-)
+role: sentence
+labels: [S<k>]
+model_role: sentence
+write_policy: result-shard-only
+completion: asynchronous-when-supported
+prompt: sentence-check-subagents.md §6
 ```
 
 ### Narrative verifier
 
 ```text
-Task(
-  subagent_type: "generalPurpose",
-  readonly: true,
-  run_in_background: true,
-  model: <deep slug>,
-  description: "background narrative",
-  prompt: <template below>
-)
+role: narrative
+labels: [full-passage]
+model_role: deep
+write_policy: result-shard-only
+completion: asynchronous-when-supported
+prompt: template below
 ```
 
 ```text
 You are a narrative verifier for a physics paper. You did NOT write this draft.
 
-## Orchestrator task plan (verify in Step 0 — read-only)
-<paste identical block — includes findings_path>
+## Worker plan (verify in Step 0 — read-only)
+<paste identical block — includes this worker's result_path>
 
 ## Passage summary (shared)
 <identical block>
@@ -181,10 +163,10 @@ You are a narrative verifier for a physics paper. You did NOT write this draft.
 <the user's quoted source>
 
 ## Step 0 — Assignment compliance (run FIRST)
-Confirm full snapshot + valid Task plan. See compliance-monitoring.md.
+Confirm full snapshot + valid worker plan. See compliance-monitoring.md.
 
 ## Incremental ledger
-Append each finding (and a final done line, label "narrative") to findings_path
+Append each finding and a terminal completion record (label "narrative") to result_path
 as JSON lines the moment you have them. Do not edit the .tex.
 
 ## Instructions
@@ -270,20 +252,18 @@ Reason: <one line>
 Otherwise:
 
 ```text
-Task(
-  subagent_type: "generalPurpose",
-  readonly: true,
-  run_in_background: true,
-  model: <deep slug>,
-  description: "background math",
-  prompt: <template below>
-)
+role: math
+labels: [full-passage]
+model_role: deep
+write_policy: result-shard-only
+completion: asynchronous-when-supported
+prompt: template below
 ```
 
 ```text
 You are a math/logic verifier for a physics paper. You did NOT write this draft.
 
-## Orchestrator task plan (verify in Step 0 — read-only)
+## Worker plan (verify in Step 0 — read-only)
 <paste identical block>
 
 ## Passage summary (shared)
@@ -299,7 +279,7 @@ You are a math/logic verifier for a physics paper. You did NOT write this draft.
 See compliance-monitoring.md § Math worker.
 
 ## Incremental ledger
-Append findings and a done line (label "math") to findings_path immediately.
+Append findings and a terminal completion record (label "math") to result_path immediately.
 Do not edit the .tex.
 
 ## Instructions
@@ -321,7 +301,7 @@ A valid construction or missing operational criterion alone is not a BLOCKER;
 thin motivation is SUGGEST. Do not invent physical meaning.
 
 If no math or logical argument: mark N/A — still complete Diagnostics as N/A,
-the report, and a done line.
+the report, and a terminal completion record.
 
 ## Workflow (per statement)
 1. Classify type (Step 0).
@@ -375,13 +355,12 @@ Reason: <one line>
 ### Verifier synthesizer (round end only)
 
 ```text
-Task(
-  subagent_type: "generalPurpose",
-  readonly: true,
-  model: <synth slug>,
-  description: "round synthesizer",
-  prompt: <template below>
-)
+role: synthesizer
+labels: [round]
+model_role: synth
+write_policy: no-source-edits
+completion: after-verifier-harvest
+prompt: template below
 ```
 
 ```text
@@ -397,13 +376,13 @@ You are the verifier synthesizer. You did NOT write the draft. You set job-round
 <current marked interior>
 
 ## Harvest tags
-valid / stale / open per job-state.md — paste findings.jsonl summary
+valid / stale / open per job-state.md — paste the deterministic result-shard summary
 
-## Orchestrator task plan
+## Worker plan
 <paste>
 
 ## Sentence scope
-Total N. Changed: <list>. Skipped: <list>. C = sentence Tasks launched.
+Total N. Changed: <list>. Skipped: <list>. C = sentence verifier assignments launched.
 
 ## Closed BLOCKER lists (do not open the principle files for this)
 
@@ -425,7 +404,7 @@ class 6. Else SUGGEST.
 Fast polish only: word-delta class in fast-polish.md § 2. Pre-existing in source → SUGGEST, except unresolved physical meaning (class 6) on an object this quote introduces.
 
 ## Verifier reports
-<paste worker reports and/or jsonl harvest; math may be "skipped — no equations">
+<paste worker reports and/or result-shard harvest; math may be "skipped — no equations">
 
 ## Instructions
 1. Procedural compliance first (compliance-monitoring.md). Plan defects →
@@ -443,7 +422,7 @@ Fast polish only: word-delta class in fast-polish.md § 2. Pre-existing in sourc
 6. Emit Mode + CHECKS. You are the only agent that may set OVERALL.
 
 ## Output format (final output — no extra commentary)
-Mode: verify-subagents · verify:<partial|complete> · <N> sentences · <C> changed · <M> Tasks · sentence:<slug> · deep:<slug> · synth:<slug>
+Mode: verify-subagents · verify:<partial|complete> · <N> sentences · <C> changed · <M> verifier assignments · profile:<accepted_default|custom|inherit|fallback>
 
 <!-- CHECKS
 compliance_orchestrator_plan: PASS|FAIL
@@ -466,4 +445,4 @@ OVERALL: PASS|CONFLICTS|PARTIAL
 
 1. Copy `Mode:` and `<!-- CHECKS -->` into the **audit drawer** verbatim ([user-communication.md](user-communication.md)).
 2. Apply [merge-policy.md](merge-policy.md) — one interior write, or unmark.
-3. Do **not** silently loop until `PASS`. `CONFLICTS` → one user decision. `PARTIAL` → relaunch open/dirty labels in the background.
+3. Do **not** silently loop until `PASS`. `CONFLICTS` → one user decision. `PARTIAL` → reschedule open or dirty labels through the selected runtime.

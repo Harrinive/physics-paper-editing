@@ -2,9 +2,9 @@
 
 **For agents:** Start with [SKILL.md](SKILL.md) § Agent read order. **Read with the Read tool** at intake.
 
-There is **no blocking source-audit phase**. This file routes how the draft is produced and how **thorough** the background checks are. The user never waits on pace.
+There is **no blocking source-audit phase**. This file routes how the draft is produced and how thorough verification is. The user never waits on pace.
 
-**Do not run sentence-level worker Tasks until the draft is marked and snapshotted** ([coworker-loop.md](coworker-loop.md)).
+**Do not run sentence-level verifier jobs until the draft is marked and snapshotted** ([coworker-loop.md](coworker-loop.md)).
 
 ---
 
@@ -13,8 +13,8 @@ There is **no blocking source-audit phase**. This file routes how the draft is p
 | Count | Effect |
 |-------|--------|
 | **1** (or fragment) | Micro-eligible |
-| **2–10** | Micro-eligible; one background Task per changed sentence |
-| **11–12** | Micro-eligible; may batch 2 sentences per Task ([sentence-check-subagents.md](sentence-check-subagents.md) §3.1) |
+| **2–10** | Micro-eligible; one verifier assignment per changed sentence |
+| **11–12** | Micro-eligible; may batch two sentences per assignment ([sentence-check-subagents.md](sentence-check-subagents.md) §3.1) |
 | **>12** | **Not feasible** — route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) or **ASK USER** to narrow |
 
 ---
@@ -24,9 +24,9 @@ There is **no blocking source-audit phase**. This file routes how the draft is p
 | Choice | Values | Controls |
 |--------|--------|----------|
 | **Job** | `polish` \| `rewrite` | Tighten existing prose vs compose substantially new prose |
-| **Pace** | `fast` \| `full` | Background-check scope only. At `polish` + standalone micro, `fast` narrows the narrative/math question and may skip the math Task — [fast-polish.md](fast-polish.md). Never skips the synthesizer or a changed sentence's Task |
+| **Pace** | `fast` \| `full` | Verification scope only. At `polish` + standalone micro, `fast` narrows the narrative/math question and may skip math verification — [fast-polish.md](fast-polish.md). Never skips the synthesizer or a changed sentence's verifier assignment |
 
-All four combinations are valid. Ask **job** only when unclear. **Do not** ask pace or three models every job — inherit the last confirmed profile in this chat or `session.md`. If none, use recommended slugs in [phase2-verify-subagents.md](phase2-verify-subagents.md) and mention once that they can change checkers ([user-communication.md](user-communication.md)).
+All four combinations are valid. Ask **job** only when unclear. At the start of a top-level editing session, collect one model-profile choice: accept the role-based profile, use the parent model for all roles, or provide custom mappings. Persist it under [runtime-contract.md](runtime-contract.md). Reuse a profile only when it is user-confirmed, explicitly inherited from a confirmed section session, or a recorded no-interaction fallback.
 
 Default pace when unset: `fast`.
 
@@ -39,7 +39,7 @@ Default pace when unset: `fast`.
 ```
 Q1: How many sentences?
     │
-    ├─ ≤12 ──► intake: job if unclear; inherit pace + models
+    ├─ ≤12 ──► intake: job if unclear; resolve the confirmed model profile
     └─ >12 or whole section ──► section skill / narrow scope
 ```
 
@@ -66,7 +66,7 @@ Q2: Job?
 
 For a named physical object, run [physical-lead.md](../physics-paper-principles/physical-lead.md) and consider the definition form. Construction does not force rewrite or a halt. Ask only if an essential scientific choice cannot be resolved from supplied context ([coworker-loop.md](coworker-loop.md) § Definition halt).
 
-### Q3: Pace — background scope (do not ask every job)
+### Q3: Pace — verification scope (do not ask every job)
 
 ```
 Q3: Pace?  (inherit or default fast)
@@ -87,7 +87,7 @@ Q3: Pace?  (inherit or default fast)
 
 **>12 sentences or whole-section edit:** route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md). Do not run the micro loop on the full section in one turn.
 
-If a ≤12 split is not feasible: AskQuestion — section skill / proceed with partial coverage / narrow the quote.
+If a ≤12 split is not feasible: collect one user decision — section skill / proceed with partial coverage / narrow the quote.
 
 ---
 
@@ -100,11 +100,11 @@ If a ≤12 split is not feasible: AskQuestion — section skill / proceed with p
 | rewrite | fast | Compose | Every sentence + full narrative/math (no math skip) |
 | rewrite | full | Compose | Every sentence + full narrative/math |
 
-There is no pre-draft sentence-Task wave.
+There is no pre-draft sentence-verifier wave.
 
 ---
 
-## AskQuestion prompts
+## User-decision prompts
 
 ### Sentence-level checking (split not feasible)
 
@@ -113,7 +113,7 @@ There is no pre-draft sentence-Task wave.
 | Option | Then |
 |--------|------|
 | Use section skill (Recommended) | Route to [physics-paper-editing-section](../physics-paper-editing-section/SKILL.md) |
-| Proceed with partial coverage | One Task per splittable sentence; note gaps |
+| Proceed with partial coverage | One verifier assignment per splittable sentence; note gaps |
 | Narrow the scope | User gives shorter quote; re-count |
 
 ### Editing setup
@@ -121,7 +121,7 @@ There is no pre-draft sentence-Task wave.
 Ask **only** what is unresolved:
 
 1. Job: light polish or substantial rewrite (omit if clear).
-2. Pace / models: **omit** when a profile can be inherited or defaults apply.
+2. Model profile: ask once for the top-level session unless a confirmed parent profile is inherited; use the three choices in [runtime-contract.md](runtime-contract.md).
 
 ---
 
@@ -136,5 +136,5 @@ Mode: draft-ready · verify:running · <N> sentences
 Per-round synthesizer ([phase2-verify-subagents.md](phase2-verify-subagents.md)):
 
 ```
-Mode: verify-subagents · verify:<running|partial|complete> · <N> sentences · <C> changed · <M> Tasks · sentence:<slug> · deep:<slug> · synth:<slug>
+Mode: verify-subagents · verify:<running|partial|complete> · <N> sentences · <C> changed · <M> verifier assignments · profile:<accepted_default|custom|inherit|fallback>
 ```

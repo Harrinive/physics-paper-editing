@@ -5,6 +5,9 @@ description: >-
   marked working text, background-verify a snapshot, interrupt-safe harvest,
   three-way merge. Canon is physics-paper-principles. Routes >12 sentences to
   parent skill physics-paper-editing-section.
+compatibility: >-
+  Requires filesystem access for drafting. Full verification requires subagent
+  delegation; adapters are provided for Cursor, Codex, and Claude Code.
 ---
 
 # Physics Paper Editing (micro)
@@ -31,7 +34,7 @@ description: >-
 
 **Use this skill alone** (plus **`physics-paper-principles`**) when the user gives a passage of **≤12 sentences**. No parent skill, no `cross-skill.md` on that path. Standalone jobs still write `.physics-edit/micro/<job_id>/` ([job-state.md](job-state.md)).
 
-**First reply:** count typographic sentences. If ≤12, ask polish vs rewrite only if unclear; inherit pace and models ([gate.md](gate.md)). If the passage introduces or rewrites a named physical object, run the physical-lead diagnostic ([physical-lead.md](../physics-paper-principles/physical-lead.md)); **halt and ask** only when an essential scientific ambiguity prevents faithful drafting ([coworker-loop.md](coworker-loop.md) § Definition halt). Otherwise draft from principles, mark, launch background checks, **end the turn**. User-facing copy: [user-communication.md](user-communication.md).
+**First reply:** count typographic sentences. If ≤12, ask polish versus rewrite only if unclear; resolve one confirmed model profile for this top-level session ([runtime-contract.md](runtime-contract.md) and [gate.md](gate.md)). If the passage introduces or rewrites a named physical object, run the physical-lead diagnostic ([physical-lead.md](../physics-paper-principles/physical-lead.md)); **halt and ask** only when an essential scientific ambiguity prevents faithful drafting ([coworker-loop.md](coworker-loop.md) § Definition halt). Otherwise draft from principles, mark, delegate verification under the selected runtime, and return control whenever the runtime permits. User-facing copy: [user-communication.md](user-communication.md).
 
 ## Invoked by section macro (optional)
 
@@ -40,8 +43,8 @@ Read this section only when Stage D passes `chunk_text` + `edit_gate` + `pace` +
 
 - Run the coworker loop on `chunk_text` only.
 - Use supplied `edit_gate` and `pace`; do not re-ask.
-- **Verifier models:** inherit from `session.md` when `user_confirmed: true`; else use recommended slugs and note once. Handoff: [cross-skill.md](../physics-paper-editing-section/cross-skill.md) § Verifier model profile.
-- Set `caller: section-orchestrator` in the Task plan ([compliance-monitoring.md](compliance-monitoring.md)).
+- **Verifier models:** inherit only the confirmed profile from `session.md`. Handoff: [cross-skill.md](../physics-paper-editing-section/cross-skill.md) § Verifier model profile.
+- Set `caller: section-orchestrator` in the worker plan ([compliance-monitoring.md](compliance-monitoring.md)).
 - Wrap that chunk’s `tex_anchor` span; one job per chunk.
 
 ## Purpose
@@ -50,8 +53,8 @@ Edit LaTeX prose as a **coworker**, not a blocking pipeline:
 
 1. **Draft first** — producer writes using **`physics-paper-principles`** as canon.
 2. **Mark** a construction area and leave the text in the `.tex`.
-3. **Background-verify** a frozen snapshot against those principles; workers flush findings to disk.
-4. **Merge** once per round; interrupt + harvest if the user changed related text.
+3. **Verify** a frozen snapshot against those principles; workers persist findings to disk.
+4. **Merge** once per round; request a stop when supported, then harvest if the user changed related text.
 
 The producer writes the draft and applies merge actions. It **must not** grade its own draft or set `OVERALL` — only the per-round **verifier synthesizer** may do that. `OVERALL` is a job-round status (`PASS` | `CONFLICTS` | `PARTIAL`), not a gate that blocks the first `.tex` write.
 
@@ -65,7 +68,7 @@ Canonical loop: [coworker-loop.md](coworker-loop.md).
 |--|--|
 | **Scope** | One passage, **≤12 sentences** |
 | **Input** | Passage + optional context (neighbors, section title, brief) |
-| **Output (first turn)** | Marked draft in `.tex`; background job running; first-turn orientation |
+| **Output (first turn)** | Marked draft in `.tex`; verification dispatched; first-turn orientation |
 | **Output (later wake)** | Receipt and/or one decision; marks updated or removed |
 
 Passages **>12 sentences** are out of scope — see [Scope overflow](#scope-overflow).
@@ -76,11 +79,11 @@ Passages **>12 sentences** are out of scope — see [Scope overflow](#scope-over
 
 1. **Scope** — confirm ≤12 sentences ([Scope overflow](#scope-overflow) if not).
 2. **Read** — [user-communication.md](user-communication.md), [coworker-loop.md](coworker-loop.md), step 2 table.
-3. **Intake** — polish vs rewrite if unclear; inherit pace + models ([gate.md](gate.md)). Definition halt if needed ([coworker-loop.md](coworker-loop.md)).
+3. **Intake** — polish versus rewrite if unclear; confirm the session model profile once ([runtime-contract.md](runtime-contract.md)). Definition halt if needed ([coworker-loop.md](coworker-loop.md)).
 4. **Draft** — **`physics-paper-principles`**; no blocking source-audit phase. Named physical objects: [physical-lead.md](../physics-paper-principles/physical-lead.md).
-5. **Mark + write** — [job-state.md](job-state.md); snapshot; launch background checkers ([phase2-verify-subagents.md](phase2-verify-subagents.md)).
-6. **End the turn** — user keeps editing.
-7. **On wake** — interrupt if related; harvest; one merge ([merge-policy.md](merge-policy.md)); relaunch dirty labels or unmark.
+5. **Mark + write** — [job-state.md](job-state.md); snapshot; dispatch verification ([phase2-verify-subagents.md](phase2-verify-subagents.md)).
+6. **Continue or return control** — follow the runtime's asynchronous or foreground mode.
+7. **On completion or wake** — stop stale work if supported; harvest; one merge ([merge-policy.md](merge-policy.md)); relaunch dirty labels or unmark.
 
 ---
 
@@ -101,11 +104,11 @@ That is the **only** parent-skill awareness required on a standalone micro job. 
 | Term | Meaning |
 |------|---------|
 | **Producer** | Main agent — drafts, marks, applies merge; never sets `OVERALL` |
-| **Sentence verifier** | Background Task — one sentence; artifact-first then unresolved 1–15; appends `findings.jsonl` |
-| **Narrative verifier** | Background Task — full snapshot; four narrative groups |
-| **Math verifier** | Background Task — full snapshot when math or logical argument present |
+| **Sentence verifier** | Independent subagent — assigned sentence scope; artifact-first then unresolved 1–15; writes its own result shard |
+| **Narrative verifier** | Independent subagent — full snapshot; four narrative groups |
+| **Math verifier** | Independent subagent — full snapshot when math or logical argument is present |
 | **Verifier synthesizer** | Per **round** — sole `OVERALL` authority (`PASS` \| `CONFLICTS` \| `PARTIAL`) |
-| **Task plan** | Required before any worker Task ([compliance-monitoring.md](compliance-monitoring.md)) |
+| **Worker plan** | Required before any verifier delegation ([compliance-monitoring.md](compliance-monitoring.md)) |
 | **Construction area** | `% PPE-BEGIN` / `% PPE-END` pair ([job-state.md](job-state.md)) |
 | **Round** | Full wave completion **or** interrupt harvest, then one merge write |
 | **Edit gate** | `polish` \| `rewrite` — how the draft is produced |
@@ -121,7 +124,7 @@ That is the **only** parent-skill awareness required on a standalone micro job. 
 
 ### Agent tiers
 
-| Tier | Who | Writes prose? | Dispatches Tasks? | Grades `OVERALL`? |
+| Tier | Who | Writes prose? | Delegates workers? | Grades `OVERALL`? |
 |------|-----|---------------|-------------------|-------------------|
 | **Main agent** (Producer) | 1 agent | Yes (draft + merge) | Yes | **No** |
 | **Verifier subagents** | sentence · narrative · math | No | No | No |
@@ -137,22 +140,22 @@ That is the **only** parent-skill awareness required on a standalone micro job. 
 
 - Write the marked draft to `.tex` **before** checks finish. Do not wait for `OVERALL`. **Exception:** definition halt — do not invent the resolution of an essential scientific ambiguity ([coworker-loop.md](coworker-loop.md)).
 - Producer must not grade its own draft or set `OVERALL`.
-- Launch checkers `run_in_background: true`. End the turn after launch.
-- On wake, harvest `findings.jsonl` before merging. Do not drop stale findings.
-- **Publish Task plan** before any worker Task. **Never** batch ≤10 sentences into one sentence Task.
+- Delegate checkers through the selected runtime. Continue asynchronously when available; otherwise use foreground waves without withholding the draft.
+- On completion or wake, harvest result shards before merging. Do not drop stale findings.
+- **Publish the worker plan** before any verifier delegation. Preserve one changed-sentence assignment for scopes of ten or fewer unless the user explicitly accepts partial coverage.
 - User-facing turns follow [user-communication.md](user-communication.md) — no fake progress bars, no pipeline narration.
 
 ```
 [ ] 1. Context — file, neighbors, [bracket comments] as editing instructions
 [ ] 2. Read — user-communication.md, coworker-loop.md, principles + severity (table below)
-[ ] 3. Intake — polish/rewrite if unclear; inherit pace + models ([gate.md](gate.md)); consider physical meaning and definition choice; definition halt only for essential scientific ambiguity
+[ ] 3. Intake — polish/rewrite if unclear; confirm or inherit the recorded session profile ([runtime-contract.md](runtime-contract.md)); consider physical meaning and definition choice; definition halt only for essential scientific ambiguity
 [ ] 4. Draft — physics-paper-principles; no blocking source-audit phase
 [ ] 5. Mark + snapshot — [job-state.md](job-state.md)
-[ ] 6. Background verify — [phase2-verify-subagents.md](phase2-verify-subagents.md)
-      [ ] Task plan; one Task per changed label; narrative + math when applicable
-      [ ] run_in_background: true; workers append findings.jsonl
-      [ ] End the turn (Mode: … · verify:running)
-[ ] 7. On wake — related hashes → interrupt → harvest → merge ([merge-policy.md](merge-policy.md))
+[ ] 6. Verification — [phase2-verify-subagents.md](phase2-verify-subagents.md)
+      [ ] Worker plan; schedule changed-label, narrative, and math assignments as applicable
+      [ ] Runtime capability resolution; workers write separate result shards
+      [ ] Continue asynchronously when supported; otherwise harvest foreground waves
+[ ] 7. On completion or wake — related hashes → stop if supported → harvest → merge ([merge-policy.md](merge-policy.md))
 [ ] 8. Relaunch open/dirty labels or unmark; synthesizer CHECKS in the audit drawer
 ```
 
@@ -175,9 +178,9 @@ That is the **only** parent-skill awareness required on a standalone micro job. 
 | Intake | + [gate.md](gate.md) |
 | Mark / snapshot / interrupt | + [job-state.md](job-state.md) |
 | Merge round | + [merge-policy.md](merge-policy.md) |
-| Launch or wake checkers | + [phase2-verify-subagents.md](phase2-verify-subagents.md), [sentence-check-subagents.md](sentence-check-subagents.md), [compliance-monitoring.md](compliance-monitoring.md) |
+| Dispatch or harvest checkers | + [runtime-contract.md](runtime-contract.md), [phase2-verify-subagents.md](phase2-verify-subagents.md), [sentence-check-subagents.md](sentence-check-subagents.md), [compliance-monitoring.md](compliance-monitoring.md) |
 | `polish` + `pace: fast` + standalone | + [fast-polish.md](fast-polish.md) |
-| Before any verifier Task | + [compliance-monitoring.md](compliance-monitoring.md) § Task plan block |
+| Before any verifier delegation | + [compliance-monitoring.md](compliance-monitoring.md) § Worker plan block |
 
 When length is ambiguous, load sentence + narrative. When math or a named-object definition might appear, load math (and physical-lead) too.
 
@@ -195,15 +198,19 @@ Follow [user-communication.md](user-communication.md) exactly — named state, r
 
 | File | Role |
 |------|------|
-| [coworker-loop.md](coworker-loop.md) | Draft → mark → snapshot → background verify → interrupt → merge |
-| [job-state.md](job-state.md) | PPE marks, snapshot, `findings.jsonl`, interrupt prompt |
+| [coworker-loop.md](coworker-loop.md) | Draft → mark → snapshot → verification → harvest → merge |
+| [job-state.md](job-state.md) | PPE marks, snapshot, result shards, stop request |
+| [runtime-contract.md](runtime-contract.md) | Capability contract, session profile, scheduler, storage schema |
+| [runtime-cursor.md](runtime-cursor.md) | Cursor adapter |
+| [runtime-codex.md](runtime-codex.md) | Codex adapter |
+| [runtime-claude.md](runtime-claude.md) | Claude Code adapter |
 | [merge-policy.md](merge-policy.md) | Three-way merge rubric |
 | [user-communication.md](user-communication.md) | Workbench UX — every user-facing turn |
 | [gate.md](gate.md) | Job × pace; inherit models; sentence-count thresholds |
 | [severity.md](severity.md) | Closed BLOCKER lists; SUGGEST; unresolved physical meaning never auto-applies |
-| [phase2-verify-subagents.md](phase2-verify-subagents.md) | Background checkers, artifact-first prompts, per-round synthesizer |
-| [sentence-check-subagents.md](sentence-check-subagents.md) | Sentence split, artifact-first sentence Tasks, jsonl flush |
-| [compliance-monitoring.md](compliance-monitoring.md) | Task plan, Step 0, Diagnostics homework, synthesizer procedural checks |
+| [phase2-verify-subagents.md](phase2-verify-subagents.md) | Verifier prompts, artifact-first checks, per-round synthesizer |
+| [sentence-check-subagents.md](sentence-check-subagents.md) | Sentence split, artifact-first sentence verifiers, incremental result writes |
+| [compliance-monitoring.md](compliance-monitoring.md) | Worker plan, Step 0, Diagnostics homework, synthesizer procedural checks |
 | [fast-polish.md](fast-polish.md) | Fast standalone polish: narrower question, possible math skip |
 
 **Canon (sibling skill)** — [physics-paper-principles/SKILL.md](../physics-paper-principles/SKILL.md)
