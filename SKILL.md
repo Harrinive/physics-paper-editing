@@ -32,6 +32,8 @@ version-1 job mid-round.
    independent reviewer.
 6. Read [runtime-contract.md](runtime-contract.md) only when model selection,
    delegation, persistence, or a runtime fallback is needed.
+7. Before any user-facing reply, read
+   [user-communication.md](user-communication.md).
 
 Direct edits do not load scaffolded, review, persistence, or legacy material.
 
@@ -79,13 +81,24 @@ and do not imply that review was independent.
 ## Completion
 
 Use the quality axes and deterministic completion rule in
-[quality-contract.md](quality-contract.md). Do not emit a legacy `OVERALL`
+[quality-contract.md](quality-contract.md). Shape the user-facing reply with
+[user-communication.md](user-communication.md). Do not emit a legacy `OVERALL`
 status for a version-2 job.
 
 ## Related skills
 
 - **physics-paper-principles** — drafting and review canon
 - **physics-paper-editing-section** — whole sections or passages over 12 sentences
+
+## Validation fixtures
+
+Not part of ordinary edit routing. Use when checking portability or retiring
+legacy behavior:
+
+| File | Role |
+|---|---|
+| [portability-test-matrix.md](portability-test-matrix.md) | Host/behavior scenarios for version 2 |
+| [semantic-fixtures.md](semantic-fixtures.md) | Physics-decision oracles (grade substance, not wording) |
 
 ## Out of scope
 
