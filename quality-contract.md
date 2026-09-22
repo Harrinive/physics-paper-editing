@@ -26,6 +26,12 @@ completion: ready | needs_fix | needs_user
 `physics_lead` is not a synonym for style or brevity. A mathematically correct
 but narratively unearned definition is `FIX`.
 
+The prose axis is evaluated under the declared coverage contract. Under
+`selective`, it combines chunk-level prose quality with current checks of every
+changed or diagnosed sentence. Under `exhaustive`, it is `PASS` only when every
+sentence has a current-snapshot `PASS` as defined in
+[language-coverage.md](language-coverage.md).
+
 ## Required axes
 
 - **Substantive edit:** fidelity, physics lead, and prose must pass. Formal
@@ -38,6 +44,10 @@ but narratively unearned definition is `FIX`.
 1. Any required `USER_DECISION` → `completion: needs_user`.
 2. Otherwise any required `FIX` → `completion: needs_fix`.
 3. Otherwise → `completion: ready`.
+
+Completion also requires a matching live snapshot and complete evidence for
+the declared language coverage. A stale, skipped, or historical result cannot
+satisfy an axis.
 
 `N/A` is allowed only when an axis truly has no object to inspect—for example,
 formal validity on equation-free copyediting. Do not produce principle-by-

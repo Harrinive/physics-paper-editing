@@ -12,7 +12,8 @@ edit_intent: copyedit | substantive
 model_tier: strong | economy | unknown
 tier_source: adapter | user | inherited | fallback
 scientific_risk: low | medium | high
-execution_path: direct | guided | independent | legacy_full
+language_coverage: selective | exhaustive
+execution_path: direct | guided | independent
 verification_independence: independent | self_only | unavailable
 reviewer_model_profile:
   choice: recommended | parent | custom | pending
@@ -22,6 +23,7 @@ roles:
   editor: {requested_tier: strong | economy | inherit, resolved_model: unknown}
   holistic_reviewer: {requested_tier: capable | inherit, resolved_model: unknown}
   math_reviewer: {requested_tier: capable | inherit, resolved_model: unknown}
+  language_reviewer: {requested_tier: economy | inherit, resolved_model: unknown}
   local_polisher: {requested_tier: economy | inherit, resolved_model: unknown}
   adjudicator: {requested_tier: capable | inherit, resolved_model: unknown}
 ```
@@ -30,21 +32,26 @@ Record a resolved model only when the host reports it. The core skill contains
 no vendor model names. Unknown editor capability routes as economy.
 
 A known capability tier selects the editing path; it does not select worker
-models for the user. For each new top-level job that needs workers, ask once
-before the first launch: accept the recommended mapping for all planned roles,
-inherit the parent model and reasoning effort for every role, or supply a custom
-mapping. Name each recommended model and reasoning effort when the host exposes
-them. If identifiers are hidden, say so and offer inheritance or custom models.
-Set `user_confirmed: true` only after an explicit user choice or an explicit
-standing instruction. A chunk may inherit a user-confirmed section profile.
-Do not carry a past job's choice into a new job without a standing instruction.
+models for the user. In the first reply of every new top-level editing
+conversation, ask which models to use if workers are needed: accept the
+recommended mapping for all planned roles, inherit the parent model and
+reasoning effort for every role, or supply a custom mapping. Ask before
+substantive editing, even when routing may later require no workers. Name each
+recommended model and reasoning effort when the host exposes them. If
+identifiers are hidden, say so and offer inheritance or custom models. A
+standing instruction may determine the recommended mapping, but the user must
+still confirm a choice in the current conversation. Set `user_confirmed: true`
+only after that explicit answer. Reuse the confirmed answer throughout the
+conversation unless the user changes it. A chunk inherits the current
+conversation's user-confirmed section profile and does not ask again. A new
+conversation asks again, including when resuming saved work.
 
-While the answer is pending, continue drafting and checks that do not need
-workers. Do not launch a worker because a recommendation was displayed, the
-user did not answer, or the runtime has no question tool. If interaction is
-unavailable, run the checks in the parent and record `self_only`. If the host
-cannot honor the selected model, explain the limitation and ask for a revised
-choice before launching. Do not silently substitute a different model.
+While the intake answer is pending, do not begin substantive editing or launch
+a worker. Do not treat a displayed recommendation, silence, or a saved choice
+from another conversation as confirmation. If interaction is unavailable, run
+the checks in the parent and record `self_only`. If the host cannot honor the
+selected model, explain the limitation and ask for a revised choice before
+launching. Do not silently substitute a different model.
 
 ## Worker rules
 
@@ -53,6 +60,9 @@ choice before launching. Do not silently substitute a different model.
   triggered math reviewer.
 - `independent` launches the same reviewers independently; an adjudicator is
   conditional on an actual scientific conflict.
+- Exhaustive coverage may launch one language reviewer per chunk when the
+  confirmed profile or requested independence calls for it. It never launches
+  one worker per sentence.
 - A local polisher receives only a diagnosed span and decided repair.
 - No version-2 role is assigned one worker per sentence.
 - If delegation is unavailable or forbidden, run the checks in the strongest
@@ -73,10 +83,12 @@ asynchronous, concurrent, or file-based work, persist:
 └── result.yaml
 ```
 
-Each review records the snapshot identifier, role, scope, model metadata when
-known, and axis results from [quality-contract.md](quality-contract.md). Reject
-review output from an obsolete snapshot. Separate review files avoid concurrent
-writes to one log.
+Each review records the round/job identifier, snapshot identifier, role, scope,
+requested and resolved model, reasoning effort when known, verification
+independence, and axis results from [quality-contract.md](quality-contract.md).
+Exhaustive language reviews also persist the sentence map required by
+[language-coverage.md](language-coverage.md). Reject review output from an
+obsolete snapshot. Separate review files avoid concurrent writes to one log.
 
 ## Capability fallbacks
 
@@ -92,8 +104,8 @@ writes to one log.
 Content quality and verification independence are separate. A fallback changes
 the latter; it does not fabricate a content `PASS` or `FIX`.
 
-## Version compatibility
+## Legacy closure
 
-Any live job without `harness_version: 2` resumes under
-[legacy-v1/LEGACY.md](legacy-v1/LEGACY.md). Do not translate its state or mix v2
-roles and quality axes into an active v1 round.
+Any job without `harness_version: 2` is closed historical evidence. Do not
+resume or translate it. Start a fresh version-2 job with new snapshots and all
+quality and coverage results pending.

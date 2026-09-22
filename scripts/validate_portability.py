@@ -32,6 +32,7 @@ required = {
         "scaffolded-mode.md",
         "review-prompts.md",
         "runtime-contract.md",
+        "language-coverage.md",
         "portability-test-matrix.md",
         "legacy-v1/LEGACY.md",
         *ADAPTERS,
@@ -74,13 +75,18 @@ for path in ROOT.glob("*.md"):
 routing = (ROOT / "adaptive-routing.md").read_text()
 for value in (
     "harness_version: 2",
-    "direct | guided | independent | legacy_full",
+    "direct | guided | independent",
     "strong",
     "economy",
     "unknown",
 ):
     if value not in routing:
         fail(f"adaptive routing lacks {value!r}")
+
+coverage = (ROOT / "language-coverage.md").read_text()
+for value in ("selective", "exhaustive", "sentence_results", "chunk_snapshot_id"):
+    if value not in coverage:
+        fail(f"language coverage lacks {value!r}")
 
 quality = (ROOT / "quality-contract.md").read_text()
 for axis in ("scientific_fidelity", "physics_lead", "formal_validity", "prose"):

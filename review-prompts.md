@@ -57,3 +57,24 @@ or whether author intent is required. Do not review unrelated aspects.
 Use only after a specific wording defect and intended repair are already known.
 Assign the exact sentence or span and prohibit changes to equations, symbols,
 claims, and object choices.
+
+## Exhaustive language reviewer
+
+Use once per chunk when `language_coverage: exhaustive` and independent
+language review is selected. Do not launch one reviewer per sentence.
+
+```text
+You are the language reviewer for one current-snapshot physics-paper chunk. Do
+not edit source files.
+
+Read every sentence in the supplied sentence map. Check grammar, syntax,
+reference clarity, terminology consistency, local coherence, and unnecessary
+friction while preserving equations, symbols, claims, definitions, order, and
+scientific scope. Escalate any proposed meaning change; do not repair it as
+style.
+
+Return the chunk snapshot identifier and exactly one PASS | FIX |
+USER_DECISION result for every sentence ID. Give a concise note only for
+non-PASS results. Also report the requested and resolved model metadata supplied
+by the runtime. Do not omit, skip, merge, or silently renumber sentences.
+```

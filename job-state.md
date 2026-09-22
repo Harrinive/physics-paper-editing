@@ -26,8 +26,9 @@ per sentence.
 
 On resume, compare the live span with the review snapshot. Preserve obsolete
 reviews as stale, apply no finding blindly, and recheck only axes affected by
-the changed text. Never convert a version-1 job in place; use the legacy state
-contract for jobs without `harness_version: 2`.
+the changed text. Under exhaustive coverage, recheck every changed sentence and
+any invalidated sentence map. Never convert or resume a version-1 job in place;
+leave it closed and start a fresh version-2 job.
 
 ## Completion
 

@@ -12,6 +12,10 @@ compatibility: >-
 
 # Physics Paper Editing (micro)
 
+> **CLOSED LEGACY WORKFLOW.** Retain this document only to interpret historical
+> artifacts. Do not resume it, launch its worker topology, or count its checks
+> toward current work. Start a fresh version-2 job instead.
+
 **Process** for editing a short LaTeX physics/mathematics passage. Canon — what the prose should be — is **`physics-paper-principles`**. This skill does not restate those principles. Verifier workers use the **inverted** Detect lookup: artifact first, then the principles listed under it ([sentence-check-subagents.md](sentence-check-subagents.md), [phase2-verify-subagents.md](phase2-verify-subagents.md)).
 
 **Standalone** for passages **≤12 sentences**. Parent: **`physics-paper-editing-section`** for whole `\section{...}` or **>12 sentences**.

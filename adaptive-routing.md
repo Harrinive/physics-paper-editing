@@ -12,7 +12,8 @@ edit_intent: copyedit | substantive
 model_tier: strong | economy | unknown
 tier_source: adapter | user | inherited | fallback
 scientific_risk: low | medium | high
-execution_path: direct | guided | independent | legacy_full
+language_coverage: selective | exhaustive
+execution_path: direct | guided | independent
 verification_independence: independent | self_only | unavailable
 ```
 
@@ -45,6 +46,11 @@ User constraints on delegation override worker launch. In that case retain the
 required quality checks in the parent and record `self_only`; never claim
 independent review.
 
+Language coverage is orthogonal to this matrix. Exhaustive coverage does not
+raise scientific risk, but it requires the current-snapshot per-sentence record
+defined in [language-coverage.md](language-coverage.md). It uses at most one
+language reviewer per chunk, not one worker per sentence.
+
 ## Path contracts
 
 ### Direct
@@ -68,12 +74,6 @@ independent review.
 - Launch an adjudicator only when reviewers propose incompatible scientific
   resolutions. Do not use one for stylistic disagreement.
 
-### Legacy full
-
-Use only when the user explicitly requests it or an existing job lacks
-`harness_version: 2`. Follow [legacy-v1/LEGACY.md](legacy-v1/LEGACY.md) without
-mixing version-2 schemas into that live job.
-
 ## Compatibility mapping
 
 For a new job receiving old options:
@@ -82,6 +82,8 @@ For a new job receiving old options:
   scientifically substantive.
 - `job_mode: rewrite|mixed` → `edit_intent: substantive`.
 - `pace: fast` → adaptive routing.
-- `pace: full` → at least `independent` review.
+- `pace: full` → at least `independent` scientific review; it does not by
+  itself imply exhaustive sentence coverage.
 
-Existing version-1 jobs keep their original meanings.
+Existing version-1 jobs are closed history. Start a new version-2 job with
+fresh routing, coverage, and pending quality state.

@@ -65,11 +65,12 @@ under a different name.
 
 **Oracle:** the global object ledger detects the inconsistency before completion.
 
-## 9. Legacy resume
+## 9. Legacy closure
 
 A persisted job has no `harness_version: 2`.
 
-**Oracle:** resume the version-1 documents without translating active state.
+**Oracle:** preserve the artifact as closed history and start a fresh version-2
+job with new snapshots and no inherited PASS state.
 
 ## 10. Limited runtime
 
@@ -77,3 +78,15 @@ The host cannot reveal model identity, delegate, or run background work.
 
 **Oracle:** economy routing, parent-only checks, no invented model identifier,
 and no claim of concurrency or independent verification.
+
+## 11. Model choice at conversation intake
+
+A new conversation requests a short edit that will probably take the direct
+path and need no subagents. A saved job or standing project instruction already
+contains a preferred reviewer mapping.
+
+**Oracle:** the first reply still asks which models to use if independent
+reviewers become necessary, presents the standing mapping as the recommended
+option, and waits for an explicit answer before substantive editing. Later
+micro chunks inherited from a section do not ask again. A resumed job in a new
+conversation asks again.
