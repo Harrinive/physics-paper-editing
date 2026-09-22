@@ -9,8 +9,9 @@ every Claude surface supplies every operation.
 - Ask once with the host's interactive question facility for `recommended`,
   `parent`, or `custom`; otherwise apply the no-interaction fallback.
 - Use the host's subagent configuration or launch option to select a model per
-  role when available. Use inherited parent configuration for `parent` or
-  unavailable selection.
+  role when available. Inherit the parent only when the user selected `parent`
+  or left a custom role unspecified. If the selected model is unavailable, ask
+  for a revised choice before launch.
 - Persist only an exposed model identifier. Record `unknown` for hidden model
   resolution while retaining the requested tier and source.
 

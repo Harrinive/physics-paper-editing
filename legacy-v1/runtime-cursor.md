@@ -7,8 +7,9 @@ in Cursor. Cursor-specific commands belong here, not in the core workflow.
 
 - Use `AskQuestion` once at top-level intake for `recommended`, `parent`, or
   `custom`; persist the response using the contract schema.
-- Launch each `Task` with the role's resolved `model`. Use `model: inherit` for
-  `parent`, unavailable tiers, and unselected custom roles.
+- Launch each `Task` with the role's resolved `model`. Use `model: inherit`
+  for a user-selected `parent` profile or custom roles the user left unspecified.
+  If a selected model is unavailable, ask for a revised choice before launch.
 - Record the requested tier separately from the model Cursor actually runs. If
   Cursor falls back or hides the final identifier, write `unknown`.
 

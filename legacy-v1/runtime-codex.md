@@ -5,9 +5,9 @@ in Codex. Codex-specific calls belong here, not in the core workflow.
 
 ## Session and model profile
 
-- Use `request_user_input` once at top-level intake when available for
-  `recommended`, `parent`, or `custom`. Otherwise use the no-interaction
-  fallback in the contract.
+- Ask once at top-level intake for `recommended`, `parent`, or `custom`.
+  If a question tool is unavailable, ask in conversation and wait before
+  launching workers. Use the self-only fallback when interaction is unavailable.
 - Use `spawn_agent` with a model and reasoning effort when the profile or host
   configuration supplies them. Omit overrides for inheritance.
 - Record a resolved model only when Codex reports it. A requested tier or

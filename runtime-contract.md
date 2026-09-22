@@ -14,6 +14,10 @@ tier_source: adapter | user | inherited | fallback
 scientific_risk: low | medium | high
 execution_path: direct | guided | independent | legacy_full
 verification_independence: independent | self_only | unavailable
+reviewer_model_profile:
+  choice: recommended | parent | custom | pending
+  user_confirmed: true | false
+  source: user | confirmed_section | standing_instruction | pending
 roles:
   editor: {requested_tier: strong | economy | inherit, resolved_model: unknown}
   holistic_reviewer: {requested_tier: capable | inherit, resolved_model: unknown}
@@ -25,9 +29,22 @@ roles:
 Record a resolved model only when the host reports it. The core skill contains
 no vendor model names. Unknown editor capability routes as economy.
 
-Do not ask the user to choose a profile when the runtime already supplies a
-known capability tier and no preference is material. State the selected path
-only when it changes cost, verification independence, or expected latency.
+A known capability tier selects the editing path; it does not select worker
+models for the user. For each new top-level job that needs workers, ask once
+before the first launch: accept the recommended mapping for all planned roles,
+inherit the parent model and reasoning effort for every role, or supply a custom
+mapping. Name each recommended model and reasoning effort when the host exposes
+them. If identifiers are hidden, say so and offer inheritance or custom models.
+Set `user_confirmed: true` only after an explicit user choice or an explicit
+standing instruction. A chunk may inherit a user-confirmed section profile.
+Do not carry a past job's choice into a new job without a standing instruction.
+
+While the answer is pending, continue drafting and checks that do not need
+workers. Do not launch a worker because a recommendation was displayed, the
+user did not answer, or the runtime has no question tool. If interaction is
+unavailable, run the checks in the parent and record `self_only`. If the host
+cannot honor the selected model, explain the limitation and ask for a revised
+choice before launching. Do not silently substitute a different model.
 
 ## Worker rules
 
@@ -66,7 +83,7 @@ writes to one log.
 | Missing capability | Behavior |
 |---|---|
 | Model-tier resolution | Use `unknown` → economy routing |
-| Per-role model selection | Inherit; record the limitation |
+| Per-role model selection | Ask whether to inherit the parent or use self-only review; do not silently override the user's choice |
 | Delegation | Parent performs the checks; mark `self_only` |
 | Background work | Run reviewers in foreground; do not claim concurrency |
 | Interruption | Let obsolete review finish, preserve it as stale, and recheck changed content |

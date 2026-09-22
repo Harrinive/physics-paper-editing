@@ -129,7 +129,7 @@ Mode: section-edit · chunk:<id> · verify:running · …
 
 1. Count typographic sentences. If >12, use the scope-overflow message below — do not start this loop on the full section.
 2. Ask **polish vs rewrite** only when that is actually unclear.
-3. **Do not** ask pace or three models every job. Inherit the last confirmed profile in this chat or `session.md`. If none, use the recommended slugs in [phase2-verify-subagents.md](phase2-verify-subagents.md) and mention once: “I’ll use the usual checkers; say if you want different models.”
+3. Before any verifier launch, obtain one explicit model-profile choice for this top-level job: recommended role mapping, parent-model inheritance, or custom mapping. Reuse only a user-confirmed profile from this job or its parent section session. Showing defaults or saying “I’ll use the usual checkers” does not confirm a choice.
 4. If the quote **introduces or rewrites** a named physical/protocol object, run [physical-lead.md](../../physics-paper-principles/legacy-v1/physical-lead.md). Consider physical meaning and choose a suitable definition form. Use **Need your call** only for the essential scientific ambiguity described in [coworker-loop.md](coworker-loop.md) § Definition halt; otherwise draft with supported interpretation.
 5. Otherwise draft, mark, schedule verification, and follow this file’s first-turn orientation.
 

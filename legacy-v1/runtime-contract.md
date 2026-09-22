@@ -101,8 +101,8 @@ relaunches only missing, interrupted, failed, or stale scopes.
 
 | Capability absent | Required behavior |
 |---|---|
-| Interactive choice | State the recommended profile, inherit, record `user_confirmed: false` |
-| Per-worker model selection | Inherit the parent; record `resolved: unknown` if hidden |
+| Interactive choice | Do not launch workers; perform self-only checks and report that the model choice remains pending |
+| Per-worker model selection | Ask the user to approve parent inheritance or use self-only review; do not silently replace the chosen model |
 | Enforced read-only mode | Use a read-only assignment and verify result-only writes |
 | Background work | Run foreground waves; do not claim concurrent user editing |
 | Completion event | Poll or harvest at the next parent wake |

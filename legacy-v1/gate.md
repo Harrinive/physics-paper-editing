@@ -26,7 +26,7 @@ There is **no blocking source-audit phase**. This file routes how the draft is p
 | **Job** | `polish` \| `rewrite` | Tighten existing prose vs compose substantially new prose |
 | **Pace** | `fast` \| `full` | Verification scope only. At `polish` + standalone micro, `fast` narrows the narrative/math question and may skip math verification — [fast-polish.md](fast-polish.md). Never skips the synthesizer or a changed sentence's verifier assignment |
 
-All four combinations are valid. Ask **job** only when unclear. At the start of a top-level editing session, collect one model-profile choice: accept the role-based profile, use the parent model for all roles, or provide custom mappings. Persist it under [runtime-contract.md](runtime-contract.md). Reuse a profile only when it is user-confirmed, explicitly inherited from a confirmed section session, or a recorded no-interaction fallback.
+All four combinations are valid. Ask **job** only when unclear. At the start of a top-level editing session, collect one model-profile choice: accept the role-based profile, use the parent model for all roles, or provide custom mappings. Persist it under [runtime-contract.md](runtime-contract.md). Reuse a profile only when it is user-confirmed for this job or explicitly inherited from a confirmed section session. A no-interaction fallback cannot authorize worker launch.
 
 Default pace when unset: `fast`.
 

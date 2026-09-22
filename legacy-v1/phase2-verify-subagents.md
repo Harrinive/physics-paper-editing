@@ -56,7 +56,7 @@ Label **S1, S2, …** on the snapshot ([sentence-check-subagents.md](sentence-ch
 
 ## Model profile
 
-Resolve the profile once per top-level session through [runtime-contract.md](runtime-contract.md). Do not delegate until the profile is confirmed, inherited from a confirmed section session, or recorded through the no-interaction fallback.
+Resolve the profile once per top-level session through [runtime-contract.md](runtime-contract.md). Do not delegate until the profile is user-confirmed for this job or inherited from a user-confirmed section session. A no-interaction fallback permits self-only checks, not worker launch.
 
 | Role | Requested tier | Purpose |
 |------|----------------|---------|

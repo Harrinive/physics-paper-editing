@@ -18,7 +18,7 @@ Sentence-count thresholds: [gate.md](gate.md).
 | Background verify | Yes — **changed labels only** |
 | ASK USER → proceed anyway | Yes — splittable sentences; note partial coverage |
 
-Model choice: use the recorded profile ([gate.md](gate.md) · [phase2-verify-subagents.md](phase2-verify-subagents.md)). `section-brief.md` / `manifest.json` alone are not enough without the matching `session.md` profile; a no-interaction fallback remains valid with `user_confirmed: false`.
+Model choice: use the recorded profile ([gate.md](gate.md) · [phase2-verify-subagents.md](phase2-verify-subagents.md)). `section-brief.md` / `manifest.json` alone are not enough without the matching user-confirmed `session.md` profile. A no-interaction fallback is self-only and does not authorize sentence workers.
 
 ---
 

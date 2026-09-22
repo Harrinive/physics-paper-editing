@@ -64,6 +64,16 @@ No version-2 path launches one worker per sentence or requires a synthesizer for
 every edit. Sentence-level help is permitted only for a specific local repair
 already diagnosed by the editor or holistic reviewer.
 
+## Model choice before delegation
+
+For each new top-level edit that needs subagents, ask the user which models to
+use before the first launch. Offer the recommended role-to-model choices (with
+actual model names and reasoning effort when available), parent-model
+inheritance, and a custom choice. Wait for an explicit answer; a displayed
+default, silence, or an adapter-resolved tier is not a choice. Reuse the answer
+for this job's review rounds and for chunks inherited from a section session.
+See [runtime-contract.md](runtime-contract.md) for the profile and fallback.
+
 ## Persistence
 
 Ordinary synchronous short edits create no marks, snapshots, or `.physics-edit`
