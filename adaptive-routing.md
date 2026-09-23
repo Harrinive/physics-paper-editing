@@ -34,6 +34,13 @@ least medium risk. When the context cannot resolve an essential scientific
 meaning, stop that decision and ask the author; stronger review cannot supply
 missing intent.
 
+Classify risk from the scientific difference between the source-supported
+meaning and the proposed output, not from the user's label or the quality of a
+candidate draft. Removing or correcting an unsupported scientific assertion in
+a candidate is at least medium risk even when the source fixes the answer. It
+becomes high risk when the repair changes a derivation, hypothesis, quantifier,
+cross-section consequence, or scientifically ambiguous claim.
+
 ## Routing matrix
 
 | Risk | Strong editor | Economy or unknown editor |
@@ -57,17 +64,23 @@ language reviewer per chunk, not one worker per sentence.
 
 - Build a private physics spine and any triggered object ledger.
 - Draft and run the quality axes yourself.
+- Check every changed or newly written sentence against all 15 sentence
+  principles, and run every applicable passage, math, and object check.
+- Treat “compact self-check” as compact private evidence, not reduced canon
+  coverage.
 - Launch no workers and create no job state.
 
 ### Guided
 
 - Draft from the physics spine and object ledger.
+- Complete the editor's canon closure before independent review.
 - Launch one holistic reviewer using [review-prompts.md](review-prompts.md).
 - Add one math reviewer only if formal content changed.
 - Repair `FIX` findings and recheck the affected axis.
 
 ### Independent
 
+- Complete the editor's canon closure before independent review.
 - Launch a holistic reviewer and, when formal content is present, a math
   reviewer independently.
 - Aggregate axis results mechanically using [quality-contract.md](quality-contract.md).

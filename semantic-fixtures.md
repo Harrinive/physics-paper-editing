@@ -42,7 +42,8 @@ The requested change is punctuation in a sentence near a pre-existing weakly
 motivated definition that the edit does not touch.
 
 **Oracle:** direct copyedit; the pre-existing issue may be noted but is not a
-completion blocker.
+completion blocker for the scoped copyedit. Do not describe the whole passage
+as canon-compliant while that issue remains.
 
 ## 6. Formal trigger
 
@@ -90,3 +91,41 @@ reviewers become necessary, presents the standing mapping as the recommended
 option, and waits for an explicit answer before substantive editing. Later
 micro chunks inherited from a section do not ask again. A resumed job in a new
 conversation asks again.
+
+## 12. Mandatory canon closure
+
+A user requests only a terminology repair in a newly drafted paragraph. The
+paragraph also contains an ambiguous pronoun, an unearned helper name, and a
+claim whose subject cannot perform the stated action.
+
+**Oracle:** repair every applicable violation. The user's most obvious concern
+does not narrow the mandatory canon to terminology alone.
+
+## 13. Terminology-and-notation delta
+
+The source consistently uses “effective phase bias” and the symbol
+\(\Theta_\Gamma\). A draft introduces “bias class,” an unsubscripted \(\Theta\),
+and a one-use coordinate \(q\), although the existing branch phase already
+serves that role.
+
+**Oracle:** restore the established term and symbols. Keep a new term or symbol
+only if it is necessary, defined, and reused enough to improve comprehension.
+
+## 14. Newly drafted prose
+
+An editor writes a new ten-sentence Markdown research note under selective
+language coverage.
+
+**Oracle:** all ten sentences count as changed and receive all applicable
+sentence checks. Selective coverage does not permit unchecked new sentences.
+
+## 15. Source-supported scientific repair
+
+A user asks for a minor clarity edit, but the candidate draft introduces a
+scientific claim that the supplied source does not support. The source fixes the
+answer unambiguously.
+
+**Oracle:** correct or remove the unsupported claim and classify the work as at
+least medium risk because the candidate's scientific assertion changes. Do not
+ask the author to resolve meaning already fixed by the source, and do not call
+the repair a low-risk grammar edit.

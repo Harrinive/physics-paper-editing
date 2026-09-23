@@ -2,6 +2,16 @@
 
 Language coverage is independent of scientific risk and edit intent.
 
+Coverage selects which sentences require current evidence; it never selects
+which sentence principles are enforced. Every sentence within the declared
+coverage is checked against all 15 sentence principles. Every sentence in
+newly drafted prose counts as changed.
+
+For each checked sentence, compare terminology and notation with the source,
+the surrounding document, and any project vocabulary registry. A newly coined
+technical phrase or mathematical alias is a current finding even when the
+sentence is otherwise grammatical.
+
 ## Modes
 
 | Mode | Required evidence |
@@ -19,14 +29,19 @@ preserves claims, equations, definitions, symbols, order, and scientific scope.
 
 ## Sentence map
 
-At the start of a chunk review:
+Create and persist the sentence map only when current-snapshot evidence is
+required: a section-inherited coverage contract, an exhaustive audit, or a
+resumable or concurrent file edit. An ordinary synchronous direct edit performs
+the same applicable sentence checks without manufacturing hashes or job state.
+
+When a sentence map is required, at the start of a chunk review:
 
 1. freeze the chunk snapshot and its SHA-256 identifier;
 2. assign stable IDs `S01`, `S02`, ... to typographic sentences without
    splitting equations, citations, references, or definitions from their
    immediate sentence;
 3. record each exact sentence span's hash;
-4. apply the sentence principles and return `PASS | FIX | USER_DECISION` for
+4. apply all 15 sentence principles and return `PASS | FIX | USER_DECISION` for
    every required sentence.
 
 For exhaustive coverage, persist:
@@ -48,6 +63,10 @@ language_review:
 One reviewer checks the whole chunk. Never launch one worker per sentence.
 
 ## Invalidation and completion
+
+The snapshot and invalidation rules below apply only when the workflow requires
+the sentence map defined above. For an ordinary synchronous direct edit,
+completion instead requires a fresh canon check of the final text in hand.
 
 - A verdict is valid only for its recorded sentence and chunk snapshot.
 - After any source repair, recompute the sentence and chunk hashes and rerun the

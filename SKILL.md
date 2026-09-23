@@ -1,16 +1,17 @@
 ---
 name: physics-paper-editing
 description: >-
-  Physics-first, capability-adaptive editing for LaTeX physics passages of at
-  most 12 sentences. Routes low-risk work directly, gives economy models a
-  structured scaffold, and adds independent physics or math review only when
-  the scientific risk warrants it. Canon is physics-paper-principles; longer
-  passages use physics-paper-editing-section.
+  Physics-first, capability-adaptive editing for physics passages in LaTeX,
+  Markdown, or plain text of at most 12 sentences. Routes low-risk work
+  directly, gives economy models a structured scaffold, and adds independent
+  physics or math review only when scientific risk warrants it. Canon is
+  physics-paper-principles; longer passages use physics-paper-editing-section.
 ---
 
 # Physics paper editing
 
-Edit one passage of at most 12 typographic sentences. Use
+Edit one physics passage in LaTeX, Markdown, or plain text of at most 12
+typographic sentences. Use
 **`physics-paper-principles`** as the prose canon. Route a whole section or a
 longer passage to **`physics-paper-editing-section`**.
 
@@ -52,23 +53,32 @@ or resumable file edit requires them. Legacy material is historical only.
    story-bearing object before drafting.
 4. Draft the edit. For substantive work, a correct formula does not excuse a
    poor object choice, unearned helper, or pointless normalization.
-5. Run the path selected by [adaptive-routing.md](adaptive-routing.md) and the
-   declared checks in [language-coverage.md](language-coverage.md).
-6. Apply clear fixes. A required axis marked `FIX` must be repaired and
+5. Run the path selected by [adaptive-routing.md](adaptive-routing.md). Every
+   path includes canon closure on the completed draft: check all sentence
+   principles on every changed or newly written sentence, all applicable
+   passage-level principles, every required math check, and every triggered
+   story-bearing-object check.
+6. Apply the declared checks in [language-coverage.md](language-coverage.md).
+   Coverage selects sentences, not principles.
+7. Apply clear fixes. A required axis marked `FIX` must be repaired and
    rechecked; `USER_DECISION` goes to the author.
-7. Return the edited text and only the decisions or limitations that matter.
+8. Return the edited text and only the decisions or limitations that matter.
 
 ## Path summary
 
 | Path | Use | Process |
 |---|---|---|
-| `direct` | Low risk | One editor; compact self-check; no workers or job state |
+| `direct` | Low risk | One editor; full canon self-check; no workers or job state |
 | `guided` | Ordinary substantive work | Editor plus one holistic reviewer; math reviewer only when triggered |
 | `independent` | High risk | Holistic and applicable math review; adjudicator only on conflict |
 
 No version-2 path launches one worker per sentence or requires a synthesizer for
 every edit. Exhaustive language coverage uses one editor or language reviewer
 for the whole chunk and records a verdict for each sentence.
+
+The paths change scaffolding, reviewer independence, and persisted evidence;
+they do not change which applicable canon principles are mandatory. “Direct”
+means less orchestration, not reduced quality coverage.
 
 ## Model choice at conversation intake
 
@@ -104,7 +114,11 @@ and do not imply that review was independent.
 Use the quality axes and deterministic completion rule in
 [quality-contract.md](quality-contract.md). Shape the user-facing reply with
 [user-communication.md](user-communication.md). Do not emit a legacy `OVERALL`
-status for a version-2 job.
+status for a version-2 job. No path may complete while an applicable canon
+principle fails within the required edit scope. A scoped copyedit may finish
+with an untouched, out-of-scope pre-existing violation only when it is reported
+as a limitation; that result is not a claim that the whole passage passes the
+canon.
 
 ## Related skills
 

@@ -14,7 +14,10 @@ ledger. Check:
 1. scientific fidelity;
 2. whether the physically native quantity leads the explanation;
 3. whether every new helper, normalization, and factor split earns its role;
-4. passage coherence and prose economy.
+4. whether terminology and notation preserve the source, project vocabulary,
+   and established field usage;
+5. every applicable sentence and narrative principle, including passage
+   coherence and prose economy.
 
 Run the factor round-trip, inline-substitution, and payoff tests on changed
 story-bearing objects. Mathematical correctness alone does not validate object
@@ -68,10 +71,11 @@ You are the language reviewer for one current-snapshot physics-paper chunk. Do
 not edit source files.
 
 Read every sentence in the supplied sentence map. Check grammar, syntax,
-reference clarity, terminology consistency, local coherence, and unnecessary
-friction while preserving equations, symbols, claims, definitions, order, and
-scientific scope. Escalate any proposed meaning change; do not repair it as
-style.
+reference clarity, terminology and notation, local coherence, and unnecessary
+friction by applying all 15 sentence principles. Compare the draft with the
+source, surrounding document, and any project vocabulary registry. Preserve
+equations, symbols, claims, definitions, order, and scientific scope. Escalate
+any proposed meaning change; do not repair it as style.
 
 Return the chunk snapshot identifier and exactly one PASS | FIX |
 USER_DECISION result for every sentence ID. Give a concise note only for

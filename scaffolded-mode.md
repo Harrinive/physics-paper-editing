@@ -37,12 +37,15 @@ Math changes
 
 Candidate draft
 
-Triggered diagnostics
-- only actual issues; no exhaustive N/A list
+Canon closure
+- terminology-and-notation delta:
+- applicable sentence, narrative, math, or object failures:
+- record only actual issues; no exhaustive N/A list
 ```
 
 Repeat the object row for each new or materially changed story-bearing object.
-Omit the math block only when no formal content changes.
+Omit the math block only when no formal content changes. Complete every
+applicable canon check even though the worksheet records only failures.
 
 ## Boundaries
 

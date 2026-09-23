@@ -21,10 +21,24 @@ completion: ready | needs_fix | needs_user
 | `scientific_fidelity` | No supplied mechanism, limitation, scope, or claim strength was lost or invented |
 | `physics_lead` | The physically native quantity leads; every story-bearing helper has an earned role, scope, factor choice, and payoff |
 | `formal_validity` | Changed definitions, equations, implications, approximations, imports, and conventions are valid |
-| `prose` | The edited passage is clear, economical, coherent, and locally grammatical |
+| `prose` | Every in-scope sentence satisfies all applicable sentence principles; established terminology and notation are preserved; the passage is clear, economical, coherent, and locally grammatical |
 
 `physics_lead` is not a synonym for style or brevity. A mathematically correct
 but narratively unearned definition is `FIX`.
+
+## Canon binding
+
+An axis may be `PASS` only when no applicable canon principle assigned to that
+axis fails within the required edit scope. Routing changes who checks the text
+and whether review is independent; it does not lower the quality bar. A
+favorable holistic judgment cannot override a specific terminology, notation,
+logic, object-choice, sentence, or narrative `FIX`.
+
+A scoped copyedit may complete with an untouched pre-existing violation outside
+the authorized change scope only when the limitation is recorded. The copyedit
+may be ready, but the passage must not be described as fully compliant with the
+canon. A violation introduced, changed, or left unresolved inside the required
+coverage cannot be treated this way.
 
 The prose axis is evaluated under the declared coverage contract. Under
 `selective`, it combines chunk-level prose quality with current checks of every
@@ -36,8 +50,11 @@ sentence has a current-snapshot `PASS` as defined in
 
 - **Substantive edit:** fidelity, physics lead, and prose must pass. Formal
   validity must pass whenever mathematical or logical content is present.
-- **Copyedit:** fidelity and prose must pass. A pre-existing physics-lead issue
-  is advisory unless the edit changes that object, its factors, or its role.
+- **Copyedit:** fidelity and prose must pass. Every applicable canon violation
+  in the required coverage is reported. A pre-existing physics-lead issue
+  outside the authorized change scope is a recorded limitation unless the edit
+  changes that object, its factors, or its role; it does not become a silent
+  whole-passage PASS.
 
 ## Deterministic completion
 
@@ -45,9 +62,12 @@ sentence has a current-snapshot `PASS` as defined in
 2. Otherwise any required `FIX` → `completion: needs_fix`.
 3. Otherwise → `completion: ready`.
 
-Completion also requires a matching live snapshot and complete evidence for
-the declared language coverage. A stale, skipped, or historical result cannot
-satisfy an axis.
+When the selected workflow requires current-snapshot evidence—such as a
+section-inherited, exhaustive, resumable, or concurrent review—completion also
+requires a matching live snapshot and complete evidence for the declared
+language coverage. A stale, skipped, or historical result cannot satisfy an
+axis. An ordinary synchronous direct edit applies the same canon checks to the
+text in hand without manufacturing snapshot state.
 
 `N/A` is allowed only when an axis truly has no object to inspect—for example,
 formal validity on equation-free copyediting. Do not produce principle-by-

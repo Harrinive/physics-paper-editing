@@ -16,6 +16,10 @@ Validate behavior, not host command spelling.
 | Exhaustive language coverage | One reviewer per chunk at most; every current sentence has a verdict; no skipped sentence completes |
 | Version-1 artifact | Treated as closed history; fresh version-2 job starts with pending checks |
 | Section edit | Global physics spine/object ledger inherited by every chunk |
+| Direct canon coverage | Same editor checks every applicable canon principle; no workers or persistent state required |
+| Terminology and notation | Output-only technical terms and symbols are replaced, defined and justified, or removed |
+| Newly drafted passage | Every sentence counts as changed under selective coverage |
+| Markdown physics note | Routes by sentence count and risk exactly like equivalent LaTeX prose |
 
 Run the matrix on Cursor, Codex, and Claude Code where available. Retain compact
 evidence: routing state, reviewer roles actually launched, axis result, and
