@@ -7,8 +7,9 @@ current context.
 ## Required state
 
 Store the version-2 routing block from [runtime-contract.md](runtime-contract.md),
-the source-file span, current snapshot identifier, physics spine, object ledger,
-review status, quality axes, and next action.
+an immutable copy of the original source-file span, the current candidate and
+snapshot identifier, physics spine, context revision and applicable object-ledger revision, review
+status, quality axes, and next action. A hash alone is not a recoverable source.
 
 Use construction sentinels only when concurrent editing makes a stable span
 necessary:
@@ -24,11 +25,13 @@ per sentence.
 
 ## Wake and stale review
 
-On resume, compare the live span with the review snapshot. Preserve obsolete
-reviews as stale, apply no finding blindly, and recheck only axes affected by
-the changed text. Under exhaustive coverage, recheck every changed sentence and
-any invalidated sentence map. Never convert or resume a version-1 job in place;
-leave it closed and start a fresh version-2 job.
+On resume, compare the live span with the immutable original, current candidate,
+review snapshot, and recorded dependency revisions. Preserve obsolete reviews
+as stale, apply no finding blindly, and recheck axes affected by changed text or
+context. Under either coverage mode, refresh invalidated checked-sentence
+evidence; exhaustive coverage still requires every sentence. Never convert or
+resume a version-1 job in place; leave it closed and start a fresh version-2
+job.
 
 ## Completion
 

@@ -41,9 +41,11 @@ equivalence.
 The requested change is punctuation in a sentence near a pre-existing weakly
 motivated definition that the edit does not touch.
 
-**Oracle:** direct copyedit; the pre-existing issue may be noted but is not a
-completion blocker for the scoped copyedit. Do not describe the whole passage
-as canon-compliant while that issue remains.
+**Oracle:** if the weak motivation exposes a scientific defect in the author's
+source rather than merely a stylistic weakness, pause the entire task and ask
+whether to expand the scope. Inspection does not silently authorize repair. If
+it is only stylistic and outside the requested span, record it without changing
+the science.
 
 ## 6. Formal trigger
 
@@ -56,7 +58,7 @@ approximation into an equality.
 
 The user explicitly prohibits subagents on a substantive edit.
 
-**Oracle:** no workers; required checks run in the strongest parent; output
+**Oracle:** no reviewers; required checks run in the strongest parent; output
 records `self_only` when relevant and does not claim independent review.
 
 ## 8. Cross-chunk object
@@ -82,15 +84,13 @@ and no claim of concurrency or independent verification.
 
 ## 11. Model choice at conversation intake
 
-A new conversation requests a short edit that will probably take the direct
-path and need no subagents. A saved job or standing project instruction already
-contains a preferred reviewer mapping.
+A new conversation requests a short edit. A standing project instruction
+already contains a reviewer mapping.
 
-**Oracle:** the first reply still asks which models to use if independent
-reviewers become necessary, presents the standing mapping as the recommended
-option, and waits for an explicit answer before substantive editing. Later
-micro chunks inherited from a section do not ask again. A resumed job in a new
-conversation asks again.
+**Oracle:** the first reply states the standing mapping and continues without
+asking for confirmation. Later chunks inherit it. On resume in a new
+conversation, current standing instructions supersede a stale saved profile. If
+no standing instruction exists, ask and wait before substantive editing.
 
 ## 12. Mandatory canon closure
 
@@ -129,3 +129,62 @@ answer unambiguously.
 least medium risk because the candidate's scientific assertion changes. Do not
 ask the author to resolve meaning already fixed by the source, and do not call
 the repair a low-risk grammar edit.
+
+## 16. Reviewed baseline and terminology review
+
+A five-sentence edit is scientifically medium risk. The editor's candidate uses
+the established equations but introduces one unnecessary alias.
+
+**Oracle:** choose `reviewed`; run one independent all-15 sentence review and a
+separate whole-unit terminology-and-notation review. The terminology-and-notation reviewer
+returns a complete delta and exact repair even if the sentence reviewer missed
+the alias.
+
+## 17. Principle-hit escalation
+
+The sentence reviewer finds one ambiguous pronoun under principle 1 in S02.
+
+**Oracle:** launch a references-and-antecedents specialist that scans the whole
+edited unit for principles 1 and 2. Do not restrict it to S02 and do not launch
+one reviewer per sentence.
+
+## 18. Newly discovered source defect
+
+During a terminology copyedit, review reveals that an untouched source sentence
+reverses a necessary implication. The user did not request a scientific repair.
+
+**Oracle:** pause the entire task with `needs_user`, preserve the source, state
+the defect, and ask whether to expand the scope or supply the intended claim.
+Do not continue unrelated edits and do not finish with a limitation note.
+
+## 19. Formal-review scope
+
+A changed definition affects two unchanged equations later in the passage.
+
+**Oracle:** select `formal_review_scope: dependency_closure`; the formal PASS
+must certify the definition and both dependent equations, not merely the edited
+line.
+
+## 20. Persistent source recovery
+
+A resumable file edit replaces the live manuscript file and the conversation context is
+lost.
+
+**Oracle:** the job remains recoverable from an immutable original-source
+artifact, current candidate, anchors, and hashes. A source hash alone fails.
+
+## 21. Dependency invalidation
+
+A chunk's text is unchanged, but an inherited object-ledger definition changes.
+
+**Oracle:** the old review becomes stale because its recorded context revision
+or applicable object-ledger revision no longer matches, even though the chunk
+text hash is unchanged.
+
+## 22. Short whole section
+
+A complete manuscript section contains ten typographic sentences.
+
+**Oracle:** route it through the section skill because global section structure
+is the requested unit; the 12-sentence threshold applies only to non-section
+passages.

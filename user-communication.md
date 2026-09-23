@@ -24,11 +24,14 @@ Prefer the result, the current action, and any decision the author must make
 over process narration. Before sending any reply, rewrite unexplained workflow
 jargon that an outside author would have to ask about.
 
-At the start of a new top-level editing conversation, ask the model-choice
-question in the first reply and in ordinary language: which models should be
-used if independent reviewers are needed? Present the recommended choice,
-using actual available model names and reasoning effort, plus parent-model and
-custom options. Do not describe this as resolving a profile, route, or gate.
+At the start of a new top-level editing conversation, first check for a standing
+project or conversation role-to-model policy. If one exists, state the
+role-to-model mapping briefly and continue working without asking for
+confirmation. If none
+exists, ask in ordinary language which models should be used if independent
+reviewers are needed; present the recommended mapping, parent-model inheritance,
+and a custom option. Do not describe this as resolving a profile, route, or
+gate.
 
 Lead with the edited result. Keep the private physics spine, object ledger, and
 review worksheets out of the response unless they explain a consequential
@@ -40,9 +43,13 @@ choice.
   hand routine quality work back to the user.
 - For `needs_user`, preserve the supported text and ask one specific scientific
   question that distinguishes the unresolved meanings.
+- A newly discovered scientific defect in the author's source pauses the whole
+  task unless the requested objective already authorized its repair. State the
+  concrete defect and the one decision needed; do not continue unrelated edits
+  or hide the issue as a completion-time limitation.
 - Say that the text was "checked by the same editor" only when independent
   review was expected, requested, or materially relevant.
-- Do not expose internal model routing, progress bars, worker counts, or routine
+- Do not expose internal model routing, progress bars, reviewer counts, or routine
   schema fields unless the user asks for an audit.
 
 When the user asks for an audit, state the actual language coverage in ordinary

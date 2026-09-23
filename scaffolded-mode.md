@@ -39,6 +39,7 @@ Candidate draft
 
 Canon closure
 - terminology-and-notation delta:
+- sentence principle hit map:
 - applicable sentence, narrative, math, or object failures:
 - record only actual issues; no exhaustive N/A list
 ```
@@ -64,6 +65,7 @@ It must not:
 - treat a helper as justified merely because it shortens one formula;
 - adjudicate a changed derivation or strong claim without capable review.
 
-For medium risk, pass the worksheet and draft to one capable holistic reviewer.
-For high risk, use a capable scientific editor; retain the economy model only
-for bounded preparation or local repair.
+For reviewed work, pass the worksheet and candidate to the mandatory sentence
+and terminology-and-notation reviewers, then to the triggered specialists and holistic
+reviewer. For high-risk work, use capable blind physics and formal reviewers;
+retain the economy model only for bounded preparation or local repair.

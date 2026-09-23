@@ -13,17 +13,21 @@ model_tier: strong | economy | unknown
 tier_source: adapter | user | inherited | fallback
 scientific_risk: low | medium | high
 language_coverage: selective | exhaustive
-execution_path: direct | guided | independent
+execution_path: direct | reviewed
+review_profile: standard | high_risk
+formal_review_scope: none | changed | dependency_closure | all_in_scope
 verification_independence: independent | self_only | unavailable
-reviewer_model_profile:
-  choice: recommended | parent | custom | pending
-  user_confirmed: true | false
-  source: user | confirmed_section | standing_instruction | pending
+role_model_policy:
+  choice: standing | recommended | parent | custom | pending
+  active: true | false
+  source: user | inherited_section | standing_instruction | pending
 roles:
   editor: {requested_tier: strong | economy | inherit, resolved_model: unknown}
+  sentence_reviewer: {requested_tier: economy | inherit, resolved_model: unknown}
+  terminology_reviewer: {requested_tier: economy | inherit, resolved_model: unknown}
+  principle_specialist: {requested_tier: economy | capable | inherit, resolved_model: unknown}
   holistic_reviewer: {requested_tier: capable | inherit, resolved_model: unknown}
-  math_reviewer: {requested_tier: capable | inherit, resolved_model: unknown}
-  language_reviewer: {requested_tier: economy | inherit, resolved_model: unknown}
+  formal_reviewer: {requested_tier: capable | inherit, resolved_model: unknown}
   local_polisher: {requested_tier: economy | inherit, resolved_model: unknown}
   adjudicator: {requested_tier: capable | inherit, resolved_model: unknown}
 ```
@@ -31,64 +35,84 @@ roles:
 Record a resolved model only when the host reports it. The core skill contains
 no vendor model names. Unknown editor capability routes as economy.
 
-A known capability tier selects the editing path; it does not select worker
-models for the user. In the first reply of every new top-level editing
-conversation, ask which models to use if workers are needed: accept the
-recommended mapping for all planned roles, inherit the parent model and
-reasoning effort for every role, or supply a custom mapping. Ask before
-substantive editing, even when routing may later require no workers. Name each
-recommended model and reasoning effort when the host exposes them. If
-identifiers are hidden, say so and offer inheritance or custom models. A
-standing instruction may determine the recommended mapping, but the user must
-still confirm a choice in the current conversation. Set `user_confirmed: true`
-only after that explicit answer. Reuse the confirmed answer throughout the
-conversation unless the user changes it. A chunk inherits the current
-conversation's user-confirmed section profile and does not ask again. A new
-conversation asks again, including when resuming saved work.
+A known capability tier selects the editing path; it does not silently choose
+the standing role-to-model policy. At the start of every new top-level editing
+conversation:
 
-While the intake answer is pending, do not begin substantive editing or launch
-a worker. Do not treat a displayed recommendation, silence, or a saved choice
-from another conversation as confirmation. If interaction is unavailable, run
-the checks in the parent and record `self_only`. If the host cannot honor the
-selected model, explain the limitation and ask for a revised choice before
-launching. Do not silently substitute a different model.
+1. Look for a standing project or conversation instruction that supplies the
+   role-to-model mapping.
+2. If one exists, state the mapping briefly in the first reply, set
+   `choice: standing`, `active: true`, and continue without requesting
+   confirmation.
+3. If none exists, ask which models to use if reviewers are needed: accept the
+   recommended mapping, inherit the parent, or accept a custom mapping. Wait
+   for the answer before substantive editing.
 
-## Worker rules
+Reuse the active mapping throughout the conversation unless the user changes
+it. A section chunk inherits the active section mapping and does not ask again.
+On resume in a new conversation, re-read current standing instructions:
+announce and use them if present; otherwise ask again. A stale saved profile
+cannot override a current standing instruction. If the host cannot honor a
+selected model or reasoning effort, stop before launching that reviewer,
+explain the limitation, and ask for a replacement. Never substitute silently.
 
-- `direct` launches no workers.
-- `guided` launches at most one holistic reviewer and one conditionally
-  triggered math reviewer.
-- `independent` launches the same reviewers independently; an adjudicator is
-  conditional on an actual scientific conflict.
-- Exhaustive coverage may launch one language reviewer per chunk when the
-  confirmed profile or requested independence calls for it. It never launches
-  one worker per sentence.
+## Runtime adapter selection
+
+Read exactly one adapter before resolving capabilities or launching reviewers:
+
+| Host | Adapter |
+|---|---|
+| Codex | [runtime-codex.md](runtime-codex.md) |
+| Cursor | [runtime-cursor.md](runtime-cursor.md) |
+| Claude Code or compatible host | [runtime-claude.md](runtime-claude.md) |
+
+For another host, apply this portable contract directly and record unavailable
+capabilities as unknown.
+
+## Editor and reviewer rules
+
+- `direct` launches no reviewers.
+- `reviewed` always launches one sentence reviewer and one terminology-and-
+  notation reviewer for the whole edited unit.
+- A sentence-principle hit launches one whole-unit specialist for that
+  principle or tightly coupled group; never one reviewer per sentence.
+- `reviewed` also launches one holistic reviewer and, when
+  `formal_review_scope` is not `none`, one formal reviewer with the scope
+  selected in [adaptive-routing.md](adaptive-routing.md).
+- A high-risk profile keeps the holistic and formal reviews blind to the
+  editor's conclusions and to one another. An adjudicator is conditional on an
+  actual scientific conflict.
 - A local polisher receives only a diagnosed span and decided repair.
-- No version-2 role is assigned one worker per sentence.
+- No version-2 role is assigned one reviewer per sentence.
 - If delegation is unavailable or forbidden, run the checks in the strongest
   available parent and record `verification_independence: self_only` or
   `unavailable`.
 
 ## Persistence
 
-Do not create state for ordinary synchronous short edits. For resumable,
-asynchronous, concurrent, or file-based work, persist:
+Do not create state for ordinary synchronous short edits, regardless of path.
+For resumable, asynchronous, concurrent, file-based, or exhaustive work,
+persist:
 
 ```text
 .physics-edit/<scope>/<job_id>/
 ├── session.md
-├── snapshot.tex
+├── source-original.txt
+├── candidate-snapshot.txt
 ├── object-ledger.md
 ├── reviews/
 └── result.yaml
 ```
 
-Each review records the round/job identifier, snapshot identifier, role, scope,
-requested and resolved model, reasoning effort when known, verification
-independence, and axis results from [quality-contract.md](quality-contract.md).
-Exhaustive language reviews also persist the sentence map required by
-[language-coverage.md](language-coverage.md). Reject review output from an
-obsolete snapshot. Separate review files avoid concurrent writes to one log.
+Each review records the round/job identifier, candidate snapshot identifier,
+role, review scope, formal-review scope when applicable, requested and resolved
+model, reasoning effort when known, verification independence, applicable canon
+paths and revision, context revision and applicable object-ledger revision, and
+axis results from
+[quality-contract.md](quality-contract.md). Persist the checked sentence map
+required by [language-coverage.md](language-coverage.md) for both coverage modes
+when snapshot evidence is required. Reject output from an obsolete candidate or
+dependency revision. Separate review files avoid concurrent writes to one log.
 
 ## Capability fallbacks
 
@@ -99,7 +123,11 @@ obsolete snapshot. Separate review files avoid concurrent writes to one log.
 | Delegation | Parent performs the checks; mark `self_only` |
 | Background work | Run reviewers in foreground; do not claim concurrency |
 | Interruption | Let obsolete review finish, preserve it as stale, and recheck changed content |
-| Resume handle | Resume from persisted snapshot and review files |
+| Resume handle | Resume from the immutable original, current candidate, dependency revisions, and review files |
+
+`context_revision` identifies the inherited physics spine, neighboring text,
+and manuscript conventions supplied to the review. It excludes the object
+ledger, whose applicable revision is recorded separately.
 
 Content quality and verification independence are separate. A fallback changes
 the latter; it does not fabricate a content `PASS` or `FIX`.
