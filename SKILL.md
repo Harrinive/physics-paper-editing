@@ -30,7 +30,7 @@ version-2 job or inherits a fresh version-2 section round.
    [narrative.md](../physics-paper-principles/narrative.md),
    [math.md](../physics-paper-principles/math.md), and
    [physical-lead.md](../physics-paper-principles/physical-lead.md).
-5. Read [scaffolded-mode.md](scaffolded-mode.md) only for an economy editor.
+5. Read [scaffolded-mode.md](scaffolded-mode.md) only for an economy or unknown editor.
 6. Read [review-prompts.md](review-prompts.md) only for `reviewed` work.
 7. For a top-level edit, read [runtime-contract.md](runtime-contract.md) before
    the first reply, then read the selected host adapter before resolving models
