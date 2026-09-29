@@ -32,9 +32,9 @@ ledger. Check:
 5. every applicable narrative and object principle, including passage
    coherence and prose economy.
 
-Run the factor round-trip, inline-substitution, and payoff tests on changed
-story-bearing objects. Mathematical correctness alone does not validate object
-choice. Do not invent missing physics.
+Run the factor round-trip, inline-substitution, payoff, and convention-merge
+tests on changed story-bearing objects. Mathematical correctness alone does
+not validate object choice. Do not invent missing physics.
 
 Return only the quality-axis statuses that are in scope, concise evidence for
 non-PASS results, and a proposed repair for candidate defects when the source
@@ -112,8 +112,8 @@ Use once per edited unit under `reviewed`, regardless of language coverage.
 
 ```text
 You are the independent terminology-and-notation reviewer. Do not edit source
-files. Read the supplied physics-paper-principles/SKILL.md and sentence.md,
-especially principles 3 and 15, before reviewing.
+files. Read the supplied physics-paper-principles/SKILL.md, sentence.md
+(especially principles 3 and 15), and physical-lead.md before reviewing.
 
 Compare the entire CANDIDATE with SOURCE, surrounding manuscript, project
 vocabulary registry, relevant project usages, and established field meaning.
@@ -121,6 +121,10 @@ Inventory every technical head noun, compound label, shortened name, acronym,
 abbreviation, primed or unsubscripted alias, and mathematical symbol introduced
 or altered by the candidate. Also inspect inherited field-standard terms for a
 shifted meaning.
+
+Also run the convention-merge check from physical-lead.md on every inventoried
+item — flag a merged-convention seam even when the item is locally
+well-defined.
 
 For every delta item, return keep | define | replace | remove, its evidence,
 and an exact repair. Keep a new item only when it is standard or necessary,
