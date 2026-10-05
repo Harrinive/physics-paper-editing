@@ -214,7 +214,7 @@ opens with an unstated pair of examples, buries its proposition mid-paragraph,
 and gives no closing summary line, though nothing about its physics differs
 from the pattern the reader already learned in the first three.
 
-**Oracle:** `narrative` flags a parallel-unit alignment finding: restate the
+**Oracle:** `prose` fails with a parallel-unit alignment finding: restate the
 fourth subsection in the shared template (constraint statement, proposition,
 closing line) established by the first three. Do not flag the first three for
 following a template, and do not force a closing summary line onto a fifth
