@@ -188,3 +188,34 @@ A complete manuscript section contains ten typographic sentences.
 **Oracle:** route it through the section skill because global section structure
 is the requested unit; the 12-sentence threshold applies only to non-section
 passages.
+
+## 23. Merged-convention seam
+
+A section defines named quantities \(A_j\) and \(B_{jk}\) physically in its
+opening paragraph and uses them in every subsequent equation and theorem. Deep
+in a later paragraph, a general matrix symbol \(\mathbf M\) is introduced
+("the entries of \(\mathbf M\) are..."), immediately followed by "we set
+\(A_j=\mathbf M_{jj}\) and \(B_{jk}=\mathbf M_{jk}\)." The bold symbol
+\(\mathbf M\) reappears exactly once more, to state a single proposition
+compactly, and nowhere else in the section.
+
+**Oracle:** `physics_lead` fails with a convention-merge finding, not a
+terminology nitpick. The fix restates the one proposition that used
+\(\mathbf M\) directly in terms of \(A_j\) and \(B_{jk}\) and removes
+\(\mathbf M\) and its bridging sentence, rather than keeping two notations for
+the same object reconciled by a translation sentence.
+
+## 24. Parallel-unit alignment
+
+A section has four subsections, each adding one more physical constraint to
+the same construction. Three open with a one-line statement of the new
+constraint, present a proposition, and close with a table row; the fourth
+opens with an unstated pair of examples, buries its proposition mid-paragraph,
+and gives no closing summary line, though nothing about its physics differs
+from the pattern the reader already learned in the first three.
+
+**Oracle:** `prose` fails with a parallel-unit alignment finding: restate the
+fourth subsection in the shared template (constraint statement, proposition,
+closing line) established by the first three. Do not flag the first three for
+following a template, and do not force a closing summary line onto a fifth
+subsection whose result genuinely stays open.
