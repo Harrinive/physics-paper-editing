@@ -50,6 +50,14 @@ non-PASS results, and a proposed repair for candidate defects when the source
 determines one. Use USER_DECISION for genuinely unresolved scientific meaning
 or for a newly discovered source-level scientific defect whose repair the user
 did not authorize.
+
+In a section round (Stage E) you review what the chunk reviews cannot see: the
+physics story and its order across the section, object identity and scope,
+payoff of each name, redundancy between distant passages, claim strength,
+agreement with the neighbouring sections. The wording of one sentence is covered
+by the chunk reviews; report it separately as a local item, not as a finding.
+Give each finding the tier claim, global or style, and report in the format of
+the packet.
 ```
 
 ## Formal reviewer
@@ -71,7 +79,9 @@ Do not broaden the task into general prose editing and do not invent scientific
 intent. State the scope that the returned PASS certifies.
 
 Return formal_validity: PASS | FIX | USER_DECISION, concise evidence, and a
-repair when the source fixes the answer.
+repair when the source fixes the answer. In a section round (Stage E), report in
+the format of the packet, with every finding on the axis formal_validity and the
+tier claim for a wrong or unsupported statement.
 ```
 
 ## Conflict adjudicator
