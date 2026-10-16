@@ -97,11 +97,11 @@ merely because formulas were left textually unchanged.
 1. The editor drafts from the physics spine and object ledger and completes its
    own canon closure.
 2. One independent sentence reviewer checks every sentence in the declared
-   language coverage against all 15 principles.
+   language coverage against all 15 principles. It does not receive the source.
 3. One independent terminology-and-notation reviewer checks the entire edited
-   unit against the source, surrounding manuscript, project vocabulary, and
-   established field usage. This review is mandatory even when the sentence
-   reviewer reports no terminology problem.
+   unit against the object ledger, surrounding manuscript, project vocabulary,
+   and established field usage. It does not receive the source. This review is
+   mandatory even when the sentence reviewer reports no terminology problem.
 4. Any sentence principle reported as `FIX`, or as a non-scientific
    `USER_DECISION`, launches a whole-unit specialist for that principle or the
    tightly coupled group defined in [review-prompts.md](review-prompts.md). The
@@ -115,8 +115,9 @@ merely because formulas were left textually unchanged.
    another's findings. Use an adjudicator only for incompatible supported
    scientific repairs.
 7. Reviewers never write the live manuscript or file. The editor integrates
-   exact proposed repairs, reruns every affected check, and reruns terminology
-   review whenever a later repair changes terminology or notation.
+   exact proposed repairs in one batch and reruns the affected checks on the
+   touched sentences ([scoped-review.md](scoped-review.md)); the whole-unit
+   sentence and terminology reviews run again only at the close of the unit.
 
 If delegation is forbidden, perform the same checks in the strongest available
 parent, record `self_only`, and do not claim independent verification. If a

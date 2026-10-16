@@ -73,7 +73,9 @@ capabilities as unknown.
 
 - `direct` launches no reviewers.
 - `reviewed` always launches one sentence reviewer and one terminology-and-
-  notation reviewer for the whole edited unit.
+  notation reviewer for the whole edited unit at its first review and at its
+  close; a repair is re-reviewed on its touched sentences only
+  ([scoped-review.md](scoped-review.md)). Neither reviewer receives the source.
 - A sentence-principle hit launches one whole-unit specialist for that
   principle or tightly coupled group; never one reviewer per sentence.
 - `reviewed` also launches one holistic reviewer and, when

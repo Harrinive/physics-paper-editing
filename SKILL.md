@@ -67,8 +67,9 @@ historical only.
    reviewers, every triggered principle specialist, the holistic reviewer, and
    the applicable formal review. Integrate findings without allowing reviewers
    to write the live manuscript or file.
-8. Apply clear candidate fixes and recheck affected axes. `USER_DECISION`
-   pauses the task and goes to the author.
+8. Apply clear candidate fixes in one batch and recheck the affected axes on
+   the touched sentences ([scoped-review.md](scoped-review.md)).
+   `USER_DECISION` pauses the task and goes to the author.
 9. Return the edited text and only the decisions that matter.
 
 ## Path summary
@@ -82,6 +83,11 @@ No version-2 path launches one reviewer per sentence. One sentence reviewer
 checks the whole declared coverage; one terminology-and-notation reviewer
 checks the whole edited unit. A principle hit launches a whole-unit specialist
 rather than a reviewer for the seed sentence.
+
+Those whole-unit reviews are the first review and the review at the close of
+the unit. After a repair, review only the touched sentences with their
+neighbours as context, and give the sentence and terminology reviewers no
+source text: see [scoped-review.md](scoped-review.md).
 
 The paths change reviewer independence, not which applicable canon principles
 are mandatory. Persistence depends on lifecycle and evidence needs rather than
