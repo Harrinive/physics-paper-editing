@@ -109,7 +109,9 @@ sentence. Report a defect in a context sentence only when the scoped edit
 caused it. Preserve equations, claims, definitions, order, and scientific
 scope. A scientific doubt that the wording of the candidate cannot resolve is
 USER_DECISION; a defect introduced by the candidate is FIX. Mark a finding
-`optional` when the sentence is correct and the repair is a matter of taste.
+`optional` when the sentence is correct and the repair is a matter of taste;
+when every finding on a sentence is optional, the verdict of that sentence is
+PASS.
 
 Return the snapshot identifier, checked_sentence_ids, exactly one
 PASS | FIX | USER_DECISION result for every sentence in SCOPE, and a P01--P15

@@ -27,13 +27,17 @@ made, and review the whole unit once, at its close.
    review the touched set once. Do not review after each single fix.
 6. **Close of the unit: one full review.** When a unit has no pending verdict,
    run one whole-unit sentence review and one whole-unit terminology-and-
-   notation review of the final text. Their findings are repaired and verified
-   by rules 2 to 5. A second whole-unit review is warranted only when a repair
+   notation review of the final text (the close review; the program issues it
+   only when nothing is pending). Their findings are repaired and verified by
+   rules 2 to 5. A second whole-unit review is warranted only when a repair
    changed a claim, a definition, a count, or a condition.
 7. **Stopping.** A finding marked optional by its reviewer never starts a
-   repair loop. A sentence that is flagged a third time, or findings that
-   alternate between equivalent wordings, go to the author as a decision with
-   one recommendation.
+   repair loop, and a sentence whose findings are all optional gets PASS. When
+   the editor, after reading a FIX finding, decides that the sentence is right
+   as written, the decision is recorded with its reason (`waive`); a sentence
+   with an unrepaired FIX is not reviewed again unchanged. A sentence that is
+   flagged a third time, or findings that alternate between equivalent
+   wordings, go to the author as a decision with one recommendation.
 8. **Section stages.** Repairs that come from a section-wide review, from an
    author ruling, or from a change of another unit follow rules 2 to 5 as well.
 
