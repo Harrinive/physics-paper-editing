@@ -1,11 +1,17 @@
 # Review assignments
 
 Use these compact assignments when adaptive routing selects `reviewed`. Give
-every reviewer the source, candidate, relevant context, edit intent, physics
-spine, object ledger, review scope, and snapshot identifier when applicable.
-Also give exact paths to every applicable canon file and instruct the reviewer
-to read those files before reviewing. Do not assume a context-isolated reviewer
-already knows the canon, and do not paste the entire canon into the prompt.
+every reviewer the candidate, relevant context, edit intent, physics spine,
+object ledger, review scope, and snapshot identifier when applicable. Give the
+source (SOURCE) only to the holistic reviewer, the formal reviewer, the
+physics-object specialist (P11), and the conflict adjudicator; the sentence
+reviewer, the terminology-and-notation reviewer, and the other specialists
+do not receive it ([scoped-review.md](scoped-review.md)). Give a sentence or
+terminology reviewer only the ledger rows and registry entries for the names
+that occur in its scope. Also give exact paths to every applicable canon file
+and instruct the reviewer to read those files before reviewing. Do not assume a
+context-isolated reviewer already knows the canon, and do not paste the entire
+canon into the prompt.
 
 Reviewers are read-only. They return findings and exact proposed repairs; the
 editor owns integration. A reviewer that discovers a scientific defect in the
@@ -14,8 +20,11 @@ the defect, not a silent repair. A defect in the candidate returns `FIX`.
 
 The labels in these assignments are fixed: `SOURCE` is the immutable author
 source for the current round, and `CANDIDATE` is the frozen current proposed
-text. A reviewer's proposed revision is not the current candidate until the
-editor integrates it and freezes a new snapshot.
+text. `SCOPE` is either `full` (every sentence of the unit) or `touched` (the
+listed sentence IDs; the sentence before and after each touched span is
+read-only context), as defined in [scoped-review.md](scoped-review.md). A
+reviewer's proposed revision is not the current candidate until the editor
+integrates it and freezes a new snapshot.
 
 ## Holistic reviewer
 
@@ -85,22 +94,25 @@ claims, and object choices.
 
 ## Sentence reviewer
 
-Use once per edited unit under `reviewed`. Do not launch one reviewer per
-sentence.
+Use once per review scope of an edited unit under `reviewed`. Do not launch one
+reviewer per sentence.
 
 ```text
 You are the independent sentence reviewer for one current candidate. Do not
 edit source files. Read the supplied physics-paper-principles/SKILL.md and
-sentence.md before reviewing.
+sentence.md before reviewing. You are not given the source text.
 
-Apply all 15 sentence principles to every sentence selected by
-LANGUAGE_COVERAGE. Check the candidate as a local passage as well as sentence
-by sentence. Preserve equations, claims, definitions, order, and scientific
-scope. A scientific defect in the author's source outside the authorized
-objective is USER_DECISION; a defect introduced by the candidate is FIX.
+SCOPE lists the sentences you review. Apply all 15 sentence principles to every
+sentence in SCOPE, and read the sentence before and after each scoped span as
+context only. Check the scoped text as a local passage as well as sentence by
+sentence. Report a defect in a context sentence only when the scoped edit
+caused it. Preserve equations, claims, definitions, order, and scientific
+scope. A scientific doubt that the wording of the candidate cannot resolve is
+USER_DECISION; a defect introduced by the candidate is FIX. Mark a finding
+`optional` when the sentence is correct and the repair is a matter of taste.
 
 Return the snapshot identifier, checked_sentence_ids, exactly one
-PASS | FIX | USER_DECISION result for every checked sentence, and a P01--P15
+PASS | FIX | USER_DECISION result for every sentence in SCOPE, and a P01--P15
 hit map listing the affected sentence IDs. Give concise evidence and exact
 proposed repairs for non-PASS results. Do not omit, merge, or silently renumber
 sentences.
@@ -108,18 +120,22 @@ sentences.
 
 ## Terminology-and-notation reviewer
 
-Use once per edited unit under `reviewed`, regardless of language coverage.
+Use once per review scope of an edited unit under `reviewed`, regardless of
+language coverage.
 
 ```text
 You are the independent terminology-and-notation reviewer. Do not edit source
 files. Read the supplied physics-paper-principles/SKILL.md, sentence.md
-(especially principles 3 and 15), and physical-lead.md before reviewing.
+(especially principles 3 and 15), and physical-lead.md before reviewing. You
+are not given the source text.
 
-Compare the entire CANDIDATE with SOURCE, surrounding manuscript, project
-vocabulary registry, relevant project usages, and established field meaning.
-Inventory every technical head noun, compound label, shortened name, acronym,
-abbreviation, primed or unsubscripted alias, and mathematical symbol introduced
-or altered by the candidate. Also inspect inherited field-standard terms for a
+SCOPE lists the sentences you review; read the sentence before and after each
+scoped span as context only. Compare the scoped text with the object ledger,
+the supplied registry entries, the earlier text of the candidate, and
+established field meaning. Inventory every technical head noun, compound
+label, shortened name, acronym, abbreviation, primed or unsubscripted alias,
+and mathematical symbol in SCOPE that the ledger, the registry, and the earlier
+text do not establish. Also inspect inherited field-standard terms for a
 shifted meaning.
 
 Also run the convention-merge check from physical-lead.md on every inventoried
@@ -130,15 +146,16 @@ For every delta item, return keep | define | replace | remove, its evidence,
 and an exact repair. Keep a new item only when it is standard or necessary,
 defined at first use, and reused enough to improve comprehension. Return a
 proposed terminology-only revision, plus
-terminology_notation: PASS | FIX | USER_DECISION. Escalate any repair that may
-change physical meaning; do not decide that change as language.
+terminology_notation: PASS | FIX | USER_DECISION, and a result per scoped
+sentence when only some sentences carry a finding. Escalate any repair that
+may change physical meaning; do not decide that change as language.
 ```
 
 ## Principle specialist
 
 Launch after the sentence reviewer reports `FIX` or `USER_DECISION` for a
-principle. A specialist checks the whole edited unit, not only the seed
-sentence. Tightly coupled groups are:
+principle; an `optional` finding does not launch one. A specialist checks the
+whole edited unit, not only the seed sentence. Tightly coupled groups are:
 
 | Trigger | Specialist scope |
 |---|---|

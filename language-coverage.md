@@ -44,6 +44,10 @@ independent sentence reviewer checks all sentences selected by the coverage
 mode, and one independent terminology-and-notation reviewer checks the entire
 edited unit regardless of coverage mode.
 
+After a repair, the sentence and terminology reviews cover the touched
+sentences only, and a verdict on an untouched sentence stays current
+([scoped-review.md](scoped-review.md)).
+
 The sentence reviewer records a hit map for principles `P01` through `P15`.
 Any `FIX`, or a `USER_DECISION` that is not a source-level scientific halt,
 triggers a specialist sweep of the whole edited unit for that principle or its
