@@ -28,8 +28,11 @@ version-2 job or inherits a fresh version-2 section round.
 4. Always read [sentence.md](../physics-paper-principles/sentence.md). Read the
    other canon layers when their content is present:
    [narrative.md](../physics-paper-principles/narrative.md),
-   [math.md](../physics-paper-principles/math.md), and
-   [physical-lead.md](../physics-paper-principles/physical-lead.md).
+   [math.md](../physics-paper-principles/math.md),
+   [physical-lead.md](../physics-paper-principles/physical-lead.md), and, for a
+   figure or table caption,
+   [caption.md](../physics-paper-principles/caption.md). A caption is an
+   ordinary passage: it takes the same paths as any other.
 5. Read [scaffolded-mode.md](scaffolded-mode.md) only for an economy or unknown editor.
 6. Read [review-prompts.md](review-prompts.md) only for `reviewed` work.
 7. For a top-level edit, read [runtime-contract.md](runtime-contract.md) before

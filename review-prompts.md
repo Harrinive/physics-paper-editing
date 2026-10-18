@@ -16,6 +16,13 @@ and instruct the reviewer to read those files before reviewing. Do not assume a
 context-isolated reviewer already knows the canon, and do not paste the entire
 canon into the prompt.
 
+When the edited unit is a figure or table caption, also give every reviewer the
+rendered figure and the captions of the earlier figures, and add
+[caption.md](../physics-paper-principles/caption.md) to its canon files. The
+sentence reviewer then makes its cold read as a reader who has seen only the
+abstract, the earlier figures and captions, and this figure, and states the
+takeaway that the caption gives that reader.
+
 Reviewers are read-only. They return findings and exact proposed repairs; the
 editor owns integration. A reviewer that discovers a scientific defect in the
 author's source outside the authorized objective returns `USER_DECISION` and
