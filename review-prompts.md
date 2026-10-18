@@ -6,9 +6,12 @@ object ledger, review scope, and snapshot identifier when applicable. Give the
 source (SOURCE) only to the holistic reviewer, the formal reviewer, the
 physics-object specialist (P11), and the conflict adjudicator; the sentence
 reviewer, the terminology-and-notation reviewer, and the other specialists
-do not receive it ([scoped-review.md](scoped-review.md)). Give a sentence or
-terminology reviewer only the ledger rows and registry entries for the names
-that occur in its scope. Also give exact paths to every applicable canon file
+do not receive it ([scoped-review.md](scoped-review.md)). Give the
+terminology-and-notation reviewer only the ledger rows and registry entries for
+the names that occur in its scope. Give the sentence reviewer the ledger rows
+but no registry entries, and mark the ledger, brief, and context as reference
+material that the human reader does not have: its cold restatement must show
+what the text alone conveys. Also give exact paths to every applicable canon file
 and instruct the reviewer to read those files before reviewing. Do not assume a
 context-isolated reviewer already knows the canon, and do not paste the entire
 canon into the prompt.
@@ -112,7 +115,16 @@ You are the independent sentence reviewer for one current candidate. Do not
 edit source files. Read the supplied physics-paper-principles/SKILL.md and
 sentence.md before reviewing. You are not given the source text.
 
-SCOPE lists the sentences you review. Apply all 15 sentence principles to every
+Cold read first. For every sentence in SCOPE, restate it in plain words as a
+physicist outside the subfield would understand it after reading only the
+candidate text up to that sentence (sentence.md, principle 16). Count as a
+lookup anything you take from the reference material, a definition outside the
+supplied text, or your own expertise. The restatement, the lookups, the
+conditions before the main clause, and the nesting depth are your evidence for
+principles 3, 13, and 16; a sentence that an agent parses easily can still fail
+them.
+
+SCOPE lists the sentences you review. Apply all 16 sentence principles to every
 sentence in SCOPE, and read the sentence before and after each scoped span as
 context only. Check the scoped text as a local passage as well as sentence by
 sentence. Report a defect in a context sentence only when the scoped edit
@@ -124,8 +136,9 @@ when every finding on a sentence is optional, the verdict of that sentence is
 PASS.
 
 Return the snapshot identifier, checked_sentence_ids, exactly one
-PASS | FIX | USER_DECISION result for every sentence in SCOPE, and a P01--P15
-hit map listing the affected sentence IDs. Give concise evidence and exact
+PASS | FIX | USER_DECISION result for every sentence in SCOPE, and a P01--P16
+hit map listing the affected sentence IDs. For every sentence that fails
+principle 16, include its cold restatement and lookup list in the evidence. Give concise evidence and exact
 proposed repairs for non-PASS results. Do not omit, merge, or silently renumber
 sentences.
 ```
@@ -175,7 +188,7 @@ whole edited unit, not only the seed sentence. Tightly coupled groups are:
 | P03 or P15 | Terminology and notation; the mandatory terminology-and-notation reviewer may satisfy this rerun |
 | P04, P09, or P10 | Grammar, agency, and sentence kernels |
 | P05 or P13 | Flow and information order |
-| P06, P08, or P14 | Idiom, economy, and substantive clauses |
+| P06, P08, P14, or P16 | Idiom, economy, substantive clauses, and reader load |
 | P07 | Setup and claim mode |
 | P11 | Physics-object consistency |
 | P12 | Mathematics--prose boundary |

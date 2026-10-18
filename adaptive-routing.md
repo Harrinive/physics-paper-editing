@@ -78,7 +78,7 @@ merely because formulas were left textually unchanged.
 
 - Build a private physics spine and any triggered object ledger.
 - Draft and run every required quality axis yourself.
-- Check every in-scope sentence against all 15 sentence principles and resolve
+- Check every in-scope sentence against all 16 sentence principles and resolve
   the terminology-and-notation delta for the edited unit.
 - Launch no reviewer. An ordinary synchronous edit creates no job state, but a
   resumable or concurrent direct edit still uses the required persistence.
@@ -97,7 +97,7 @@ merely because formulas were left textually unchanged.
 1. The editor drafts from the physics spine and object ledger and completes its
    own canon closure.
 2. One independent sentence reviewer checks every sentence in the declared
-   language coverage against all 15 principles. It does not receive the source.
+   language coverage against all 16 principles. It does not receive the source.
 3. One independent terminology-and-notation reviewer checks the entire edited
    unit against the object ledger, surrounding manuscript, project vocabulary,
    and established field usage. It does not receive the source. This review is

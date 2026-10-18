@@ -4,7 +4,7 @@ Language coverage is independent of scientific risk and edit intent.
 
 Coverage selects which sentences require current evidence; it never selects
 which sentence principles are enforced. Every sentence within the declared
-coverage is checked against all 15 sentence principles. Every sentence in
+coverage is checked against all 16 sentence principles. Every sentence in
 newly drafted prose counts as changed.
 
 For each checked sentence, compare terminology and notation with the source,
@@ -48,7 +48,7 @@ After a repair, the sentence and terminology reviews cover the touched
 sentences only, and a verdict on an untouched sentence stays current
 ([scoped-review.md](scoped-review.md)).
 
-The sentence reviewer records a hit map for principles `P01` through `P15`.
+The sentence reviewer records a hit map for principles `P01` through `P16`.
 Any `FIX`, or a `USER_DECISION` that is not a source-level scientific halt,
 triggers a specialist sweep of the whole edited unit for that principle or its
 tightly coupled group. The first finding is evidence of a possible pattern;
@@ -71,7 +71,7 @@ When a sentence map is required, at the start of a chunk review:
    splitting equations, citations, references, or definitions from their
    immediate sentence;
 3. record each exact sentence span's hash;
-4. apply all 15 sentence principles and return `PASS | FIX | USER_DECISION` for
+4. apply all 16 sentence principles and return `PASS | FIX | USER_DECISION` for
    every required sentence.
 
 When snapshot evidence is required, persist the checked-sentence evidence for

@@ -17,7 +17,7 @@ made, and review the whole unit once, at its close.
    unchanged. A context or object-ledger revision still invalidates everything.
 3. **What the reviewer is given.** The reviewer receives CANDIDATE, the touched
    sentence IDs as its scope, and the sentence before and after each touched
-   span as read-only context. It applies all 15 principles to the scoped
+   span as read-only context. It applies all 16 principles to the scoped
    sentences. It reports a defect in a context sentence only when the edit
    caused it (a broken antecedent, a repeated phrase, a changed premise).
 4. **Closing a finding.** A finding is closed by checking the repair against

@@ -135,7 +135,7 @@ the repair a low-risk grammar edit.
 A five-sentence edit is scientifically medium risk. The editor's candidate uses
 the established equations but introduces one unnecessary alias.
 
-**Oracle:** choose `reviewed`; run one independent all-15 sentence review and a
+**Oracle:** choose `reviewed`; run one independent all-16 sentence review and a
 separate whole-unit terminology-and-notation review. The terminology-and-notation reviewer
 returns a complete delta and exact repair even if the sentence reviewer missed
 the alias.
@@ -219,3 +219,29 @@ fourth subsection in the shared template (constraint statement, proposition,
 closing line) established by the first three. Do not flag the first three for
 following a template, and do not force a closing summary line onto a fifth
 subsection whose result genuinely stays open.
+
+## 25. Correct but overloaded sentence
+
+A sentence is scientifically correct and uses only registered terms. It states
+a result after two conditions, each built from defined terms of other sections,
+and it compresses a mechanism of three stages into one "when" clause. An agent
+with the registry in context parses it without difficulty.
+
+**Oracle:** the sentence reviewer's cold restatement needs several lookups and
+meets more than one condition before the main clause, so principle 16 fails and
+principle 13 fails for the compressed mechanism. The repair splits the sentence,
+tells the stages in the order in which they happen, and leaves the claim and
+its conditions unchanged. Correctness and registered vocabulary do not make the
+sentence pass.
+
+## 26. Physics-sounding phrase without a referent
+
+A sentence explains a result by an idiomatic physics phrase (an interference,
+amplitude, or strength) that the document never defines, and it states that a
+quantity is "first order in" a family of magnitudes when the document defines
+two such families.
+
+**Oracle:** principle 3 fails on the referent test: the repair replaces the
+phrase with the process stated through objects the document defines, and names
+the quantity of the order claim by its symbol. The idiomatic standing of the
+phrase in the field does not make it pass.

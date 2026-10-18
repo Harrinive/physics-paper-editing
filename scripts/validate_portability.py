@@ -107,7 +107,7 @@ for value in (
 ):
     if value not in coverage:
         fail(f"language coverage lacks {value!r}")
-if "Coverage selects which sentences" not in coverage or "all 15 sentence principles" not in coverage:
+if "Coverage selects which sentences" not in coverage or "all 16 sentence principles" not in coverage:
     fail("language coverage lacks mandatory canon closure")
 for value in ("only when current-snapshot evidence is", "ordinary synchronous direct edit"):
     if value not in coverage:
