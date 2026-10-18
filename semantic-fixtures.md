@@ -245,3 +245,41 @@ two such families.
 phrase with the process stated through objects the document defines, and names
 the quantity of the order claim by its symbol. The idiomatic standing of the
 phrase in the field does not make it pass.
+
+## 27. Roadmap that names what the method needs
+
+A subsection opens: "The next two approximations need the error spaces, the
+leakage subspace outside them, and the error trajectories through them, so we
+begin by constructing the error spaces." The three names are defined only later
+in the subsection, and the sentence is grammatical and easy to read.
+
+**Oracle:** the connecting-sentence tests of narrative.md fail: deleting the
+sentence loses nothing, it answers what the construction needs rather than a
+question about the physical system, and its names are unknown at that point.
+The repair deletes it or replaces it with a claim the subsection already makes
+(here, that a correctable error moves the logical information instead of
+destroying it). A reading that finds no stall does not make it pass.
+
+## 28. The same pattern in another field
+
+A section on a driven two-level system opens: "To compute the transition
+probability we need the rotating frame, the dressed states, and the
+adiabaticity parameter, so we first define the rotating frame." None of the
+three is defined yet.
+
+**Oracle:** the same failure as fixture 27: the sentence states a dependency
+of the derivation and lists unmet names. A repair leads with the physical point
+the section exploits (for example, that near resonance the drive is slow in a
+frame rotating with it) or deletes the sentence. The diagnosis does not depend
+on vocabulary from fixture 27.
+
+## 29. Orientation that works
+
+A paragraph ends a derivation of a decay rate and the next one begins: "The
+rate grows with the overlap of the two wave functions, so the barrier width,
+which sets this overlap, controls the lifetime." Overlap and barrier width are
+defined in the text before.
+
+**Oracle:** the connecting-sentence tests pass: the sentence states a physical
+consequence of the previous result and where the argument goes. No repair is
+proposed; a rewording for taste is at most optional.

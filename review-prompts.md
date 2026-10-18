@@ -49,7 +49,8 @@ ledger. Check:
 4. whether terminology and notation preserve the source, project vocabulary,
    and established field usage;
 5. every applicable narrative and object principle, including passage
-   coherence and prose economy.
+   coherence and prose economy, and the delete, question, and names tests of
+   narrative.md on every opening, roadmap, and wrap-up in scope.
 
 Run the factor round-trip, inline-substitution, payoff, and convention-merge
 tests on changed story-bearing objects. Mathematical correctness alone does
