@@ -63,7 +63,7 @@ historical only.
    path includes canon closure on the completed draft: check all sentence
    principles on every sentence in the declared coverage, resolve every
    terminology-and-notation delta item, and run all applicable narrative,
-   formal, and story-bearing-object checks.
+   formal, story-bearing-object, and caption checks.
 6. Apply the declared checks in [language-coverage.md](language-coverage.md).
    Coverage selects sentences, not principles.
 7. Under `reviewed`, run the mandatory sentence and terminology-and-notation

@@ -22,10 +22,11 @@ text; never present it to a reviewer as fixed.
 
 When the edited unit is a figure or table caption, also give every reviewer the
 rendered figure and the captions of the earlier figures, and add
-[caption.md](../physics-paper-principles/caption.md) to its canon files. The
-sentence reviewer then makes its cold read as a reader who has seen only the
-abstract, the earlier figures and captions, and this figure, and states the
-takeaway that the caption gives that reader.
+[caption.md](../physics-paper-principles/caption.md) to its canon files.
+Every reviewer applies every applicable rule in that file. The sentence
+reviewer then makes its cold read as a reader who has seen only the abstract,
+the earlier figures and captions, and this figure, and states the takeaway
+that the caption gives that reader.
 
 Reviewers are read-only. They return findings and exact proposed repairs; the
 editor owns integration. A reviewer that discovers a scientific defect in the

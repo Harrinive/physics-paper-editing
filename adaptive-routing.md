@@ -78,8 +78,10 @@ merely because formulas were left textually unchanged.
 
 - Build a private physics spine and any triggered object ledger.
 - Draft and run every required quality axis yourself.
-- Check every in-scope sentence against all 16 sentence principles and resolve
-  the terminology-and-notation delta for the edited unit.
+- Check every in-scope sentence against all 16 sentence principles, resolve
+  the terminology-and-notation delta for the edited unit, and run every other
+  applicable check from the loaded canon files (including caption.md when the
+  unit is a caption).
 - Launch no reviewer. An ordinary synchronous edit creates no job state, but a
   resumable or concurrent direct edit still uses the required persistence.
 - After the first repair, any additional candidate or authorized in-scope
