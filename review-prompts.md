@@ -16,6 +16,10 @@ and instruct the reviewer to read those files before reviewing. Do not assume a
 context-isolated reviewer already knows the canon, and do not paste the entire
 canon into the prompt.
 
+Mark as settled only the author's rulings. Wording the editor wrote, including
+a sentence it added, is part of the candidate and is reviewed like any other
+text; never present it to a reviewer as fixed.
+
 When the edited unit is a figure or table caption, also give every reviewer the
 rendered figure and the captions of the earlier figures, and add
 [caption.md](../physics-paper-principles/caption.md) to its canon files. The
@@ -27,6 +31,8 @@ Reviewers are read-only. They return findings and exact proposed repairs; the
 editor owns integration. A reviewer that discovers a scientific defect in the
 author's source outside the authorized objective returns `USER_DECISION` and
 the defect, not a silent repair. A defect in the candidate returns `FIX`.
+A scientific finding fixes the claim; the wording a reviewer proposes for it is
+a suggestion that must still pass the sentence principles.
 
 The labels in these assignments are fixed: `SOURCE` is the immutable author
 source for the current round, and `CANDIDATE` is the frozen current proposed

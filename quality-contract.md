@@ -93,6 +93,9 @@ claim. Do not produce principle-by-principle `N/A` lists.
 - Conflicting scientific repairs require an adjudicator or the author.
 - Stylistic disagreement may be resolved by the editor using the requested
   voice and minimal-change constraint.
+- Reader load (sentence principle 16) is not style. When a scientific repair
+  makes a sentence fail it, find a wording that satisfies both; send the
+  sentence to the adjudicator only when none exists.
 - Report missing independent verification separately from content quality; it
   does not fabricate a failed content axis.
 

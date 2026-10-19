@@ -15,7 +15,10 @@ made, and review the whole unit once, at its close.
    every sentence of a split, merged, or moved passage. A verdict on any other
    sentence stays current while that sentence and its predecessor are
    unchanged. A context or object-ledger revision still invalidates everything.
-3. **What the reviewer is given.** The reviewer receives CANDIDATE, the touched
+3. **What the reviewer is given.** The touched set always goes to the sentence
+   and terminology-and-notation reviewers, and also to the formal reviewer
+   when a claim changed; this includes the editor's own last repair. The
+   reviewer receives CANDIDATE, the touched
    sentence IDs as its scope, and the sentence before and after each touched
    span as read-only context. It applies all 16 principles to the scoped
    sentences. It reports a defect in a context sentence only when the edit
