@@ -20,12 +20,22 @@ Mark as settled only the author's rulings. Wording the editor wrote, including
 a sentence it added, is part of the candidate and is reviewed like any other
 text; never present it to a reviewer as fixed.
 
-When the edited unit is a figure or table caption, also give every reviewer the
-rendered figure and the captions of the earlier figures, and add
+Give the terminology-and-notation reviewer the result of the banned-name scan
+(SKILL.md, core procedure, step 5). The reviewer confirms each hit as a `FIX`
+or clears it when the words do not name the registered concept, and judges
+the names that the scan cannot: shortenings, coinages, and shifted meanings.
+
+A figure or table caption is reviewed as ordinary text: the same reviewers,
+the same assignments, all sentence principles, and the same banned-name scan.
+In addition, give every reviewer the rendered figure and the captions of the
+earlier figures, and add
 [caption.md](../physics-paper-principles/caption.md) to its canon files. The
 sentence reviewer then makes its cold read as a reader who has seen only the
 abstract, the earlier figures and captions, and this figure, and states the
-takeaway that the caption gives that reader.
+caption's title, the takeaway, and the plotted quantities and models that the
+caption gives that reader. For each caption sentence it also
+states what the sentence gives that reader beyond the legend, the axes, and the
+printed labels, and whether its subject is a physical object or a drawn mark.
 
 Reviewers are read-only. They return findings and exact proposed repairs; the
 editor owns integration. A reviewer that discovers a scientific defect in the

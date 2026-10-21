@@ -22,7 +22,7 @@ completion: ready | needs_fix | needs_user
 | `scientific_fidelity` | No supplied mechanism, limitation, scope, or claim strength was lost or invented |
 | `physics_lead` | The physically native quantity leads; every story-bearing helper has an earned role, scope, factor choice, and payoff |
 | `formal_validity` | Every statement in the declared formal-review scope (`changed`, `dependency_closure`, or `all_in_scope`) is valid and agrees with the prose |
-| `terminology_notation` | Every technical term, shortened name, abbreviation, alias, and symbol preserves the source, project vocabulary, and field-standard meaning, or is necessary, defined, and consistently reused |
+| `terminology_notation` | Every technical term, shortened name, abbreviation, alias, and symbol preserves the source, project vocabulary, and field-standard meaning, or is necessary, defined, and consistently reused; the banned-name scan of the whole registry has no hit |
 | `prose` | Every sentence in the declared language coverage satisfies all applicable sentence principles and the passage is clear, economical, coherent, and locally grammatical |
 
 `physics_lead` is not a synonym for style or brevity. A mathematically correct

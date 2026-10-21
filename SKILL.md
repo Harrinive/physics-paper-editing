@@ -63,15 +63,27 @@ historical only.
    path includes canon closure on the completed draft: check all sentence
    principles on every sentence in the declared coverage, resolve every
    terminology-and-notation delta item, and run all applicable narrative,
-   formal, and story-bearing-object checks.
+   formal, and story-bearing-object checks. When the project has a vocabulary
+   registry (`project-vocabulary.json`), every path also runs the banned-name
+   scan on the completed draft, saved as a file, with the checker of the
+   sibling skill `sc-qubit-vocabulary`:
+   `python3 <skills>/sc-qubit-vocabulary/scripts/check_note_vocabulary.py --avoid-only --note <draft> --project-registry <registry>`,
+   where `<skills>` is the folder that holds this skill. It checks the
+   `avoid_names` of the whole registry, not only the entries a reviewer
+   receives; each hit is a terminology-and-notation `FIX`, unless the words
+   do not name the registered concept there, which the editor records with
+   its reason (`block diagonal` against a banned `block`). Without the
+   checker, the editor searches the draft for every `avoid_names` string of
+   the registry. A caption or table is scanned like any other text.
 6. Apply the declared checks in [language-coverage.md](language-coverage.md).
    Coverage selects sentences, not principles.
 7. Under `reviewed`, run the mandatory sentence and terminology-and-notation
    reviewers, every triggered principle specialist, the holistic reviewer, and
    the applicable formal review. Integrate findings without allowing reviewers
    to write the live manuscript or file.
-8. Apply clear candidate fixes in one batch and recheck the affected axes on
-   the touched sentences ([scoped-review.md](scoped-review.md)).
+8. Apply clear candidate fixes in one batch, rerun the banned-name scan, and
+   recheck the affected axes on the touched sentences
+   ([scoped-review.md](scoped-review.md)).
    `USER_DECISION` pauses the task and goes to the author.
 9. Return the edited text and only the decisions that matter.
 
