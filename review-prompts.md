@@ -16,6 +16,16 @@ and instruct the reviewer to read those files before reviewing. Do not assume a
 context-isolated reviewer already knows the canon, and do not paste the entire
 canon into the prompt.
 
+The context of the sentence and terminology-and-notation reviewers includes,
+read-only, the whole current paragraph and the whole paragraph before it: what
+they establish is given information (narrative.md), which the human reader has
+just read, so a reviewer without them can neither flag a restatement nor count
+lookups correctly (sentence principle 16). When the edit is in a file, also
+give these reviewers and the holistic reviewer the pattern report of the
+completed draft (SKILL.md, core procedure, step 5). Its candidates are
+evidence, not findings: the reviewer confirms each against the canon or
+clears it.
+
 Mark as settled only the author's rulings. Wording the editor wrote, including
 a sentence it added, is part of the candidate and is reviewed like any other
 text; never present it to a reviewer as fixed.
@@ -27,8 +37,9 @@ the names that the scan cannot: shortenings, coinages, and shifted meanings.
 
 A figure or table caption is reviewed as ordinary text: the same reviewers,
 the same assignments, all sentence principles, and the same banned-name scan.
-In addition, give every reviewer the rendered figure and the captions of the
-earlier figures, and add
+In addition, give every reviewer the rendered figure, the captions of the
+earlier figures, and, read-only, the paragraphs that cite the figure (for the
+caption–text comparison only; the cold read does not use them), and add
 [caption.md](../physics-paper-principles/caption.md) to its canon files. The
 sentence reviewer then makes its cold read as a reader who has seen only the
 abstract, the earlier figures and captions, and this figure, and states the
@@ -36,6 +47,9 @@ caption's title, the takeaway, and the plotted quantities and models that the
 caption gives that reader. For each caption sentence it also
 states what the sentence gives that reader beyond the legend, the axes, and the
 printed labels, and whether its subject is a physical object or a drawn mark.
+It reports a caption sentence repeated word for word in the citing text and a
+discussion or conclusion beyond the takeaway, and keeps a takeaway that states
+the text's finding in other words (caption.md, Group A).
 
 Reviewers are read-only. They return findings and exact proposed repairs; the
 editor owns integration. A reviewer that discovers a scientific defect in the
@@ -47,8 +61,9 @@ a suggestion that must still pass the sentence principles.
 The labels in these assignments are fixed: `SOURCE` is the immutable author
 source for the current round, and `CANDIDATE` is the frozen current proposed
 text. `SCOPE` is either `full` (every sentence of the unit) or `touched` (the
-listed sentence IDs; the sentence before and after each touched span is
-read-only context), as defined in [scoped-review.md](scoped-review.md). A
+listed sentence IDs; the rest of the unit, the paragraph before it, and the
+sentence after each touched span are read-only context), as defined in
+[scoped-review.md](scoped-review.md). A
 reviewer's proposed revision is not the current candidate until the editor
 integrates it and freezes a new snapshot.
 
@@ -66,7 +81,11 @@ ledger. Check:
    and established field usage;
 5. every applicable narrative and object principle, including passage
    coherence and prose economy, and the delete, question, and names tests of
-   narrative.md on every opening, roadmap, and wrap-up in scope.
+   narrative.md on every opening, roadmap, and wrap-up in scope;
+6. read in sequence: given information restated in later sentences or the
+   next paragraph, template runs without a frame and their connectives, and
+   the division of labor between each caption and the text that cites it
+   (narrative.md). Use the pattern report as evidence.
 
 Run the factor round-trip, inline-substitution, payoff, and convention-merge
 tests on changed story-bearing objects. Mathematical correctness alone does
@@ -83,6 +102,8 @@ physics story and its order across the section, object identity and scope,
 payoff of each name, redundancy between distant passages, claim strength,
 agreement with the neighbouring sections. The wording of one sentence is covered
 by the chunk reviews; report it separately as a local item, not as a finding.
+Given information restated across chunk boundaries and template runs that
+span chunks are section findings: no chunk review sees them whole.
 Give each finding the tier claim, global or style, and report in the format of
 the packet.
 ```
@@ -149,9 +170,13 @@ principles 3, 13, and 16; a sentence that an agent parses easily can still fail
 them.
 
 SCOPE lists the sentences you review. Apply all 16 sentence principles to every
-sentence in SCOPE, and read the sentence before and after each scoped span as
-context only. Check the scoped text as a local passage as well as sentence by
-sentence. Report a defect in a context sentence only when the scoped edit
+sentence in SCOPE, and read the current paragraph, the paragraph before it, and
+the sentence after each scoped span as context only. Check the scoped text as
+a local passage as well as sentence by sentence. A name, gloss, situation
+label, symbol definition, or scope qualifier that the current or preceding
+paragraph established is given: it is not a lookup, and a scoped sentence that
+restates it in full where the short form is unambiguous fails principle 5.
+Confirm or clear each candidate of the pattern report in your scope. Report a defect in a context sentence only when the scoped edit
 caused it. Preserve equations, claims, definitions, order, and scientific
 scope. A scientific doubt that the wording of the candidate cannot resolve is
 USER_DECISION; a defect introduced by the candidate is FIX. Mark a finding
@@ -178,8 +203,8 @@ files. Read the supplied physics-paper-principles/SKILL.md, sentence.md
 (especially principles 3 and 15), and physical-lead.md before reviewing. You
 are not given the source text.
 
-SCOPE lists the sentences you review; read the sentence before and after each
-scoped span as context only. Compare the scoped text with the object ledger,
+SCOPE lists the sentences you review; read the current paragraph, the
+paragraph before it, and the sentence after each scoped span as context only. Compare the scoped text with the object ledger,
 the supplied registry entries, the earlier text of the candidate, and
 established field meaning. Inventory every technical head noun, compound
 label, shortened name, acronym, abbreviation, primed or unsubscripted alias,
@@ -189,7 +214,10 @@ shifted meaning.
 
 Also run the convention-merge check from physical-lead.md on every inventoried
 item — flag a merged-convention seam even when the item is locally
-well-defined.
+well-defined. Flag a name, gloss, or symbol definition that the current or
+preceding paragraph established and that a scoped sentence restates in full,
+or a symbol given its full gloss again, where the short form is unambiguous
+(sentence principle 3).
 
 For every delta item, return keep | define | replace | remove, its evidence,
 and an exact repair. Keep a new item only when it is standard or necessary,

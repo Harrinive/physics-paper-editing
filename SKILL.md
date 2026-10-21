@@ -74,7 +74,17 @@ historical only.
    do not name the registered concept there, which the editor records with
    its reason (`block diagonal` against a banned `block`). Without the
    checker, the editor searches the draft for every `avoid_names` string of
-   the registry. A caption or table is scanned like any other text.
+   the registry. A caption or table is scanned like any other text. When the
+   edit is in a file, every path also runs the pattern detector on the
+   completed draft:
+   `python3 <skills>/physics-paper-editing-section/scripts/check_prose_patterns.py <draft> [--registry <registry>] [--lines A-B]`,
+   with `--lines` covering the passage and the paragraph before it. It lists technical phrases restated in full within a paragraph or right
+   after their definition, runs of sentences or paragraphs with one opening,
+   and caption sentences shared word for word with the citing text. Its
+   candidates are evidence for the given-information, template-run, and
+   caption rules of narrative.md, not findings: under `reviewed` the report
+   goes to the sentence, terminology-and-notation, and holistic reviewers;
+   under `direct` the editor judges each candidate itself.
 6. Apply the declared checks in [language-coverage.md](language-coverage.md).
    Coverage selects sentences, not principles.
 7. Under `reviewed`, run the mandatory sentence and terminology-and-notation
@@ -100,8 +110,8 @@ checks the whole edited unit. A principle hit launches a whole-unit specialist
 rather than a reviewer for the seed sentence.
 
 Those whole-unit reviews are the first review and the review at the close of
-the unit. After a repair, review only the touched sentences with their
-neighbours as context, and give the sentence and terminology reviewers no
+the unit. After a repair, review only the touched sentences, with the rest
+of their paragraph and the paragraph before it as context, and give the sentence and terminology reviewers no
 source text: see [scoped-review.md](scoped-review.md).
 
 The paths change reviewer independence, not which applicable canon principles

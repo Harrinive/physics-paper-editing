@@ -283,3 +283,50 @@ defined in the text before.
 **Oracle:** the connecting-sentence tests pass: the sentence states a physical
 consequence of the previous result and where the argument goes. No repair is
 proposed; a rewording for taste is at most optional.
+
+## 30. Given information restated
+
+A paragraph defines the thermal escape rate \(\Gamma_{\mathrm{th}}\) of a
+metastable well. Each of its next three sentences, and the first sentence of
+the following paragraph, says "the thermal escape rate \(\Gamma_{\mathrm{th}}\)
+of the metastable well at temperature \(T\)". Every sentence is correct alone.
+
+**Oracle:** `prose` fails on given information: after the definition the
+sentences use \(\Gamma_{\mathrm{th}}\) or "this rate", and the symbol never
+carries its full gloss again. The cold read counts no lookup for
+\(\Gamma_{\mathrm{th}}\) in those sentences. Per-sentence correctness does not
+make the passage pass.
+
+## 31. A repeat that ambiguity requires
+
+The same paragraph defines two rates, a thermal escape rate and a tunneling
+rate, and a later sentence compares them.
+
+**Oracle:** the comparison names each rate in full or by its symbol, because
+"the rate" would have two candidate referents (sentence principle 3). No
+given-information finding.
+
+## 32. Caption and text
+
+The text that cites a figure states a measured lifetime with its definition
+and its value; the caption repeats that sentence word for word and then adds
+three sentences that argue why the trend holds. A second caption ends with a
+one-line takeaway that states the same trend in other words.
+
+**Oracle:** the first caption fails redundancy and balance twice (the
+repeated sentence and the caption's own argument); the repair leaves the
+result and the argument in the text and gives the caption a short takeaway.
+The second caption passes: its takeaway is the caption's job.
+
+## 33. Template run in prose
+
+Four consecutive paragraphs on a perturbative expansion each open "In the
+limit of large X, the expansion breaks down because …", each joined to the
+next by nothing, although the last case breaks down for a reason opposite to
+the first three.
+
+**Oracle:** `prose` fails on template runs: one framing sentence states the
+shared pattern once (the expansion breaks down wherever its small parameter
+reaches order one), each paragraph then carries only its case, and the last
+is introduced by a contrast connective. Fixture 24's displayed subsections
+keep their alignment; the rule targets running prose.

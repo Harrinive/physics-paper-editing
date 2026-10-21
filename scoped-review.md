@@ -19,9 +19,10 @@ made, and review the whole unit once, at its close.
    and terminology-and-notation reviewers, and also to the formal reviewer
    when a claim changed; this includes the editor's own last repair. The
    reviewer receives CANDIDATE, the touched
-   sentence IDs as its scope, and the sentence before and after each touched
-   span as read-only context. It applies all 16 principles to the scoped
-   sentences. It reports a defect in a context sentence only when the edit
+   sentence IDs as its scope, and as read-only context the rest of the
+   current paragraph, the whole paragraph before it, and the sentence after
+   each touched span; what those paragraphs establish is given information
+   (narrative.md). It applies all 16 principles to the scoped sentences. It reports a defect in a context sentence only when the edit
    caused it (a broken antecedent, a repeated phrase, a changed premise).
 4. **Closing a finding.** A finding is closed by checking the repair against
    it and by the scoped review of the touched sentences, not by a fresh review
