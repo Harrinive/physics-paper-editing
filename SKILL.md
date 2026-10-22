@@ -63,7 +63,7 @@ historical only.
    path includes canon closure on the completed draft: check all sentence
    principles on every sentence in the declared coverage, resolve every
    terminology-and-notation delta item, and run all applicable narrative,
-   formal, and story-bearing-object checks. When the project has a vocabulary
+   formal, story-bearing-object, and caption checks. When the project has a vocabulary
    registry (`project-vocabulary.json`), every path also runs the banned-name
    scan on the completed draft, saved as a file, with the checker of the
    sibling skill `sc-qubit-vocabulary`:
