@@ -62,8 +62,10 @@ historical only.
 5. Run the path selected by [adaptive-routing.md](adaptive-routing.md). Every
    path includes canon closure on the completed draft: check all sentence
    principles on every sentence in the declared coverage, resolve every
-   terminology-and-notation delta item, and run all applicable narrative,
-   formal, story-bearing-object, and caption checks. When the project has a vocabulary
+   terminology-and-notation delta item (and, when symbols are present, the
+   Symbol typography section of math.md on every symbol in scope), and run all
+   applicable narrative, formal, story-bearing-object, and caption checks. When
+   the project has a vocabulary
    registry (`project-vocabulary.json`), every path also runs the banned-name
    scan on the completed draft, saved as a file, with the checker of the
    sibling skill `sc-qubit-vocabulary`:

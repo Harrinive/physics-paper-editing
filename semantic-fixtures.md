@@ -253,7 +253,7 @@ leakage subspace outside them, and the error trajectories through them, so we
 begin by constructing the error spaces." The three names are defined only later
 in the subsection, and the sentence is grammatical and easy to read.
 
-**Oracle:** the connecting-sentence tests of narrative.md fail: deleting the
+**Oracle:** `prose` fails on connecting sentences: deleting the
 sentence loses nothing, it answers what the construction needs rather than a
 question about the physical system, and its names are unknown at that point.
 The repair deletes it or replaces it with a claim the subsection already makes
@@ -267,11 +267,11 @@ probability we need the rotating frame, the dressed states, and the
 adiabaticity parameter, so we first define the rotating frame." None of the
 three is defined yet.
 
-**Oracle:** the same failure as fixture 27: the sentence states a dependency
-of the derivation and lists unmet names. A repair leads with the physical point
-the section exploits (for example, that near resonance the drive is slow in a
-frame rotating with it) or deletes the sentence. The diagnosis does not depend
-on vocabulary from fixture 27.
+**Oracle:** `prose` fails the same way as fixture 27: the sentence states a
+dependency of the derivation and lists unmet names. A repair leads with the
+physical point the section exploits (for example, that near resonance the drive
+is slow in a frame rotating with it) or deletes the sentence. The diagnosis
+does not depend on vocabulary from fixture 27.
 
 ## 29. Orientation that works
 
