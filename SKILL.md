@@ -29,8 +29,9 @@ version-2 job or inherits a fresh version-2 section round.
    other canon layers when their content is present:
    [narrative.md](../physics-paper-principles/narrative.md),
    [math.md](../physics-paper-principles/math.md),
-   [physical-lead.md](../physics-paper-principles/physical-lead.md), and, for a
-   figure or table caption,
+   [physical-lead.md](../physics-paper-principles/physical-lead.md),
+   [names-and-symbols.md](../physics-paper-principles/names-and-symbols.md), and,
+   for a figure or table caption,
    [caption.md](../physics-paper-principles/caption.md). A caption is an
    ordinary passage: it takes the same paths as any other.
 5. Read [scaffolded-mode.md](scaffolded-mode.md) only for an economy or unknown editor.
@@ -51,12 +52,12 @@ historical only.
 
 1. Count sentences and determine `edit_intent`, language coverage, model tier,
    scientific risk, and `direct | reviewed` path.
-2. If a scientific defect in the author's source is newly discovered and its
-   repair is not already authorized, pause the entire task and ask the author
-   one focused question. Do not continue unrelated edits. Repair defects
-   introduced by the candidate without treating them as author decisions.
-3. Build a short private physics spine, terminology-and-notation baseline, and
-   any required object ledger before drafting.
+2. Handle a newly discovered scientific defect in the author's source as
+   [quality-contract.md](quality-contract.md) says. Repair defects introduced
+   by the candidate without treating them as author decisions.
+3. Build a short private physics spine, a note of what each paragraph is for,
+   a terminology-and-notation baseline, and any required object ledger before
+   drafting.
 4. Draft the edit. For substantive work, a correct formula does not excuse a
    poor object choice, unearned helper, or pointless normalization.
 5. Run the path selected by [adaptive-routing.md](adaptive-routing.md). Every
@@ -96,7 +97,7 @@ historical only.
 8. Apply clear candidate fixes in one batch, rerun the banned-name scan, and
    recheck the affected axes on the touched sentences
    ([scoped-review.md](scoped-review.md)).
-   `USER_DECISION` pauses the task and goes to the author.
+   `USER_DECISION` goes to the author.
 9. Return the edited text and only the decisions that matter.
 
 ## Path summary
@@ -116,8 +117,8 @@ the unit. After a repair, review only the touched sentences, with the rest
 of their paragraph and the paragraph before it as context, and give the sentence and terminology reviewers no
 source text: see [scoped-review.md](scoped-review.md).
 
-The paths change reviewer independence, not which applicable canon principles
-are mandatory. Persistence depends on lifecycle and evidence needs rather than
+The paths change reviewer independence, not which canon principles apply.
+Persistence depends on lifecycle and evidence needs rather than
 path.
 
 ## Model choice at conversation intake
@@ -152,14 +153,15 @@ Use the quality axes and deterministic completion rule in
 [quality-contract.md](quality-contract.md). Shape the user-facing reply with
 [user-communication.md](user-communication.md). Do not emit a legacy `OVERALL`
 status for a version-2 job. No path may complete while an applicable canon
-principle or required quality axis fails. A newly discovered scientific defect
-in the author's source pauses the entire task unless its repair was already
-authorized; it cannot be converted into a completion-time limitation.
+principle or required quality axis fails, apart from a principle set aside with
+its reason. An open scientific defect in the author's source keeps the work open;
+it cannot be converted into a completion-time limitation.
 
 ## Related skills
 
 - **physics-paper-principles** — drafting and review canon
 - **physics-paper-editing-section** — whole sections or passages over 12 sentences
+- **physics-paper-author-read** — responding to an author's own edits and margin comments
 
 ## Validation fixtures
 

@@ -38,10 +38,10 @@ and the proposed output, not from the user's label or the apparent quality of a
 candidate draft. Correcting an unsupported candidate assertion is at least
 medium risk even when the source fixes the answer.
 
-If the editor discovers a scientific defect in the author's source that the
-user did not already authorize this task to repair, pause the entire task with
-`needs_user`. State the defect and ask whether to expand the scope or supply the
-intended science. Do not continue unrelated edits while that decision is open.
+A scientific defect in the author's source that the user did not already
+authorize this task to repair follows the rule in
+[quality-contract.md](quality-contract.md). The job ends `needs_user` until the
+author decides whether to expand the scope or supply the intended science.
 A defect introduced by the editor or a reviewer belongs to the candidate and
 must be repaired rather than presented as an author decision.
 
@@ -91,8 +91,8 @@ merely because formulas were left textually unchanged.
   passes. Preserve an unauthorized, non-scientific observation outside the
   repair scope as an advisory; it neither authorizes a change nor certifies the
   untouched context.
-- A newly discovered scientific defect in the author's source pauses the task
-  under the rule above rather than causing a silent upgrade or repair.
+- A newly discovered scientific defect in the author's source follows the rule
+  above rather than causing a silent upgrade or repair.
 
 ### Reviewed
 
@@ -108,7 +108,7 @@ merely because formulas were left textually unchanged.
    `USER_DECISION`, launches a whole-unit specialist for that principle or the
    tightly coupled group defined in [review-prompts.md](review-prompts.md). The
    specialist searches beyond the originally flagged sentence. A source-level
-   scientific `USER_DECISION` pauses the task before further review.
+   scientific `USER_DECISION` holds further review of the work that depends on it.
 5. One holistic physics-story reviewer checks the integrated candidate. When
    `formal_review_scope` is not `none`, add one formal reviewer for exactly the
    scope selected by the table above.

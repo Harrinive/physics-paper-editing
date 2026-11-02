@@ -42,8 +42,9 @@ The requested change is punctuation in a sentence near a pre-existing weakly
 motivated definition that the edit does not touch.
 
 **Oracle:** if the weak motivation exposes a scientific defect in the author's
-source rather than merely a stylistic weakness, pause the entire task and ask
-whether to expand the scope. Inspection does not silently authorize repair. If
+source rather than merely a stylistic weakness, log it with one recommended
+repair, hold only the work that depends on it, and leave the job open until the
+author rules. Inspection does not silently authorize repair. If
 it is only stylistic and outside the requested span, record it without changing
 the science.
 
@@ -153,9 +154,10 @@ one reviewer per sentence.
 During a terminology copyedit, review reveals that an untouched source sentence
 reverses a necessary implication. The user did not request a scientific repair.
 
-**Oracle:** pause the entire task with `needs_user`, preserve the source, state
-the defect, and ask whether to expand the scope or supply the intended claim.
-Do not continue unrelated edits and do not finish with a limitation note.
+**Oracle:** preserve the source, state the defect with one recommended repair,
+hold only the work that depends on it, and end `needs_user` until the author
+expands the scope or supplies the intended claim. Do not finish with a limitation
+note.
 
 ## 19. Formal-review scope
 
@@ -330,3 +332,93 @@ shared pattern once (the expansion breaks down wherever its small parameter
 reaches order one), each paragraph then carries only its case, and the last
 is introduced by a contrast connective. Fixture 24's displayed subsections
 keep their alignment; the rule targets running prose.
+
+## 34. Scope clause the reader already has
+
+"We cool the film to 4 K for all measurements. At this temperature, for the cooled
+film and in the measurements reported here, the resistance falls by a factor of ten."
+
+**Oracle:** cut the repeated scope clause. Keep a scope clause that the next step
+uses: "The gap closes only for fields along the c axis, and the next paragraph uses
+this anisotropy."
+
+## 35. Approximation already stated
+
+An earlier section says "We work in the Born approximation." A later section says
+"The cross section grows as the square of the energy."
+
+**Oracle:** pass; do not ask to mark the later statement approximate. A passage that
+discusses the quality of the approximation keeps the word.
+
+## 36. Typical case
+
+Three of four levels decay radiatively. "The excited state decays mainly by emitting
+a photon."
+
+**Oracle:** pass. "All four excited states decay by emitting a photon" fails.
+
+## 37. References across a section
+
+A paragraph cites Appendix B in each of its four sentences; another section walks
+through Fig. 2(a), (b), and (c).
+
+**Oracle:** Appendix B once; every panel stays, because each points to something new.
+A section that discusses an appendix without citing it fails too.
+
+## 38. A name after "this"
+
+"The lens focuses the beam. This Gouy phase shifts the fringes."
+
+**Oracle:** fails: nothing before it supplies the name. "We sum the decay rates of all
+the modes. This total decay rate sets the lifetime" passes.
+
+## 39. Definition order
+
+"We define $\Gamma=2\pi|g|^2\rho$. This is the rate at which the excitation leaves the
+emitter."
+
+**Oracle:** fails: the meaning comes first. A derived result followed by its reading
+passes: "Summing over the modes gives $\Gamma=2\pi|g|^2\rho$. The rate grows with the
+density of states."
+
+## 40. Hard sentence
+
+A long sentence states a paragraph's central result; a long sentence in a fabrication
+paragraph gives deposition numbers that nothing later uses.
+
+**Oracle:** split or reword the first and keep its claim. The second is said
+qualitatively or deleted; a sentence-level reviewer reports it as a `story_check`.
+
+## 41. Takeaway of a caption
+
+A schematic whose panels build on each other ends with its takeaway. A data figure has
+no title and opens with its takeaway. A third caption says "Measured data. The curve is
+the fit."
+
+**Oracle:** the first two pass; the third fails: it has no takeaway.
+
+## 42. Defect that holds part of the work
+
+During an unattended run over three chunks, a sign error appears in the author's
+source for chunk 2 only.
+
+**Oracle:** finish chunks 1 and 3, hold chunk 2, log the defect with one recommended
+repair, leave the round open, and report it at the end. If the sign is in the
+definition on which every chunk rests, stop the whole task.
+
+## 43. A ruled decision
+
+A ruling says a comparison stays one short qualitative sentence. One finding asks for
+two measured values and a sentence on why they differ. Another ruling quotes a gain of
+20 dB, and a finding shows that the table gives 12 dB.
+
+**Oracle:** reject the first finding: it is a preference against a ruling. The text
+stays as ruled, and the editor may say once in its report that it would decide
+otherwise. Take the second to the author: it shows a scientific error.
+
+## 44. Several decisions for the author
+
+Three proposed wordings need the author's ruling.
+
+**Oracle:** a one-line list of the three, then the first alone, as a full sentence
+with before and after, named by place or content and not by a private label.

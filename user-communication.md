@@ -43,14 +43,21 @@ choice.
   hand routine quality work back to the user.
 - For `needs_user`, preserve the supported text and ask one specific scientific
   question that distinguishes the unresolved meanings.
-- A newly discovered scientific defect in the author's source pauses the whole
-  task unless the requested objective already authorized its repair. State the
-  concrete defect and the one decision needed; do not continue unrelated edits
-  or hide the issue as a completion-time limitation.
+- For a newly discovered scientific defect in the author's source, state the
+  concrete defect, the one decision needed, and one recommended repair. Do not
+  hide the issue as a completion-time limitation.
 - Say that the text was "checked by the same editor" only when independent
   review was expected, requested, or materially relevant.
 - Do not expose internal model routing, progress bars, reviewer counts, or routine
   schema fields unless the user asks for an audit.
+
+When the author must rule on proposed wording:
+
+- Write the proposal as the full sentence it would be in the text. It goes
+  through the same review as an edit before the author sees it.
+- Show the text before and after.
+- Name a passage by its place or content, never by a private draft label.
+- With several decisions, give a one-line list and take them one at a time.
 
 When the user asks for an audit, state the actual language coverage in ordinary
 language: either every sentence was checked, or the review focused on changed

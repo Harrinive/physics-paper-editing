@@ -21,7 +21,7 @@ Validate behavior, not host command spelling.
 | Standing role-to-model policy | First reply states the active mapping and continues without requesting confirmation |
 | No standing role-to-model policy | First reply asks for a role-to-model mapping and waits before substantive editing |
 | Principle hit | One hit launches a whole-unit specialist for that principle or coupled group |
-| Newly discovered source defect | Entire task pauses for the author's decision; no unrelated edits continue |
+| Newly discovered source defect | The defect is logged with one recommended repair; only the work that depends on it waits; the round closes only after the author rules |
 | Formal dependency | Formal reviewer certifies the declared changed, dependency-closure, or all-in-scope set |
 | Resumable source recovery | Immutable original and current candidate are both present; hashes alone are insufficient |
 | Context-only change | A context revision or applicable object-ledger revision invalidates dependent reviews even when text hashes match |

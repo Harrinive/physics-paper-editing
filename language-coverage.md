@@ -14,8 +14,8 @@ sentence is otherwise grammatical.
 
 Language coverage is inspection coverage, not permission to broaden the edit.
 If inspection reveals a scientific defect in the author's source that the
-requested task did not authorize repairing, pause the entire task and ask the
-author. Ordinary candidate-language defects remain `FIX` findings for the
+requested task did not authorize repairing, follow the rule in
+[quality-contract.md](quality-contract.md). Ordinary candidate-language defects remain `FIX` findings for the
 editor. Preserve an unauthorized, non-scientific observation outside the
 repair scope as an advisory rather than silently editing it; this does not
 weaken any principle within the declared inspection coverage.
@@ -34,8 +34,8 @@ materially change the result, ask before editing.
 
 Coverage does not authorize broader changes. An exhaustive copyedit still
 preserves claims, equations, definitions, symbols, order, and scientific scope;
-a newly discovered scientific defect pauses rather than silently expanding the
-repair scope.
+a newly discovered scientific defect is logged rather than silently expanding
+the repair scope.
 
 ## Reviewer escalation
 
@@ -53,7 +53,8 @@ Any `FIX`, or a `USER_DECISION` that is not a source-level scientific halt,
 triggers a specialist sweep of the whole edited unit for that principle or its
 tightly coupled group. The first finding is evidence of a possible pattern;
 the specialist does not inspect only the originally flagged sentence. A
-source-level scientific `USER_DECISION` pauses before further review. Reviewers
+source-level scientific `USER_DECISION` holds further review of the work that
+depends on it. Reviewers
 return findings and exact proposed repairs but never write the live manuscript
 or file.
 
@@ -105,10 +106,10 @@ The snapshot and invalidation rules below apply only when the workflow requires
 the sentence map defined above. For an ordinary synchronous direct edit,
 completion instead requires a fresh canon check of the final text in hand.
 
-- A verdict is valid only for its recorded sentence and chunk snapshot.
-- After any candidate repair, recompute the sentence and chunk hashes and rerun the
-  complete chunk language check. Ordinary micro chunks contain at most 12
-  sentences; a section-owned indivisible oversized unit follows the same rule.
+- A verdict is valid only for its recorded sentence and the sentence before it.
+- After a candidate repair, recheck the touched sentences
+  ([scoped-review.md](scoped-review.md)); the whole-chunk review runs at the close
+  of the chunk.
 - A split, merge, reorder, or renumbering invalidates the affected sentence map.
 - Historical, legacy, superseded, and stale results are context only.
 - Exhaustive language coverage passes only when every sentence in every current

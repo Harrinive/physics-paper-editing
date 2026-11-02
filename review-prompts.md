@@ -2,7 +2,8 @@
 
 Use these compact assignments when adaptive routing selects `reviewed`. Give
 every reviewer the candidate, relevant context, edit intent, physics spine,
-object ledger, review scope, and snapshot identifier when applicable. Give the
+what each paragraph is for, object ledger, review scope, and snapshot identifier
+when applicable. Give the
 source (SOURCE) only to the holistic reviewer, the formal reviewer, the
 physics-object specialist (P11), and the conflict adjudicator; the sentence
 reviewer, the terminology-and-notation reviewer, and the other specialists
@@ -43,7 +44,7 @@ caption–text comparison only; the cold read does not use them), and add
 [caption.md](../physics-paper-principles/caption.md) to its canon files. The
 sentence reviewer then makes its cold read as a reader who has seen only the
 abstract, the earlier figures and captions, and this figure, and states the
-caption's title, the takeaway, and the plotted quantities and models that the
+caption's title, if it has one, the takeaway, and the plotted quantities and models that the
 caption gives that reader. For each caption sentence it also
 states what the sentence gives that reader beyond the legend, the axes, and the
 printed labels, and whether its subject is a physical object or a drawn mark.
@@ -57,6 +58,16 @@ author's source outside the authorized objective returns `USER_DECISION` and
 the defect, not a silent repair. A defect in the candidate returns `FIX`.
 A scientific finding fixes the claim; the wording a reviewer proposes for it is
 a suggestion that must still pass the sentence principles.
+
+Give every reviewer the next paragraph with its assignment.
+
+**A repair is no heavier than its defect.** A proposed repair changes one place,
+adds no qualifier, and is no longer than the text it replaces (a split may add a
+few words). It may exceed this only to correct an error or to give the reader
+something missing, such as a definition; then the finding says so. A finding
+names the harm to a reader; a correct sentence with no such harm is `optional`.
+Read a repair in its paragraph before proposing it: if it satisfies a rule but
+reads worse than the text it replaces, it is not a repair.
 
 The labels in these assignments are fixed: `SOURCE` is the immutable author
 source for the current round, and `CANDIDATE` is the frozen current proposed
@@ -85,7 +96,16 @@ ledger. Check:
 6. read in sequence: given information restated in later sentences or the
    next paragraph, template runs without a frame and their connectives, and
    the division of labor between each caption and the text that cites it
-   (narrative.md). Use the pattern report as evidence.
+   (narrative.md). Use the pattern report as evidence;
+7. read as a first-time reader: at each step of the story, could the reader say
+   why it is taken, what it gives, and how far a result or comparison can be
+   read? Report a gap only where the reader would stop. State it as the
+   reader's question. Propose wording only when the text or source already
+   gives the answer, and then prefer moving or replacing words to adding them.
+   A derivation, extra support, or a caveat the story does not need is not a
+   gap;
+8. each appendix, figure, or table the section discusses is referenced at least
+   once, and a repeated reference adds something new.
 
 Run the factor round-trip, inline-substitution, payoff, and convention-merge
 tests on changed story-bearing objects. Mathematical correctness alone does
@@ -104,8 +124,8 @@ agreement with the neighbouring sections. The wording of one sentence is covered
 by the chunk reviews; report it separately as a local item, not as a finding.
 Given information restated across chunk boundaries and template runs that
 span chunks are section findings: no chunk review sees them whole.
-Give each finding the tier claim, global or style, and report in the format of
-the packet.
+Give each finding the tier claim, global or style (a reader's gap is global),
+and report in the format of the packet.
 ```
 
 ## Formal reviewer
@@ -164,7 +184,8 @@ Cold read first. For every sentence in SCOPE, restate it in plain words as a
 physicist outside the subfield would understand it after reading only the
 candidate text up to that sentence (sentence.md, principle 16). Count as a
 lookup anything you take from the reference material, a definition outside the
-supplied text, or your own expertise. The restatement, the lookups, the
+supplied text, or your own expertise, except an object that the ledger marks
+central. The restatement, the lookups, the
 conditions before the main clause, and the nesting depth are your evidence for
 principles 3, 13, and 16; a sentence that an agent parses easily can still fail
 them.
@@ -178,7 +199,13 @@ paragraph established is given: it is not a lookup, and a scoped sentence that
 restates it in full where the short form is unambiguous fails principle 5.
 Confirm or clear each candidate of the pattern report in your scope. Report a defect in a context sentence only when the scoped edit
 caused it. Preserve equations, claims, definitions, order, and scientific
-scope. A scientific doubt that the wording of the candidate cannot resolve is
+scope. Fix a hard sentence by splitting or rewording it; a clause that only
+repeats what the reader already has may go. Do not soften or remove a claim:
+when a sentence or a clause that adds a claim seems hard or unneeded, report a
+finding of severity `story_check` with no repair. The editor decides it from what
+the paragraph is for. A `story_check` finding alone leaves the sentence at PASS.
+Whether a reference is needed is yours to judge; the count across the section is
+not. A scientific doubt that the wording of the candidate cannot resolve is
 USER_DECISION; a defect introduced by the candidate is FIX. Mark a finding
 `optional` when the sentence is correct and the repair is a matter of taste;
 when every finding on a sentence is optional, the verdict of that sentence is
@@ -200,7 +227,8 @@ language coverage.
 ```text
 You are the independent terminology-and-notation reviewer. Do not edit source
 files. Read the supplied physics-paper-principles/SKILL.md, sentence.md
-(especially principles 3 and 15), physical-lead.md, and, when SCOPE contains
+(especially principles 3 and 15), names-and-symbols.md, physical-lead.md, and,
+when SCOPE contains
 symbols, the Symbol typography section of math.md before reviewing. You are
 not given the source text.
 
@@ -224,9 +252,8 @@ Check the type (italic or roman) of every character of every symbol in SCOPE
 against the Symbol typography section of math.md, inherited symbols included.
 
 For every delta item, return keep | define | replace | remove, its evidence,
-and an exact repair. Keep a new item only when it is standard or necessary,
-defined at first use, and reused enough to improve comprehension. Return a
-proposed terminology-only revision, plus
+and an exact repair. Keep a new item only when names-and-symbols.md allows it.
+Return these exact repairs, plus
 terminology_notation: PASS | FIX | USER_DECISION, and a result per scoped
 sentence when only some sentences carry a finding. Escalate any repair that
 may change physical meaning; do not decide that change as language.
@@ -254,7 +281,9 @@ You are the whole-unit specialist for PRINCIPLE_IDS. Do not edit source files.
 Read the supplied canon files, then use the seed finding only as evidence that
 the pattern may recur. Inspect the complete edited unit for every violation in
 your scope. Return an exhaustive occurrence list with sentence IDs, concise
-evidence, and exact proposed repairs. Preserve all content outside your scope.
+evidence, and exact proposed repairs. Preserve all
+content outside your scope, and report a claim that may need softening or
+removal as a `story_check`, as the sentence reviewer does.
 Escalate a possible scientific-meaning change rather than resolving it as
 style.
 ```

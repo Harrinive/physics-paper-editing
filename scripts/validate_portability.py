@@ -12,6 +12,7 @@ SUITE = (
     ROOT,
     ROOT.parent / "physics-paper-editing-section",
     ROOT.parent / "physics-paper-principles",
+    ROOT.parent / "physics-paper-author-read",
 )
 ADAPTERS = {"runtime-cursor.md", "runtime-codex.md", "runtime-claude.md"}
 CORE_FORBIDDEN = re.compile(
@@ -45,6 +46,7 @@ required = {
         "stages.md",
         "cross-skill.md",
         "chunk-contract.md",
+        "rulings-file.md",
         "legacy-v1/LEGACY.md",
     },
     ROOT.parent / "physics-paper-principles": {
@@ -53,7 +55,12 @@ required = {
         "sentence.md",
         "narrative.md",
         "math.md",
+        "names-and-symbols.md",
         "legacy-v1/LEGACY.md",
+    },
+    ROOT.parent / "physics-paper-author-read": {
+        "SKILL.md",
+        "scripts/check_sweep.py",
     },
 }
 
@@ -129,7 +136,7 @@ if "ordinary synchronous direct edit" not in quality:
     fail("quality contract makes snapshot state ambiguous for direct edits")
 
 section_skill = (ROOT.parent / "physics-paper-editing-section" / "SKILL.md").read_text()
-for value in ("pause the entire section", "immutable original section"):
+for value in ("keep working on the chunks that do not depend on it", "immutable original section"):
     if value not in section_skill:
         fail(f"section contract lacks required source-defect/recovery rule: {value!r}")
 
@@ -174,8 +181,8 @@ for value in (
         fail(f"section persistence lacks {value!r}")
 
 principles = (ROOT.parent / "physics-paper-principles" / "SKILL.md").read_text()
-if "Every principle in an applicable canon file is mandatory" not in principles:
-    fail("principles skill does not declare the canon mandatory")
+if "Every principle is considered wherever its object is present" not in principles:
+    fail("principles skill does not declare the status of the canon")
 
 sentence = (ROOT.parent / "physics-paper-principles" / "sentence.md").read_text()
 if "Terminology-and-notation delta" not in sentence:
