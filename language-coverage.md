@@ -27,6 +27,13 @@ weaken any principle within the declared inspection coverage.
 | `selective` | Check every changed, newly written, or specifically diagnosed sentence and assess the chunk's prose as a whole. Record checked sentence IDs; untouched sentences may remain ungraded. |
 | `exhaustive` | Give every typographic sentence in the current chunk a current-snapshot language verdict. No skipped or missing sentence may count as completion. |
 
+In a section round the program takes "changed" from the round-start text
+(`source-original.txt`). A sentence is unchanged while it and its predecessor,
+math and references included, stand there in the same order, so every sentence
+of a moved passage counts as changed. A chunk with no changed sentence needs no
+closure and no close review. Text drafted before `init` counts as unchanged:
+declare `exhaustive` to review such a draft as it stands.
+
 Use exhaustive coverage when the user explicitly requests every sentence, line
 by line, a full language audit, or equivalent coverage. For a section round,
 inherit its declared mode. If the expected coverage is ambiguous and would

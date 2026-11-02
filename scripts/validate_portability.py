@@ -13,6 +13,7 @@ SUITE = (
     ROOT.parent / "physics-paper-editing-section",
     ROOT.parent / "physics-paper-principles",
     ROOT.parent / "physics-paper-author-read",
+    ROOT.parent / "physics-vocabulary",
 )
 ADAPTERS = {"runtime-cursor.md", "runtime-codex.md", "runtime-claude.md"}
 CORE_FORBIDDEN = re.compile(
@@ -61,6 +62,11 @@ required = {
     ROOT.parent / "physics-paper-author-read": {
         "SKILL.md",
         "scripts/check_sweep.py",
+    },
+    ROOT.parent / "physics-vocabulary": {
+        "SKILL.md",
+        "vocabulary-check.md",
+        "scripts/check_vocabulary.py",
     },
 }
 

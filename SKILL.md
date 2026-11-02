@@ -69,8 +69,8 @@ historical only.
    the project has a vocabulary
    registry (`project-vocabulary.json`), every path also runs the banned-name
    scan on the completed draft, saved as a file, with the checker of the
-   sibling skill `sc-qubit-vocabulary`:
-   `python3 <skills>/sc-qubit-vocabulary/scripts/check_note_vocabulary.py --avoid-only --note <draft> --project-registry <registry>`,
+   sibling skill `physics-vocabulary`:
+   `python3 <skills>/physics-vocabulary/scripts/check_vocabulary.py --file <draft> --project-registry <registry>`,
    where `<skills>` is the folder that holds this skill. It checks the
    `avoid_names` of the whole registry, not only the entries a reviewer
    receives; each hit is a terminology-and-notation `FIX`, unless the words
