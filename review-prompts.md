@@ -82,7 +82,10 @@ ledger. Check:
 5. every applicable narrative and object principle, including passage
    coherence and prose economy, and the delete, question, and names tests of
    narrative.md on every opening, roadmap, and wrap-up in scope;
-6. read in sequence: given information restated in later sentences or the
+6. level of precision (narrative.md): tag each number and exact clause as
+   result, comparison, condition, reason, or illustration against the physics
+   spine's result line; run the member test on each qualitative claim;
+7. read in sequence: given information restated in later sentences or the
    next paragraph, template runs without a frame and their connectives, and
    the division of labor between each caption and the text that cites it
    (narrative.md). Use the pattern report as evidence.
@@ -100,8 +103,9 @@ did not authorize.
 In a section round (Stage E) you review what the chunk reviews cannot see: the
 physics story and its order across the section, object identity and scope,
 payoff of each name, redundancy between distant passages, claim strength,
-agreement with the neighbouring sections. The wording of one sentence is covered
-by the chunk reviews; report it separately as a local item, not as a finding.
+level of precision against the spine's result line, agreement with the
+neighbouring sections. The wording of one sentence is covered by the chunk
+reviews; report it separately as a local item, not as a finding.
 Given information restated across chunk boundaries and template runs that
 span chunks are section findings: no chunk review sees them whole.
 Give each finding the tier claim, global or style, and report in the format of
@@ -167,7 +171,10 @@ lookup anything you take from the reference material, a definition outside the
 supplied text, or your own expertise. The restatement, the lookups, the
 conditions before the main clause, and the nesting depth are your evidence for
 principles 3, 13, and 16; a sentence that an agent parses easily can still fail
-them.
+them. Level of precision is chosen at passage level (narrative.md): flag a
+number or exact clause that the supplied physics spine's result line does not
+name as a finding for passage-level review, and run the member test on each
+qualitative claim.
 
 SCOPE lists the sentences you review. Apply all 16 sentence principles to every
 sentence in SCOPE, and read the current paragraph, the paragraph before it, and
